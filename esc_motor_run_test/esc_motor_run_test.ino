@@ -1,11 +1,13 @@
 #include <Servo.h>
 
 
-#define MAX_THROTTLE (1800)
+#define MAX_THROTTLE (1864)
 #define MIN_THROTTLE (1064)
 #define ZERO_THROTTLE (0)
-#define TEST_THROTTLE (1490)
-int throttle = 0;
+#define TEST_THROTTLE (1100)
+int throttle = TEST_THROTTLE;
+
+#define INCREMENT (50)
 
 // non working : Send A(1500) B(1064) then A(1500) : Stops in fraction of a second
 // working : Send A(1500) B(1064) then D(1400)
@@ -58,7 +60,7 @@ void loop() {
         } break;
       case '+' :
         {
-          throttle += 10;
+          throttle += INCREMENT;
           throttle = throttle < MAX_THROTTLE ? throttle : MAX_THROTTLE;
           ESC.writeMicroseconds(throttle);
           Serial.print("Throttle+ = ");
@@ -66,7 +68,7 @@ void loop() {
         } break;
       case '-' :
         {
-          throttle -= 10;
+          throttle -= INCREMENT;
           throttle = throttle > ZERO_THROTTLE ? throttle : ZERO_THROTTLE;
           ESC.writeMicroseconds(throttle);
           Serial.print("Throttle- = ");
