@@ -1,7 +1,7 @@
 #include <Servo.h>
 
 
-#define MAX_THROTTLE (1864)
+#define MAX_THROTTLE (2000) //(1864)
 #define MIN_THROTTLE (1064)
 #define ZERO_THROTTLE (0)
 #define TEST_THROTTLE (1100)
@@ -30,57 +30,101 @@ void setup() {
   Serial.println("Done");
 }
 
+void state_machine(char in);
+
 void loop() {
   // put your main code here, to run repeatedly:
   if (Serial.available())
   {
     char inChar = (char)Serial.read();
-    switch (inChar)
-    {
-      case 'A' :
-        {
-          ESC.writeMicroseconds(MAX_THROTTLE);
-          Serial.println("MAX_Throttle");
-        } break;
-      case 'B' :
-        {
-          ESC.writeMicroseconds(MIN_THROTTLE);
-          Serial.println("MIN_Throttle");
-        } break;
-      case 'C' :
-        {
-          ESC.writeMicroseconds(ZERO_THROTTLE);
-          Serial.println("Zero_Throttle");
-        } break;
-      case 'D' :
-        {
-          ESC.writeMicroseconds(TEST_THROTTLE);
-          Serial.println("Test_Throttle");
-          throttle = TEST_THROTTLE;
-        } break;
-      case '+' :
-        {
-          throttle += INCREMENT;
-          throttle = throttle < MAX_THROTTLE ? throttle : MAX_THROTTLE;
-          ESC.writeMicroseconds(throttle);
-          Serial.print("Throttle+ = ");
-          Serial.println(throttle);
-        } break;
-      case '-' :
-        {
-          throttle -= INCREMENT;
-          throttle = throttle > ZERO_THROTTLE ? throttle : ZERO_THROTTLE;
-          ESC.writeMicroseconds(throttle);
-          Serial.print("Throttle- = ");
-          Serial.println(throttle);
-        } break;
-
-      default :
-        {
-          ESC.writeMicroseconds(0);
-          Serial.println("Default_Throttle");
-        } break;
-
-    }
+    state_machine(inChar);
   }
 }
+
+void state_machine(char inChar)
+{
+
+  switch (inChar)
+  {
+    case 'A' :
+      {
+        ESC.writeMicroseconds(MAX_THROTTLE);
+        Serial.println(" MAX_Throttle");
+      } break;
+    case 'B' :
+      {
+        ESC.writeMicroseconds(MIN_THROTTLE);
+        Serial.println(" MIN_Throttle");
+      } break;
+    case 'C' :
+      {
+        ESC.writeMicroseconds(ZERO_THROTTLE);
+        Serial.println(" Zero_Throttle");
+      } break;
+    case 'D' :
+      {
+        ESC.writeMicroseconds(TEST_THROTTLE);
+        Serial.println(" Test_Throttle");
+        throttle = TEST_THROTTLE;
+      } break;
+    case '+' :
+      {
+        throttle += INCREMENT;
+        throttle = throttle < MAX_THROTTLE ? throttle : MAX_THROTTLE;
+        ESC.writeMicroseconds(throttle);
+        Serial.print(" Throttle+ = ");
+        Serial.println(throttle);
+      } break;
+    case '-' :
+      {
+        throttle -= INCREMENT;
+        throttle = throttle > ZERO_THROTTLE ? throttle : ZERO_THROTTLE;
+        ESC.writeMicroseconds(throttle);
+        Serial.print(" Throttle- = ");
+        Serial.println(throttle);
+      } break;
+
+    case 'S':
+      {
+        Serial.println("Running sequence ... ");
+        state_machine('A');
+        delay(400);
+        state_machine('B');
+        delay(200);
+        state_machine('D');
+        Serial.println("Ready for throttle...");
+      } break;
+
+    case 'R':
+      {
+        Serial.println("Auto Throttle ... ");
+
+        int i = 0;
+        for (i = 0; i < 20; i++)
+        {
+          state_machine('+');
+          delay(300);
+        }
+
+        delay(5000);
+
+        for ( i = 0; i < 20; i++)
+        {
+          state_machine('-');
+          delay(100);
+        }
+
+        state_machine('C');
+        Serial.println("Throttle disarmed...");
+      } break;
+
+
+    default :
+      {
+        ESC.writeMicroseconds(0);
+        Serial.println(" Default_Throttle");
+      } break;
+
+  }
+}
+
