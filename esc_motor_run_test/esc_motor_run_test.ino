@@ -1,5 +1,10 @@
+
+#include "data.h"
 #include <Servo.h>
 
+Servo servo[4];  // create servo object to control a servo
+int pins[4] = {2, 3, 4, 5};
+int i = 0;
 
 #define MAX_THROTTLE (2000) //(1864)
 #define MIN_THROTTLE (1064)
@@ -15,10 +20,19 @@ int throttle = TEST_THROTTLE;
 // https://hobbyking.com/media/file/391175338X260742X34.pdf
 Servo ESC;
 
+void servo_init()
+{
+  for (i = 0 ; i < 4 ; i++)
+  {
+    servo[i].attach(pins[i]);
+    servo[i].write(90);
+  }
+}
+
 void setup() {
   // put your setup code here, to run once:
   ESC.attach(9);
-  Serial.begin(250000);
+  Serial.begin(115200);
   Serial.println("Hello");
   //ESC.writeMicroseconds(1500);
   //delay(5000);
@@ -28,6 +42,13 @@ void setup() {
   //delay(5000);
   //ESC.writeMicroseconds(0);
   Serial.println("Done");
+
+  mpu_setup();
+  servo_init();
+
+  delay(100);
+
+
 }
 
 void state_machine(char in);
@@ -39,6 +60,28 @@ void loop() {
     char inChar = (char)Serial.read();
     state_machine(inChar);
   }
+
+  true_angle_val_raw_acc data = mpu_loop(); // Must update here too
+#define SERIAL Serial
+  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
+  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
+  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
+  SERIAL.print(data.x_unfiltered_acc, 2); SERIAL.print(",");
+  SERIAL.print(data.y_unfiltered_acc, 2); SERIAL.print(",");
+  SERIAL.println(data.z_unfiltered_acc, 2);
+
+  if (
+    (abs(data.x_angle) < 10 )
+    &&
+    (abs(data.y_angle) < 10 )
+  )
+  {
+    servo[0].write(data.x_angle + 90);
+    servo[1].write(data.y_angle + 90);
+    servo[2].write(data.x_angle + 90);
+    servo[3].write(data.y_angle + 90);
+  }
+  delay(10);
 }
 
 void state_machine(char inChar)
