@@ -71,15 +71,15 @@ void loop() {
   SERIAL.println(data.z_unfiltered_acc, 2);
 
   if (
-    (abs(data.x_angle) < 10 )
+    (abs(data.x_angle) < 30 )
     &&
-    (abs(data.y_angle) < 10 )
+    (abs(data.y_angle) < 30 )
   )
   {
-    servo[0].write(data.x_angle + 90);
-    servo[1].write(data.y_angle + 90);
-    servo[2].write(data.x_angle + 90);
-    servo[3].write(data.y_angle + 90);
+    servo[0].write(90 - data.x_angle);
+    servo[1].write(90 + data.y_angle);
+    servo[2].write(90 + data.x_angle);
+    servo[3].write(90 - data.y_angle);
   }
   delay(10);
 }
