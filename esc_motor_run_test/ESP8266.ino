@@ -18,6 +18,14 @@ void ESP8266_setup(void)
   //    delay(1000);
   //    Serial1.print("AT+RST/n/r");
   //    delay(1000);
+  if(wifi.restart())
+  {
+    Log.Info(THIS"wifi restarted"CR);
+  }
+  else
+  {
+    Log.Error(THIS"wifi restart"CR);
+  }
 
   Log.Info(THIS"FW Version: %s"CR, wifi.getVersion().c_str()); // Not showing up ????
 
@@ -34,21 +42,21 @@ void ESP8266_setup(void)
     Log.Error(THIS"Join AP failure"CR);
   }
 
-#if defined(GROUND_SYSTEM)
+//#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
     Log.Info(THIS"multiple ok"CR);
   } else {
     Log.Error(THIS"multiple err"CR);
   }
-#else
+//#else
 //  if (wifi.disableMUX()) {
 //    Log.Info(THIS"multiple ok"CR);
 //  } else {
 //    Log.Error(THIS"multiple err"CR);
 //  }
-#endif
+//#endif
 
-#if defined(GROUND_SYSTEM)
+#if defined(SKY_SYSTEM)
   if (wifi.startTCPServer(8090))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
@@ -66,7 +74,7 @@ void ESP8266_setup(void)
 #endif
 
 
-#if defined(GROUND_SYSTEM)
+#if defined(SKY_SYSTEM)
   // Connect to a wifi unit
   // The wifi unit must send something to it
 
@@ -88,14 +96,14 @@ void ESP8266_setup(void)
     Log.Verbose(" (ASCII: %s)]"CR, buffer);
   }
 
-#else //  GROUND_SYSTEM or #if defined(SKY_SYSTEM)
+#else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
 
 
-  if (wifi.createTCP("192.168.1.2", 8090))
+  if (wifi.createTCP("192.168.1.7", 8090))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
-    txGamePadData data;
-    ESP8266_loop_send_Joystick_data(data);
+    //txGamePadData data;
+    //ESP8266_loop_send_Joystick_data(data);
   } else {
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
