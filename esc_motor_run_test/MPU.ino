@@ -32,7 +32,7 @@
 
 #include "data.h"
 #include <Wire.h>
-
+#include <Logging.h>
 
 // The name of the sensor is "MPU-6050".
 // For program code, I omit the '-',
@@ -662,7 +662,7 @@ typedef union accel_t_gyro_union
   } value;
 };
  
-true_angle_val_raw_acc data;
+angle_val_raw_acc data;
 
 // Use the following global variables and access functions to help store the overall
 // rotation angle of the sensor
@@ -848,7 +848,7 @@ void mpu_setup()
 }
 
 
-true_angle_val_raw_acc mpu_loop()
+angle_val_raw_acc mpu_loop()
 {
   int error;
   double dT;
@@ -953,12 +953,12 @@ true_angle_val_raw_acc mpu_loop()
   set_last_read_angle_data(t_now, angle_x, angle_y, angle_z, unfiltered_gyro_angle_x, unfiltered_gyro_angle_y, unfiltered_gyro_angle_z);
 
 
-  data.x_angle = angle_x;
-  data.y_angle = angle_y;
-  data.z_angle = angle_z;
-  data.x_unfiltered_acc = accel_x;
-  data.y_unfiltered_acc = accel_y;
-  data.z_unfiltered_acc = accel_z;
+  data.data.x_angle = angle_x;
+  data.data.y_angle = angle_y;
+  data.data.z_angle = angle_z;
+  data.data.x_unfiltered_acc = accel_x;
+  data.data.y_unfiltered_acc = accel_y;
+  data.data.z_unfiltered_acc = accel_z;
 /*  
   // Send the data to the serial port
   Serial.print(F("DEL:"));              //Delta T

@@ -1,6 +1,8 @@
-
+#include <Logging.h>
 #include "data.h"
 #include <Servo.h>
+
+#define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 Servo servo[4];  // create servo object to control a servo
 int pins[4] = {2, 3, 4, 5};
@@ -13,7 +15,7 @@ int i = 0;
 int throttle = TEST_THROTTLE;
 
 #define INCREMENT (50)
-
+float yaw = 0.0f;
 // non working : Send A(1500) B(1064) then A(1500) : Stops in fraction of a second
 // working : Send A(1500) B(1064) then D(1400)
 
@@ -29,57 +31,107 @@ void servo_init()
   }
 }
 
-void setup() {
-  // put your setup code here, to run once:
-  ESC.attach(9);
-  Serial.begin(115200);
-  Serial.println("Hello");
-  //ESC.writeMicroseconds(1500);
-  //delay(5000);
-  //ESC.writeMicroseconds(0);
-  //delay(100);
-  //ESC.writeMicroseconds(1400);
-  //delay(5000);
-  //ESC.writeMicroseconds(0);
-  Serial.println("Done");
+#define THIS "MAIN: "
 
+void setup() {
+unsigned long 
+  //  LOG_LEVEL_NOOUTPUT
+  //  LOG_LEVEL_ERRORS
+  //  LOG_LEVEL_INFOS
+  //  LOG_LEVEL_DEBUG
+  //  LOG_LEVEL_VERBOSE
+  //  http://playground.arduino.cc/Code/Logging
+
+  Log.Init( LOGLEVEL , 115200L );
+  Log.Info(THIS"HELLO WORLD"CR);
+  Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
+  Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
+  Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
+
+  Log.Info(THIS"Setting up ECS"CR);
+  ESC.attach(9);
+  Log.Info(THIS"DONE ECS"CR);
+
+  Log.Info(THIS"Setting up joystick"CR);
+  joystick_setup();
+  Log.Info(THIS"DONE Joystick"CR);
+  /* // test
+    while (1)
+    {
+      const GamePadEventData jdata = joystick_loop();
+    }
+  */
+
+  Log.Info(THIS"Setting up wifi"CR);
+  ESP8266_setup();
+  Log.Info(THIS"DONE WIFI"CR);
+
+  //while (1);
+
+  Log.Info(THIS"Setting up MPU"CR);
   mpu_setup();
+  Log.Info(THIS"DONE MPU"CR);
+
+  Log.Info(THIS"Setting up Servos"CR);
   servo_init();
+  Log.Info(THIS"DONE Servos"CR);
 
   delay(100);
 
+  angle_val_raw_acc data = mpu_loop();
+  yaw = data.data.z_angle;
+
+ // while (1);
 
 }
 
 void state_machine(char in);
 
+angle_val_raw_acc last_data;
 void loop() {
-  // put your main code here, to run repeatedly:
+
+  const GamePadEventData joydata = joystick_loop();
+  angle_val_raw_acc data = mpu_loop(); // Must update here too
+  
+  //wifi remaining
+
   if (Serial.available())
   {
     char inChar = (char)Serial.read();
     state_machine(inChar);
   }
 
-  true_angle_val_raw_acc data = mpu_loop(); // Must update here too
 #define SERIAL Serial
-  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
-  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
-  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
-  SERIAL.print(data.x_unfiltered_acc, 2); SERIAL.print(",");
-  SERIAL.print(data.y_unfiltered_acc, 2); SERIAL.print(",");
-  SERIAL.println(data.z_unfiltered_acc, 2);
+  //  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
+  //  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
+  //  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
+  //  SERIAL.print(data.x_unfiltered_acc, 2); SERIAL.print(",");
+  //  SERIAL.print(data.y_unfiltered_acc, 2); SERIAL.print(",");
+  //  SERIAL.println(data.z_unfiltered_acc, 2);
 
-  if (
-    (abs(data.x_angle) < 30 )
-    &&
-    (abs(data.y_angle) < 30 )
-  )
+  //if (last_data.z_angle != data.z_angle)
   {
-    servo[0].write(90 - data.x_angle);
-    servo[1].write(90 + data.y_angle);
-    servo[2].write(90 + data.x_angle);
-    servo[3].write(90 - data.y_angle);
+    float requireYaw = 0.0f;
+    if ( abs(yaw - data.data.z_angle) > 10 )
+    {
+      requireYaw = yaw - data.data.z_angle;
+      SERIAL.print(data.data.z_angle, 2); SERIAL.print(",");
+      SERIAL.println(requireYaw, 2);
+    }
+
+    if (
+      (abs(data.data.x_angle) < 30 )
+      &&
+      (abs(data.data.y_angle) < 30 )
+    )
+    {
+      servo[0].write(90 - data.data.x_angle);
+      servo[1].write(90 + data.data.y_angle);
+      servo[2].write(90 + data.data.x_angle);
+      servo[3].write(90 - data.data.y_angle);
+    }
+
+    last_data = data;
   }
   delay(10);
 }
