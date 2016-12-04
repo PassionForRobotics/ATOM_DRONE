@@ -142,11 +142,11 @@ void loop() {
 
 
 #if defined(SKY_SYSTEM)
-  const GamePadEventData gd = ESP8266_loop_recv_joystick_data(); //check
+  const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
   angle_val_raw_acc data = mpu_loop(); // Must update here too
- // ESP8266_loop_send_MPU_data(data);
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gd.x, gd.y, gd.slider, gd.twist); // 0 to 0d1023 0x03FF
-
+  // ESP8266_loop_send_MPU_data(data);
+  //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gd.x, gd.y, gd.slider, gd.twist); // 0 to 0d1023 0x03FF
+  Log.Verbose(THIS"X: %d Y: %d"CR, gd.gd.gd.x, gd.gd.gd.y);
 
   //Action pending
 

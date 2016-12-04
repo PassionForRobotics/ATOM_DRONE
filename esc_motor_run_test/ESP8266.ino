@@ -5,6 +5,8 @@
 #define SSID        "HHH7351HHH"
 #define PASSWORD    "hh1537hhh"
 
+#define PEER_IP_ADDRESS "192.168.1.7"
+
 ESP8266 wifi(Serial1, 115200);
 
 #define THIS "WIFI: "
@@ -99,7 +101,7 @@ void ESP8266_setup(void)
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
 
 
-  if (wifi.createTCP("192.168.1.7", 8090))
+  if (wifi.createTCP(PEER_IP_ADDRESS, 8090))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
     //txGamePadData data;
@@ -113,13 +115,13 @@ void ESP8266_setup(void)
 }
 
 
-const GamePadEventData ESP8266_loop_recv_joystick_data()
+const txGamePadData ESP8266_loop_recv_joystick_data()
 {
-  uint8_t buffer[128] = {0};
+  uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
   uint8_t mux_id = 0; // error prone
   txGamePadData gd;
 
-  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
+  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
   if (len > 0) {
     Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
 
@@ -135,7 +137,7 @@ const GamePadEventData ESP8266_loop_recv_joystick_data()
     Log.Verbose(" (ASCII: %s)]"CR, buffer);
   }
 
-  return gd.gd.gd; // :P
+  return gd; // :P
 }
 
 const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
