@@ -9,6 +9,8 @@ ESP8266 wifi(Serial1, 115200);
 
 #define THIS "WIFI: "
 
+#define TCP_BASED_CONN
+
 void ESP8266_setup(void)
 {
   Log.Info(THIS"setup begins"CR);
@@ -38,22 +40,70 @@ void ESP8266_setup(void)
     Log.Error(THIS"multiple err"CR);
   }
 
-  if (wifi.startTCPServer(8090)) {
-    Log.Info(THIS"start tcp server ok"CR);
+#if defined(TCP_BASED_CONN)
+#if defined(GROUND_SYSTEM)
+  if (wifi.startTCPServer(8090))
+#else
+  if (wifi.createTCP("192.168.1.2", 8090))
+#endif
+#else
+  if (wifi.registerUDP(0, "192.168.1.2" , 8090)) // Not working
+#endif
+  {
+    Log.Info(THIS"start tcp/udp server/connection ok"CR);
   } else {
-    Log.Error(THIS"start tcp server err"CR);
+    Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
 
+
+#if defined(TCP_BASED_CONN)
   if (wifi.setTCPServerTimeout(10)) {
     Log.Info(THIS"set tcp server timout 10 seconds"CR);
   } else {
     Log.Error(THIS"set tcp server timout err"CR);
   }
+#else
+  Log.Info(THIS"BYPASSED set tcp server timout"CR);
+#endif
 
+#if defined(GROUND_SYSTEM)
   // Connect to a wifi unit
+  // The wifi unit must send something to it
 
-  Log.Error(THIS"It needs to connect here to a client/server IMP"CR);
+  uint8_t buffer[128] = {0};
+  uint8_t mux_id;
 
+  uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 1000000);
+
+  if (len > 0)
+  {
+    Log.Verbose(THIS"Status:[ %s ]", wifi.getIPStatus().c_str() );
+
+    Log.Verbose(THIS"Received from: %d [ ",  mux_id );
+
+    for (uint32_t i = 0; i < len; i++)
+    {
+      Log.Verbose("%c ", (char)buffer[i]);
+    }
+    Log.Verbose(" (ASCII: %s)]"CR, buffer);
+
+#if defined(TCP_BASED_CONN)
+    if (wifi.releaseTCP(mux_id))
+#else
+    if (wifi.unregisterUDP(mux_id))
+#endif
+    {
+      Log.Info(THIS"Connection checked releasing"CR );
+      Log.Info(THIS"Release tcp %d ok"CR, mux_id);
+    } else {
+      Log.Error(THIS"Release tcp %d err"CR, mux_id);
+    }
+  }
+  else
+  {
+    Log.Error(THIS"It needs to connect here to a client/server IMP"CR);
+  }
+#endif
   //
 
   Log.Info(THIS"setup ends"CR);
@@ -62,7 +112,7 @@ void ESP8266_setup(void)
 const GamePadEventData ESP8266_loop_recv_joystick_data()
 {
   uint8_t buffer[128] = {0};
-  uint8_t mux_id;
+  uint8_t mux_id = 0; // error prone
   txGamePadData gd;
 
   uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
@@ -78,7 +128,7 @@ const GamePadEventData ESP8266_loop_recv_joystick_data()
       }
       Log.Verbose("%c ", (char)buffer[i]);
     }
-    Log.Verbose("]"CR);
+    Log.Verbose(" (ASCII: %s)]"CR, buffer);
   }
 
   return gd.gd.gd; // :P
@@ -87,7 +137,7 @@ const GamePadEventData ESP8266_loop_recv_joystick_data()
 const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
 {
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
-  uint8_t mux_id;
+  uint8_t mux_id = 0; // error prone
   angle_val_raw_acc mdata;
 
   uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
@@ -133,7 +183,7 @@ void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
 {
 
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
-  uint8_t mux_id;
+  uint8_t mux_id = 1;
 
   data.data.stx = 0x02;
   data.data.header = 0xff;

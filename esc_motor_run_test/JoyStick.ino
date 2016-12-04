@@ -63,7 +63,7 @@ void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
 {
   gpadevt = *evt;
   // 0 to 0d1023 0x03FF
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, evt->x & 0x03C0, evt->y & 0x03C0, evt->slider, evt->twist); // 0 to 0d1023 0x03FF
+  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, evt->x, evt->y, evt->slider, evt->twist); // 0 to 0d1023 0x03FF
 
   //  Serial.print("X: ");
   //  PrintHex<uint16_t>(evt->x, 0x80);
