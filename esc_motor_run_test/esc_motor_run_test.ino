@@ -2,7 +2,7 @@
 #include "data.h"
 #include <Servo.h>
 
-//#define GROUND_SYSTEM // or 
+//#define GROUND_SYSTEM // or
 #define SKY_SYSTEM
 
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
@@ -50,6 +50,14 @@ void setup() {
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
+
+#if defined(SKY_SYSTEM)
+  Log.Info(THIS"SKY_SYSTEM"CR);
+#endif
+
+#if defined(GROUND_SYSTEM)
+  Log.Info(THIS"GROUND_SYSTEM"CR);
+#endif
 
 #if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up ECS"CR);
@@ -124,7 +132,7 @@ void loop() {
   ESP8266_loop_send_Joystick_data(tgd);
   const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
 #endif
- 
+
   // Test
   if (Serial.available())
   {
@@ -156,8 +164,8 @@ void loop() {
     if ( abs(yaw - data.data.z_angle) > 10 )
     {
       requireYaw = yaw - data.data.z_angle;
-     // SERIAL.print(data.data.z_angle, 2); SERIAL.print(",");
-     // SERIAL.println(requireYaw, 2);
+      // SERIAL.print(data.data.z_angle, 2); SERIAL.print(",");
+      // SERIAL.println(requireYaw, 2);
     }
 
     if (
@@ -256,7 +264,12 @@ void state_machine(char inChar)
         Serial.println("Throttle disarmed...");
       } break;
 
-
+    case '~':
+      {
+        Log.Info(THIS"RESETTING the system\n\r\n\r\n\r"CR);
+        delay(1000);
+        asm volatile ("  jmp 0");
+      } break;
     default :
       {
         ESC.writeMicroseconds(0);

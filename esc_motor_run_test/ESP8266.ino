@@ -34,37 +34,37 @@ void ESP8266_setup(void)
     Log.Error(THIS"Join AP failure"CR);
   }
 
+#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
     Log.Info(THIS"multiple ok"CR);
   } else {
     Log.Error(THIS"multiple err"CR);
   }
+#else
+//  if (wifi.disableMUX()) {
+//    Log.Info(THIS"multiple ok"CR);
+//  } else {
+//    Log.Error(THIS"multiple err"CR);
+//  }
+#endif
 
-#if defined(TCP_BASED_CONN)
 #if defined(GROUND_SYSTEM)
   if (wifi.startTCPServer(8090))
-#else
-  if (wifi.createTCP("192.168.1.2", 8090))
-#endif
-#else
-  if (wifi.registerUDP(0, "192.168.1.2" , 8090)) // Not working
-#endif
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
   } else {
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
 
-
-#if defined(TCP_BASED_CONN)
   if (wifi.setTCPServerTimeout(10)) {
     Log.Info(THIS"set tcp server timout 10 seconds"CR);
   } else {
     Log.Error(THIS"set tcp server timout err"CR);
   }
 #else
-  Log.Info(THIS"BYPASSED set tcp server timout"CR);
+
 #endif
+
 
 #if defined(GROUND_SYSTEM)
   // Connect to a wifi unit
@@ -77,7 +77,7 @@ void ESP8266_setup(void)
 
   if (len > 0)
   {
-    Log.Verbose(THIS"Status:[ %s ]", wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -86,28 +86,24 @@ void ESP8266_setup(void)
       Log.Verbose("%c ", (char)buffer[i]);
     }
     Log.Verbose(" (ASCII: %s)]"CR, buffer);
+  }
 
-#if defined(TCP_BASED_CONN)
-    if (wifi.releaseTCP(mux_id))
-#else
-    if (wifi.unregisterUDP(mux_id))
-#endif
-    {
-      Log.Info(THIS"Connection checked releasing"CR );
-      Log.Info(THIS"Release tcp %d ok"CR, mux_id);
-    } else {
-      Log.Error(THIS"Release tcp %d err"CR, mux_id);
-    }
-  }
-  else
+#else //  GROUND_SYSTEM or #if defined(SKY_SYSTEM)
+
+
+  if (wifi.createTCP("192.168.1.2", 8090))
   {
-    Log.Error(THIS"It needs to connect here to a client/server IMP"CR);
+    Log.Info(THIS"start tcp/udp server/connection ok"CR);
+    txGamePadData data;
+    ESP8266_loop_send_Joystick_data(data);
+  } else {
+    Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
-#endif
-  //
+#endif // GROUND_SYSTEM
 
   Log.Info(THIS"setup ends"CR);
 }
+
 
 const GamePadEventData ESP8266_loop_recv_joystick_data()
 {
@@ -115,9 +111,9 @@ const GamePadEventData ESP8266_loop_recv_joystick_data()
   uint8_t mux_id = 0; // error prone
   txGamePadData gd;
 
-  uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
+  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]", wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -140,9 +136,9 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
   uint8_t mux_id = 0; // error prone
   angle_val_raw_acc mdata;
 
-  uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
+  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]", wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -162,7 +158,7 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
 void ESP8266_loop_send_Joystick_data(txGamePadData data)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
-  uint8_t mux_id;
+  uint8_t mux_id = 0;
 
   data.gd.stx = 0x02;
   data.gd.header = 0xff;
@@ -171,11 +167,20 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
   data.gd.res3 = 0x00;
   data.gd.etx = 0x03;
 
-  if (wifi.send(mux_id, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
+  if (wifi.send(/*mux_id,*/ data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
     Log.Info(THIS"send joystick data ok"CR);
   } else {
     Log.Error(THIS"send joystick data error"CR);
   }
+
+  
+//  if (wifi.releaseTCP(0)) //mux_id
+//  {
+//    Log.Info(THIS"release tcp %d ok", mux_id);
+//  } else {
+//    Log.Error(THIS"release tcp %d err", mux_id);
+//  }
+  
 }
 
 
@@ -192,11 +197,18 @@ void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
   data.data.res3 = 0x00;
   data.data.etx = 0x03;
 
-  if (wifi.send(mux_id, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
+  if (wifi.send(/*mux_id,*/ data.uc_data, SIZE_OF_MDATA_STRUCT)) {
     Log.Info(THIS"send MPU data ok"CR);
   } else {
     Log.Error(THIS"send MPU data error"CR);
   }
+
+//  if (wifi.releaseTCP(0)) //mux_id
+//  {
+//    Log.Info(THIS"release tcp %d ok", mux_id);
+//  } else {
+//    Log.Error(THIS"release tcp %d err", mux_id);
+//  }
 
   /*
     uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
