@@ -62,18 +62,8 @@ const GamePadEventData joystick_loop()
 void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
 {
   gpadevt = *evt;
-
-  Serial.print("joystick X: ");
-  Serial.print(evt->x & 0x03C0); // 0 to 0d1023 0x03FF
-
-  Serial.print(" Y: ");
-  Serial.print(evt->y & 0x03C0); // 0 to 0d1023 0x03FF
-
-  Serial.print(" Z: ");
-  Serial.print(evt->slider); // 0 to 0d1023 0x03FF
-
-  Serial.print(" Yaw: ");
-  Serial.println(evt->twist); // 0 to 0d1023 0x03FF
+  // 0 to 0d1023 0x03FF
+  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, evt->x & 0x03C0, evt->y & 0x03C0, evt->slider, evt->twist); // 0 to 0d1023 0x03FF
 
   //  Serial.print("X: ");
   //  PrintHex<uint16_t>(evt->x, 0x80);

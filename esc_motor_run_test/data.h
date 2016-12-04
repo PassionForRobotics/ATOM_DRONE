@@ -29,12 +29,12 @@ typedef struct true_angle_val_raw_acc
   unsigned char etx;
 };
 
-#define SIZE_OF_DATA_STRUCT (sizeof(true_angle_val_raw_acc))
+#define SIZE_OF_MDATA_STRUCT (sizeof(true_angle_val_raw_acc))
 
-typedef struct angle_val_raw_acc
+typedef union angle_val_raw_acc
 {
   true_angle_val_raw_acc data;
-  unsigned char uc_data[SIZE_OF_DATA_STRUCT];
+  unsigned char uc_data[SIZE_OF_MDATA_STRUCT];
 } u_data;
 
 // from le3dp_*.h
@@ -52,6 +52,29 @@ typedef struct GamePadEventData
   uint8_t buttons_a;
   uint8_t slider;
   uint8_t buttons_b;
+};
+
+
+
+typedef struct GamePadData
+{
+  unsigned char stx;
+  unsigned char header;
+  unsigned char data_len;
+  unsigned char data_type;
+  unsigned char res3;
+  GamePadEventData gd;
+  unsigned char etx;
+};
+
+#define SIZE_OF_GPADDATA_STRUCT (sizeof(GamePadData))
+
+typedef union txGamePadData
+{
+
+  GamePadData gd;
+  unsigned char uc_data[SIZE_OF_GPADDATA_STRUCT];
+
 };
 
 #endif // DATA_H

@@ -2,6 +2,9 @@
 #include "data.h"
 #include <Servo.h>
 
+#define GROUND_SYSTEM // or 
+//#define SKY_SYSTEM
+
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 Servo servo[4];  // create servo object to control a servo
@@ -34,7 +37,7 @@ void servo_init()
 #define THIS "MAIN: "
 
 void setup() {
-unsigned long 
+  unsigned long ts_START = millis();
   //  LOG_LEVEL_NOOUTPUT
   //  LOG_LEVEL_ERRORS
   //  LOG_LEVEL_INFOS
@@ -48,13 +51,21 @@ unsigned long
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
 
+#if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up ECS"CR);
   ESC.attach(9);
   Log.Info(THIS"DONE ECS"CR);
+#else
+  Log.Info(THIS"BYPASSED ECS"CR);
+#endif
 
-  Log.Info(THIS"Setting up joystick"CR);
+#if defined(GROUND_SYSTEM)
+  Log.Info(THIS"Setting up Joystick"CR);
   joystick_setup();
   Log.Info(THIS"DONE Joystick"CR);
+#else
+  Log.Info(THIS"BYPASSED Joystick"CR);
+#endif
   /* // test
     while (1)
     {
@@ -62,26 +73,43 @@ unsigned long
     }
   */
 
+#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
   Log.Info(THIS"Setting up wifi"CR);
   ESP8266_setup();
   Log.Info(THIS"DONE WIFI"CR);
-
+#else
+  Log.Info(THIS"BYPASSED WIFI"CR);
+  Log.Error(THIS"WIFI is must for either type of the systems"CR);
+#endif
   //while (1);
 
+#if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up MPU"CR);
   mpu_setup();
   Log.Info(THIS"DONE MPU"CR);
+#else
+  Log.Info(THIS"BYPASSED MPU"CR);
+#endif
 
+#if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up Servos"CR);
   servo_init();
   Log.Info(THIS"DONE Servos"CR);
+#else
+  Log.Info(THIS"BYPASSED Servos"CR);
+#endif
 
   delay(100);
 
   angle_val_raw_acc data = mpu_loop();
   yaw = data.data.z_angle;
 
- // while (1);
+  Log.Info(THIS"SYSTEM SETUP COMPLETE"CR);
+  Log.Info(THIS"SYSTEM SETUP TIME: %d"CR, millis() - ts_START);
+
+
+
+  //while (1);
 
 }
 
@@ -90,18 +118,31 @@ void state_machine(char in);
 angle_val_raw_acc last_data;
 void loop() {
 
-  const GamePadEventData joydata = joystick_loop();
-  angle_val_raw_acc data = mpu_loop(); // Must update here too
-  
-  //wifi remaining
 
+#if defined(GROUND_SYSTEM)
+  const GamePadEventData joydata = joystick_loop();
+  txGamePadData tgd;
+  tgd.gd.gd = joydata;
+  ESP8266_loop_send_Joystick_data(tgd);
+  const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
+#endif
+ 
+  // Test
   if (Serial.available())
   {
     char inChar = (char)Serial.read();
     state_machine(inChar);
   }
 
-#define SERIAL Serial
+
+#if defined(SKY_SYSTEM)
+  const GamePadEventData gd = ESP8266_loop_recv_joystick_data(); check
+  angle_val_raw_acc data = mpu_loop(); // Must update here too
+  ESP8266_loop_send_MPU_data(data);
+
+  //Action pending
+
+  //#define SERIAL Serial
   //  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
   //  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
   //  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
@@ -133,6 +174,8 @@ void loop() {
 
     last_data = data;
   }
+
+#endif // SKY_SYSTEM MPU/Joystick
   delay(10);
 }
 
