@@ -126,7 +126,7 @@ void loop() {
 
 
 #if defined(GROUND_SYSTEM)
-  const GamePadEventData joydata = joystick_loop();
+  const GamePadEventData_Simple joydata = joystick_loop();
   txGamePadData tgd;
   tgd.gd.gd = joydata;
   ESP8266_loop_send_Joystick_data(tgd);

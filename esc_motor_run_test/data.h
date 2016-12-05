@@ -54,6 +54,16 @@ typedef struct GamePadEventData
   uint8_t buttons_b;
 };
 
+typedef struct GamePadEventData_Simple
+{
+  uint32_t x;
+  uint32_t y;
+  uint32_t hat;
+  uint32_t twist;
+  uint8_t buttons_a;
+  uint8_t slider;
+  uint8_t buttons_b;
+};
 
 
 typedef struct GamePadData
@@ -63,7 +73,7 @@ typedef struct GamePadData
   unsigned char data_len;
   unsigned char data_type;
   unsigned char res3;
-  GamePadEventData gd;
+  GamePadEventData_Simple gd;
   unsigned char etx;
 };
 

@@ -18,7 +18,7 @@ USBHub                                          Hub(&Usb);
 HIDUniversal                                    Hid(&Usb);
 JoystickEvents                                  JoyEvents;
 JoystickReportParser                            Joy(&JoyEvents);
-GamePadEventData                                gpadevt;
+GamePadEventData_Simple                         gpadevt;
 
 
 #define THIS "JOYS: "
@@ -52,7 +52,7 @@ void joystick_setup()
   Log.Info(THIS"setup ends"CR);
 }
 
-const GamePadEventData joystick_loop()
+const GamePadEventData_Simple joystick_loop()
 {
   Usb.Task();
   return gpadevt;
@@ -61,9 +61,19 @@ const GamePadEventData joystick_loop()
 
 void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
 {
-  gpadevt = *evt;
+  //GamePadEventData_Simple
+
+  gpadevt.x = evt->x;
+  gpadevt.y = evt->x;
+  gpadevt.slider = evt->slider;
+  gpadevt.twist = evt->twist;
+  gpadevt.hat = evt->hat;
+  gpadevt.buttons_a = evt->buttons_a;
+  gpadevt.buttons_b = evt->buttons_b;
+  
+  //gpadevt = *evt;
   // 0 to 0d1023 0x03FF
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, evt->x, evt->y, evt->slider, evt->twist); // 0 to 0d1023 0x03FF
+  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gpadevt.x, gpadevt.x, evt->slider, gpadevt.twist); // 0 to 0d1023 0x03FF
 
   //  Serial.print("X: ");
   //  PrintHex<uint16_t>(evt->x, 0x80);
