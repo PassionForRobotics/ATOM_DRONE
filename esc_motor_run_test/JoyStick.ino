@@ -64,16 +64,25 @@ void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
   //GamePadEventData_Simple
 
   gpadevt.x = evt->x;
-  gpadevt.y = evt->x;
+  gpadevt.y = evt->y;
   gpadevt.slider = evt->slider;
+
+  int x = (gpadevt.x);
+  int y = (gpadevt.y);
+  int z = (gpadevt.slider);
+
   gpadevt.twist = evt->twist;
   gpadevt.hat = evt->hat;
   gpadevt.buttons_a = evt->buttons_a;
   gpadevt.buttons_b = evt->buttons_b;
-  
+
   //gpadevt = *evt;
   // 0 to 0d1023 0x03FF
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gpadevt.x, gpadevt.x, evt->slider, gpadevt.twist); // 0 to 0d1023 0x03FF
+  //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gpadevt.x, gpadevt.x, evt->slider, gpadevt.twist); // 0 to 0d1023 0x03FF
+  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d x: %d y: %d z: %d"CR
+              , gpadevt.x, gpadevt.y, gpadevt.slider, gpadevt.twist
+              , gpadevt.buttons_a, gpadevt.buttons_b, gpadevt.hat, x, y, z);
+  //hat : default 8 , 0(top),1(t-r),2(right),3,4,5,6,7
 
   //  Serial.print("X: ");
   //  PrintHex<uint16_t>(evt->x, 0x80);

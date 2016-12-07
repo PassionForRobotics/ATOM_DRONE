@@ -56,10 +56,10 @@ typedef struct GamePadEventData
 
 typedef struct GamePadEventData_Simple
 {
-  uint32_t x;
-  uint32_t y;
-  uint32_t hat;
-  uint32_t twist;
+  uint16_t x;
+  uint16_t y;
+  uint8_t hat;
+  uint8_t twist;
   uint8_t buttons_a;
   uint8_t slider;
   uint8_t buttons_b;
@@ -77,7 +77,7 @@ typedef struct GamePadData
   unsigned char etx;
 };
 
-#define SIZE_OF_GPADDATA_STRUCT (sizeof(GamePadData))
+#define SIZE_OF_GPADDATA_STRUCT (sizeof(GamePadData)/sizeof(uint8_t))
 
 typedef union txGamePadData
 {

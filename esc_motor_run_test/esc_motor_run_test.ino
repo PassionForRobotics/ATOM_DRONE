@@ -8,6 +8,7 @@
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 Servo servo[4];  // create servo object to control a servo
+byte servoVal[4] = {90};
 int pins[4] = {2, 3, 4, 5};
 int i = 0;
 
@@ -120,6 +121,7 @@ void setup() {
 }
 
 void state_machine(char in);
+boolean ESC_armed = false;
 
 angle_val_raw_acc last_data;
 void loop() {
@@ -145,8 +147,69 @@ void loop() {
   const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
   angle_val_raw_acc data = mpu_loop(); // Must update here too
   // ESP8266_loop_send_MPU_data(data);
-  //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d"CR, gd.x, gd.y, gd.slider, gd.twist); // 0 to 0d1023 0x03FF
-  Log.Verbose(THIS"X: %d Y: %d"CR, gd.gd.gd.x, gd.gd.gd.y);
+  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
+              , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
+              , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
+
+  // XX,Y MAP FROM 0-1023 TO 60-120 DEGREES
+  // SLIDER MAP FROM 255-0 TO 1024-1864
+  // TWIST/YAW MAP FROM ? TO ?
+  servoVal[0] = map(gd.gd.gd.x, 0, 1023, 60, 120);
+  servoVal[1] = map(gd.gd.gd.y, 0, 1023, 60, 120); // it could be opposite i.e. 120-60
+  servoVal[2] = map(gd.gd.gd.x, 0, 1023, 120, 60);
+  servoVal[3] = map(gd.gd.gd.y, 0, 1023, 120, 60);
+
+  //  int yaw_twist = map(gd.gd.gd.twist, 0, 1023, 120, 60);
+  //  servoVal[0] = servoVal[0] - yaw_twist;
+  //  servoVal[1] = servoVal[1] - yaw_twist;
+  //  servoVal[2] = servoVal[2] - yaw_twist;
+  //  servoVal[3] = servoVal[3] - yaw_twist;
+
+  int escval = 0;
+
+  if (128 == gd.gd.gd.buttons_a)
+  {
+    //state_machine('A');
+    //#define MAX_THROTTLE (2000) //(1864)
+    escval = MAX_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+
+  }
+
+  if (1 == gd.gd.gd.buttons_b)
+  {
+    //state_machine('A');
+    //#define MAX_THROTTLE (2000) //(1864)
+    escval = ZERO_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+
+  }
+
+  if (64 == gd.gd.gd.buttons_a)
+  {
+    //state_machine('B');
+    //#define MIN_THROTTLE (1064)
+    escval = MIN_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = true;
+  }
+
+
+  if ( (true == ESC_armed) )
+  {
+    escval = map(gd.gd.gd.slider, 255, 0, MIN_THROTTLE, MAX_THROTTLE);
+    ESC.writeMicroseconds(escval);
+  }
+  // check for ESC arming
+
+  servo[0].write(servoVal[0]);
+  servo[1].write(servoVal[1]);
+  servo[2].write(servoVal[2]);
+  servo[3].write(servoVal[3]);
+
+
 
   //Action pending
 
@@ -174,18 +237,19 @@ void loop() {
       (abs(data.data.y_angle) < 30 )
     )
     {
-      servo[0].write(90 - data.data.x_angle);
-      servo[1].write(90 + data.data.y_angle);
-      servo[2].write(90 + data.data.x_angle);
-      servo[3].write(90 - data.data.y_angle);
+      //      servo[0].write(90 - data.data.x_angle);
+      //      servo[1].write(90 + data.data.y_angle);
+      //      servo[2].write(90 + data.data.x_angle);
+      //      servo[3].write(90 - data.data.y_angle);
     }
 
     last_data = data;
   }
 
 #endif // SKY_SYSTEM MPU/Joystick
-  delay(10);
+  delay(1);
 }
+
 
 void state_machine(char inChar)
 {

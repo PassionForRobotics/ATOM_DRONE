@@ -5,7 +5,7 @@
 #define SSID        "HHH7351HHH"
 #define PASSWORD    "hh1537hhh"
 
-#define PEER_IP_ADDRESS "192.168.1.7"
+#define PEER_IP_ADDRESS "192.168.1.5" // SKY_SYSTEM address
 
 ESP8266 wifi(Serial1, 115200);
 
@@ -20,7 +20,7 @@ void ESP8266_setup(void)
   //    delay(1000);
   //    Serial1.print("AT+RST/n/r");
   //    delay(1000);
-  if(wifi.restart())
+  if (wifi.restart())
   {
     Log.Info(THIS"wifi restarted"CR);
   }
@@ -44,19 +44,19 @@ void ESP8266_setup(void)
     Log.Error(THIS"Join AP failure"CR);
   }
 
-//#if defined(GROUND_SYSTEM)
+  //#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
     Log.Info(THIS"multiple ok"CR);
   } else {
     Log.Error(THIS"multiple err"CR);
   }
-//#else
-//  if (wifi.disableMUX()) {
-//    Log.Info(THIS"multiple ok"CR);
-//  } else {
-//    Log.Error(THIS"multiple err"CR);
-//  }
-//#endif
+  //#else
+  //  if (wifi.disableMUX()) {
+  //    Log.Info(THIS"multiple ok"CR);
+  //  } else {
+  //    Log.Error(THIS"multiple err"CR);
+  //  }
+  //#endif
 
 #if defined(SKY_SYSTEM)
   if (wifi.startTCPServer(8090))
@@ -99,15 +99,22 @@ void ESP8266_setup(void)
   }
 
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
-
-
-  if (wifi.createTCP(PEER_IP_ADDRESS, 8090))
+int retry = 10;
+recreate:
+  if (wifi.createTCP(0, PEER_IP_ADDRESS, 8090))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
     //txGamePadData data;
     //ESP8266_loop_send_Joystick_data(data);
   } else {
-    Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
+    retry--;
+    Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power retry %d"CR, retry);
+
+    if(0<retry)
+    {
+      delay(100);
+      goto recreate;
+    }
   }
 #endif // GROUND_SYSTEM
 
@@ -177,20 +184,20 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
   data.gd.res3 = 0x00;
   data.gd.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/ data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
+  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
     Log.Info(THIS"send joystick data ok"CR);
   } else {
     Log.Error(THIS"send joystick data error"CR);
   }
 
-  
-//  if (wifi.releaseTCP(0)) //mux_id
-//  {
-//    Log.Info(THIS"release tcp %d ok", mux_id);
-//  } else {
-//    Log.Error(THIS"release tcp %d err", mux_id);
-//  }
-  
+
+  //  if (wifi.releaseTCP(0)) //mux_id
+  //  {
+  //    Log.Info(THIS"release tcp %d ok", mux_id);
+  //  } else {
+  //    Log.Error(THIS"release tcp %d err", mux_id);
+  //  }
+
 }
 
 
@@ -207,18 +214,18 @@ void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
   data.data.res3 = 0x00;
   data.data.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/ data.uc_data, SIZE_OF_MDATA_STRUCT)) {
+  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
     Log.Info(THIS"send MPU data ok"CR);
   } else {
     Log.Error(THIS"send MPU data error"CR);
   }
 
-//  if (wifi.releaseTCP(0)) //mux_id
-//  {
-//    Log.Info(THIS"release tcp %d ok", mux_id);
-//  } else {
-//    Log.Error(THIS"release tcp %d err", mux_id);
-//  }
+  //  if (wifi.releaseTCP(0)) //mux_id
+  //  {
+  //    Log.Info(THIS"release tcp %d ok", mux_id);
+  //  } else {
+  //    Log.Error(THIS"release tcp %d err", mux_id);
+  //  }
 
   /*
     uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100);
