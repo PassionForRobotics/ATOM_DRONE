@@ -154,16 +154,26 @@ void loop() {
   // XX,Y MAP FROM 0-1023 TO 60-120 DEGREES
   // SLIDER MAP FROM 255-0 TO 1024-1864
   // TWIST/YAW MAP FROM ? TO ?
-  servoVal[0] = map(gd.gd.gd.x, 0, 1023, 60, 120);
-  servoVal[1] = map(gd.gd.gd.y, 0, 1023, 60, 120); // it could be opposite i.e. 120-60
+
+  #define servo1Offset 0 // F 
+  #define servo2Offset -10  // R
+  #define servo3Offset 7  // B
+  #define servo4Offset 0  // L
+  
+  
+  servoVal[0] = map(gd.gd.gd.x, 0, 1023, 60 ,120);
+  servoVal[1] = map(gd.gd.gd.y, 0, 1023, 60 , 120); // it could be opposite i.e. 120-60
   servoVal[2] = map(gd.gd.gd.x, 0, 1023, 120, 60);
   servoVal[3] = map(gd.gd.gd.y, 0, 1023, 120, 60);
 
-  //  int yaw_twist = map(gd.gd.gd.twist, 0, 1023, 120, 60);
-  //  servoVal[0] = servoVal[0] - yaw_twist;
-  //  servoVal[1] = servoVal[1] - yaw_twist;
-  //  servoVal[2] = servoVal[2] - yaw_twist;
-  //  servoVal[3] = servoVal[3] - yaw_twist;
+    int yaw_twist = map(gd.gd.gd.twist, 0, 255, -10, 10);
+
+    int thrust_compansation = map(gd.gd.gd.slider, 255, 0, 0, 10);
+    
+    servoVal[0] = servoVal[0] + servo1Offset + yaw_twist; // + thrust_compansation
+    servoVal[1] = servoVal[1] + servo2Offset + yaw_twist; // + thrust_compansation
+    servoVal[2] = servoVal[2] + servo3Offset + yaw_twist; // + thrust_compansation
+    servoVal[3] = servoVal[3] + servo4Offset + yaw_twist; // + thrust_compansation
 
   int escval = 0;
 
