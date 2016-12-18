@@ -1,23 +1,24 @@
 
 #include <Arduino_FreeRTOS.h>
-#include <mpu_wrappers.h>
-#include <croutine.h>
-#include <FreeRTOSConfig.h>
-#include <portable.h>
-#include <StackMacros.h>
-#include <event_groups.h>
-#include <queue.h>
-#include <FreeRTOSVariant.h>
-#include <semphr.h>
-#include <projdefs.h>
-#include <list.h>/
-#include <portmacro.h>
-#include <timers.h>
-#include <task.h> 
+//#include <mpu_wrappers.h>
+//#include <croutine.h>
+//#include <FreeRTOSConfig.h>
+//#include <portable.h>
+//#include <StackMacros.h>
+//#include <event_groups.h>
+//#include <queue.h>
+//#include <FreeRTOSVariant.h>
+//#include <semphr.h>
+//#include <projdefs.h>
+//#include <list.h>/
+//#include <portmacro.h>
+//#include <timers.h>
+//#include <task.h>
 
 #include <Logging.h>
 #include "data.h"
 #include <Servo.h>
+#include "ESP8266.h"
 
 #define GROUND_SYSTEM // or
 //#define SKY_SYSTEM
@@ -26,9 +27,14 @@
 
 
 float yaw = 0.0f;
-
+//ESP8266 _wifi(Serial1);
 
 #define THIS "MAIN: "
+
+
+#if defined(GROUND_SYSTEM)
+void JoyStickTask( void *pvParameters);
+#endif
 
 void setup() {
   unsigned long ts_START = millis();
@@ -75,14 +81,14 @@ void setup() {
     }
   */
 
-#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
-  Log.Info(THIS"Setting up wifi"CR);
-  ESP8266_setup();
-  Log.Info(THIS"DONE WIFI"CR);
-#else
-  Log.Info(THIS"BYPASSED WIFI"CR);
-  Log.Error(THIS"WIFI is must for either type of the systems"CR);
-#endif
+//#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+//  Log.Info(THIS"Setting up wifi"CR);
+//  static ESP8266 _wifi = ESP8266_setup();
+//  Log.Info(THIS"DONE WIFI"CR);
+//#else
+//  Log.Info(THIS"BYPASSED WIFI"CR);
+//  Log.Error(THIS"WIFI is must for either type of the systems"CR);
+//#endif
   //while (1);
 
 #if defined(SKY_SYSTEM)
@@ -108,25 +114,127 @@ void setup() {
   yaw = data.data.z_angle;
 #endif
 
+  BaseType_t xReturned;
+
+
+#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+  xReturned = xTaskCreate(
+                JoyStickTask
+                ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
+                ,  (4 * 512) // This stack size can be checked & adjusted by reading the Stack Highwater
+                ,  NULL//(void*)(&_wifi)
+                ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+                ,  NULL );
+
+  if (pdFALSE == xReturned)
+  {
+    Log.Error(THIS"xTaskCreate failed"CR);
+  }
+  else
+  {
+    Log.Info(THIS"xTaskCreated"CR);
+  }
+
+  //  xReturned = xTaskCreate(
+  //                SerialRxTask
+  //                ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
+  //                ,  (1 * 512) // This stack size can be checked & adjusted by reading the Stack Highwater
+  //                ,  NULL //(void*)(&_wifi)
+  //                ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+  //                ,  NULL );
+  //
+  //  if (pdFALSE == xReturned)
+  //  {
+  //    Log.Error(THIS"xTaskCreate failed"CR);
+  //  }
+  //  else
+  //  {
+  //    Log.Info(THIS"xTaskCreated"CR);
+  //  }
+#endif
+
   Log.Info(THIS"SYSTEM SETUP COMPLETE"CR);
   Log.Info(THIS"SYSTEM SETUP TIME: %d"CR, millis() - ts_START);
 
+  //vTaskStartScheduler();
   //while (1);
 
 }
 
 
 angle_val_raw_acc last_data;
-void loop() {
 
+void SerialRxTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
+{
+  for (;;)
+  {
+    serialEventRun();
+  }
+}
+
+void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
+{
+  //serialEventRun
+  //ESP8266 *_wifi = static_cast<ESP8266 *>(pvParameters);
+  //thing * p2 = static_cast<thing *>(pv);
+
+  //Log.Verbose(THIS"wifi ptr 0x%u"CR, _wifi);
+  
+  //if( true == _wifi->kick() )
+//  {
+//    Log.Verbose(THIS"wifi alive"CR);
+//  }
+//  else
+//  {
+//    Log.Error(THIS"wifi dead"CR);
+//  }
+
+  //ESP8266 _wifi = (ESP8266) (*wifi);
+
+  #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+    Log.Info(THIS"Setting up wifi"CR);
+    ESP8266 _wifi = ESP8266_setup();
+    Log.Info(THIS"DONE WIFI"CR);
+  #else
+    Log.Info(THIS"BYPASSED WIFI"CR);
+    Log.Error(THIS"WIFI is must for either type of the systems"CR);
+  #endif
 
 #if defined(GROUND_SYSTEM)
-  const GamePadEventData_Simple joydata = joystick_loop();
-  txGamePadData tgd;
-  tgd.gd.gd = joydata;
-  ESP8266_loop_send_Joystick_data(tgd);
-  //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
-#endif
+
+
+
+  for (;;)
+  {
+    const GamePadEventData_Simple joydata = joystick_loop();
+    txGamePadData tgd;
+    tgd.gd.gd = joydata;
+    ESP8266_loop_send_Joystick_data(_wifi, tgd);
+    //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
+  }
+
+#endif // GROUND_SYSTEM MPU/Joystick
+
+#if defined(SKY_SYSTEM)
+
+  angle_val_raw_acc data;
+
+  for (;;)
+  {
+    const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
+    data = mpu_loop(); // Must update here too
+    // ESP8266_loop_send_MPU_data(data);
+    Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
+                , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
+                , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
+
+    steer_loop(gd);
+  }
+
+#endif // SKY_SYSTEM MPU/Joystick
+}
+
+void loop() {
 
   // Test
   if (Serial.available())
@@ -135,19 +243,7 @@ void loop() {
     state_machine(inChar);
   }
 
-
-#if defined(SKY_SYSTEM)
-  const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
-  angle_val_raw_acc data = mpu_loop(); // Must update here too
-  // ESP8266_loop_send_MPU_data(data);
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
-              , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
-              , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
-
-  steer_loop(gd);
-
-#endif // SKY_SYSTEM MPU/Joystick
-  delay(1);
+  //delay(1);
 }
 
 

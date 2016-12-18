@@ -2,24 +2,54 @@
 #include "data.h"
 #include "ESP8266.h"
 
-#define SSID        "HHH7351HHH"
-#define PASSWORD    "hh1537hhh"
-
-#define PEER_IP_ADDRESS "192.168.1.4" // SKY_SYSTEM address
-
-ESP8266 wifi(Serial1, 115200);
+//ESP8266 wifi(Serial1, 115200);
 
 #define THIS "WIFI: "
 
 #define TCP_BASED_CONN
 
-void ESP8266_setup(void)
+
+//#define LOG_OUTPUT_DEBUG            (0)
+//#define LOG_OUTPUT_DEBUG_PREFIX     (1)
+
+//#define logDebug(arg)\
+//    do {\
+//        if (LOG_OUTPUT_DEBUG)\
+//        {\
+//            if (LOG_OUTPUT_DEBUG_PREFIX)\
+//            {\
+//                Serial.print("[LOG Debug: ");\
+//                /*Serial.print((const char*)__FILE__);*/\
+//                /*Serial.print(",");*/\
+//                Serial.print((unsigned int)__LINE__);\
+//                Serial.print(",");\
+//                Serial.print((const char*)__FUNCTION__);\
+//                Serial.print("] ");\
+//            }\
+//            Serial.println(arg);\
+//        }\
+//    } while(0)
+
+ESP8266 ESP8266_setup()//HardwareSerial serial)
 {
+
+static const char * SSID = "HHH7351HHH";
+static const char * PASSWORD = "hh1537hhh";
+
+static const char * PEER_IP_ADDRESS = "192.168.1.4"; // SKY_SYSTEM address
+
+  ESP8266 wifi(Serial1, 115200);
+
   Log.Info(THIS"setup begins"CR);
 
   //    delay(1000);
   //    Serial1.print("AT+RST/n/r");
   //    delay(1000);
+
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
+
   if (wifi.restart())
   {
     Log.Info(THIS"wifi restarted"CR);
@@ -29,8 +59,14 @@ void ESP8266_setup(void)
     Log.Error(THIS"wifi restart"CR);
   }
 
-  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion().c_str()); // Not showing up ????
+  
+Serial.println(wifi.getVersion());
+//  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion()); // Not showing up ????
 
+
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
 
   if (wifi.setOprToStationSoftAP()) {
     Log.Info(THIS"to station + softap ok"CR);
@@ -38,11 +74,21 @@ void ESP8266_setup(void)
     Log.Error(THIS"to station + softap err"CR);
   }
 
-  if (wifi.joinAP(SSID, PASSWORD)) {
+
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
+
+  //if (wifi.joinAP(SSID, PASSWORD)) {
+  if (wifi.joinAP("HHH7351HHH", "hh1537hhh")) {
     Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP().c_str());
   } else {
     Log.Error(THIS"Join AP failure"CR);
   }
+
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
 
   //#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
@@ -58,6 +104,10 @@ void ESP8266_setup(void)
   //  }
   //#endif
 
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
+
 #if defined(SKY_SYSTEM)
   if (wifi.startTCPServer(8090))
   {
@@ -65,6 +115,11 @@ void ESP8266_setup(void)
   } else {
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
+
+
+  Serial1.flush();
+  while (Serial1.available())
+    Serial1.read();
 
   if (wifi.setTCPServerTimeout(10)) {
     Log.Info(THIS"set tcp server timout 10 seconds"CR);
@@ -99,18 +154,24 @@ void ESP8266_setup(void)
   }
 
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
-int retry = 10;
+  int retry = 10;
 recreate:
+
+  Serial1.flush();
   if (wifi.createTCP(0, PEER_IP_ADDRESS, 8090))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
+    //    const GamePadEventData_Simple joydata = joystick_loop();
+    //    txGamePadData tgd;
+    //    tgd.gd.gd = joydata;
+    //    ESP8266_loop_send_Joystick_data(wifi, tgd);
     //txGamePadData data;
     //ESP8266_loop_send_Joystick_data(data);
   } else {
     retry--;
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power retry %d"CR, retry);
 
-    if(0<retry)
+    if (0 < retry)
     {
       delay(100);
       goto recreate;
@@ -119,18 +180,20 @@ recreate:
 #endif // GROUND_SYSTEM
 
   Log.Info(THIS"setup ends"CR);
+
+  return wifi;
 }
 
 
-const txGamePadData ESP8266_loop_recv_joystick_data()
+const txGamePadData ESP8266_loop_recv_joystick_data(ESP8266 _wifi)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
   uint8_t mux_id = 0; // error prone
   txGamePadData gd;
 
-  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
+  uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -147,15 +210,15 @@ const txGamePadData ESP8266_loop_recv_joystick_data()
   return gd; // :P
 }
 
-const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
+const angle_val_raw_acc ESP8266_loop_recv_MPU_data(ESP8266 _wifi)
 {
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
   uint8_t mux_id = 0; // error prone
   angle_val_raw_acc mdata;
 
-  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
+  uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -172,7 +235,7 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
   return mdata; // :P
 }
 
-void ESP8266_loop_send_Joystick_data(txGamePadData data)
+void ESP8266_loop_send_Joystick_data(ESP8266 _wifi, txGamePadData data)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
   uint8_t mux_id = 0;
@@ -184,7 +247,7 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
   data.gd.res3 = 0x00;
   data.gd.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
+  if (_wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
     Log.Info(THIS"send joystick data ok"CR);
   } else {
     Log.Error(THIS"send joystick data error"CR);
@@ -201,7 +264,7 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
 }
 
 
-void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
+void ESP8266_loop_send_MPU_data(ESP8266 _wifi, angle_val_raw_acc data)
 {
 
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
@@ -214,7 +277,7 @@ void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
   data.data.res3 = 0x00;
   data.data.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
+  if (_wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
     Log.Info(THIS"send MPU data ok"CR);
   } else {
     Log.Error(THIS"send MPU data error"CR);
