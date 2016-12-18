@@ -1,3 +1,20 @@
+
+#include <Arduino_FreeRTOS.h>
+#include <mpu_wrappers.h>
+#include <croutine.h>
+#include <FreeRTOSConfig.h>
+#include <portable.h>
+#include <StackMacros.h>
+#include <event_groups.h>
+#include <queue.h>
+#include <FreeRTOSVariant.h>
+#include <semphr.h>
+#include <projdefs.h>
+#include <list.h>/
+#include <portmacro.h>
+#include <timers.h>
+#include <task.h> 
+
 #include <Logging.h>
 #include "data.h"
 #include <Servo.h>
