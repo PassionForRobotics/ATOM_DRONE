@@ -15,6 +15,8 @@
 //#include <timers.h>
 //#include <task.h>
 
+//#include <SoftwareSerial.h>
+
 #include <Logging.h>
 #include "data.h"
 #include <Servo.h>
@@ -30,6 +32,7 @@ float yaw = 0.0f;
 //ESP8266 _wifi(Serial1);
 
 #define THIS "MAIN: "
+//SoftwareSerial Serial1(10, 11); // RX, TX
 
 
 #if defined(GROUND_SYSTEM)
@@ -37,6 +40,8 @@ void JoyStickTask( void *pvParameters);
 #endif
 
 void setup() {
+
+  delay(100);
   unsigned long ts_START = millis();
   //  LOG_LEVEL_NOOUTPUT
   //  LOG_LEVEL_ERRORS
@@ -50,6 +55,8 @@ void setup() {
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
+
+//  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
 #if defined(SKY_SYSTEM)
   Log.Info(THIS"SKY_SYSTEM"CR);

@@ -36,7 +36,7 @@ ESP8266 ESP8266_setup()//HardwareSerial serial)
 static const char * SSID = "HHH7351HHH";
 static const char * PASSWORD = "hh1537hhh";
 
-static const char * PEER_IP_ADDRESS = "192.168.1.4"; // SKY_SYSTEM address
+static const char * PEER_IP_ADDRESS = "192.168.1.5"; // SKY_SYSTEM address
 
   ESP8266 wifi(Serial1, 115200);
 
@@ -59,7 +59,7 @@ static const char * PEER_IP_ADDRESS = "192.168.1.4"; // SKY_SYSTEM address
     Log.Error(THIS"wifi restart"CR);
   }
 
-  
+Serial.print("VERSION: ");  
 Serial.println(wifi.getVersion());
 //  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion()); // Not showing up ????
 
@@ -235,6 +235,7 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data(ESP8266 _wifi)
   return mdata; // :P
 }
 
+//#error check from here run and check log
 void ESP8266_loop_send_Joystick_data(ESP8266 _wifi, txGamePadData data)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
