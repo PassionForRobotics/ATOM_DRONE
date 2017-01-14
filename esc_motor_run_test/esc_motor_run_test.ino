@@ -1,4 +1,3 @@
-
 #include <Arduino_FreeRTOS.h>
 //#include <mpu_wrappers.h>
 //#include <croutine.h>
@@ -56,7 +55,7 @@ void setup() {
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
 
-//  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
+  //  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
 #if defined(SKY_SYSTEM)
   Log.Info(THIS"SKY_SYSTEM"CR);
@@ -88,14 +87,14 @@ void setup() {
     }
   */
 
-//#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
-//  Log.Info(THIS"Setting up wifi"CR);
-//  static ESP8266 _wifi = ESP8266_setup();
-//  Log.Info(THIS"DONE WIFI"CR);
-//#else
-//  Log.Info(THIS"BYPASSED WIFI"CR);
-//  Log.Error(THIS"WIFI is must for either type of the systems"CR);
-//#endif
+  //#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+  //  Log.Info(THIS"Setting up wifi"CR);
+  //  static ESP8266 _wifi = ESP8266_setup();
+  //  Log.Info(THIS"DONE WIFI"CR);
+  //#else
+  //  Log.Info(THIS"BYPASSED WIFI"CR);
+  //  Log.Error(THIS"WIFI is must for either type of the systems"CR);
+  //#endif
   //while (1);
 
 #if defined(SKY_SYSTEM)
@@ -186,26 +185,26 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
   //thing * p2 = static_cast<thing *>(pv);
 
   //Log.Verbose(THIS"wifi ptr 0x%u"CR, _wifi);
-  
+
   //if( true == _wifi->kick() )
-//  {
-//    Log.Verbose(THIS"wifi alive"CR);
-//  }
-//  else
-//  {
-//    Log.Error(THIS"wifi dead"CR);
-//  }
+  //  {
+  //    Log.Verbose(THIS"wifi alive"CR);
+  //  }
+  //  else
+  //  {
+  //    Log.Error(THIS"wifi dead"CR);
+  //  }
 
   //ESP8266 _wifi = (ESP8266) (*wifi);
 
-  #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
-    Log.Info(THIS"Setting up wifi"CR);
-    ESP8266 _wifi = ESP8266_setup();
-    Log.Info(THIS"DONE WIFI"CR);
-  #else
-    Log.Info(THIS"BYPASSED WIFI"CR);
-    Log.Error(THIS"WIFI is must for either type of the systems"CR);
-  #endif
+#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+  Log.Info(THIS"Setting up wifi"CR);
+  ESP8266 _wifi = ESP8266_setup();
+  Log.Info(THIS"DONE WIFI"CR);
+#else
+  Log.Info(THIS"BYPASSED WIFI"CR);
+  Log.Error(THIS"WIFI is must for either type of the systems"CR);
+#endif
 
 #if defined(GROUND_SYSTEM)
 

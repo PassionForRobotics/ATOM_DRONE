@@ -81,7 +81,7 @@ Serial.println(wifi.getVersion());
 
   //if (wifi.joinAP(SSID, PASSWORD)) {
   if (wifi.joinAP("HHH7351HHH", "hh1537hhh")) {
-    Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP().c_str());
+    Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP());
   } else {
     Log.Error(THIS"Join AP failure"CR);
   }
