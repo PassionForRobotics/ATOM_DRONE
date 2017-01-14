@@ -21,8 +21,8 @@
 #include <Servo.h>
 #include "ESP8266.h"
 
-#define GROUND_SYSTEM // or
-//#define SKY_SYSTEM
+//#define GROUND_SYSTEM // or
+#define SKY_SYSTEM
 
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
@@ -34,7 +34,7 @@ float yaw = 0.0f;
 //SoftwareSerial Serial1(10, 11); // RX, TX
 
 
-#if defined(GROUND_SYSTEM)
+#if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) ) 
 void JoyStickTask( void *pvParameters);
 #endif
 
@@ -227,7 +227,7 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
 
   for (;;)
   {
-    const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
+    const txGamePadData gd = ESP8266_loop_recv_joystick_data(_wifi); //check
     data = mpu_loop(); // Must update here too
     // ESP8266_loop_send_MPU_data(data);
     Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
