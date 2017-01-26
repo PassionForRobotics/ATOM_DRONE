@@ -36,7 +36,7 @@ ESP8266 ESP8266_setup()//HardwareSerial serial)
 static const char * SSID = "HHH7351HHH";
 static const char * PASSWORD = "hh1537hhh";
 
-static const char * PEER_IP_ADDRESS = "192.168.1.5"; // SKY_SYSTEM address
+static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
 
   ESP8266 wifi(Serial1, 115200);
 
