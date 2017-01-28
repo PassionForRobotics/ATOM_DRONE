@@ -46,10 +46,10 @@ void steer_loop(const txGamePadData gd)
   // SLIDER MAP FROM 255-0 TO 1024-1864
   // TWIST/YAW MAP FROM ? TO ?
 
-#define servo1Offset 0 // F 
-#define servo2Offset -10  // R
-#define servo3Offset 7  // B
-#define servo4Offset 0  // L
+#define servo1Offset 14 //0 // F 
+#define servo2Offset 1 //3 //-10  // R
+#define servo3Offset 13  // B
+#define servo4Offset -8  // L
 
 
   servoVal[0] = map(gd.gd.gd.x, 0, 1023, 60 , 120);

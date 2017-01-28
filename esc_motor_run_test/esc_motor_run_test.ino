@@ -2,10 +2,10 @@
 #include "data.h"
 #include <Servo.h>
 
-#define GROUND_SYSTEM // or
-//#define SKY_SYSTEM
+//#define GROUND_SYSTEM // or
+#define SKY_SYSTEM
 
-#define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
+#define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_ERRORS //
 
 
 float yaw = 0.0f;
@@ -130,7 +130,7 @@ void loop() {
   steer_loop(gd);
 
 #endif // SKY_SYSTEM MPU/Joystick
-  delay(1);
+  //microseconddelay(1);
 }
 
 

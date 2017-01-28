@@ -5,7 +5,10 @@
 #define SSID        "HHH7351HHH"
 #define PASSWORD    "hh1537hhh"
 
-#define PEER_IP_ADDRESS "192.168.1.4" // SKY_SYSTEM address
+//#define SSID        "HHH7501HHH"
+//#define PASSWORD    "hh1057hhh"
+
+#define PEER_IP_ADDRESS "192.168.1.2" // SKY_SYSTEM address
 
 ESP8266 wifi(Serial1, 115200);
 
