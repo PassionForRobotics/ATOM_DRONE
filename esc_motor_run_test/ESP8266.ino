@@ -18,7 +18,7 @@ ESP8266 wifi(Serial1, 115200);
 
 #define TCP_BASED_CONN
 
-void ESP8266_setup(void)
+ESP8266 ESP8266_setup(void)
 {
   Log.Info(THIS"setup begins"CR);
 
@@ -46,12 +46,12 @@ void ESP8266_setup(void)
 
 #elif defined(GROUND_SYSTEM)
 
-  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) {
+  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) { 
     Log.Info(THIS"to station + softap ok"CR);
   } else {
     Log.Error(THIS"to station + softap err"CR);
   }
-
+  
 #else
 
 #endif
@@ -150,18 +150,22 @@ recreate:
 #endif // GROUND_SYSTEM
 
   Log.Info(THIS"setup ends"CR);
+
+  return wifi;
 }
 
 
-const txGamePadData ESP8266_loop_recv_joystick_data()
+const txGamePadData ESP8266_loop_recv_joystick_data(ESP8266 _wifi)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
   uint8_t mux_id = 0; // error prone
   txGamePadData gd;
 
-  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
+  uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
   if (len > 0) {
+
     //Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+ 
 
     //Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -178,15 +182,15 @@ const txGamePadData ESP8266_loop_recv_joystick_data()
   return gd; // :P
 }
 
-const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
+const angle_val_raw_acc ESP8266_loop_recv_MPU_data(ESP8266 _wifi)
 {
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
   uint8_t mux_id = 0; // error prone
   angle_val_raw_acc mdata;
 
-  uint32_t len = wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
+  uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -203,7 +207,8 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data()
   return mdata; // :P
 }
 
-void ESP8266_loop_send_Joystick_data(txGamePadData data)
+//#error check from here run and check log
+void ESP8266_loop_send_Joystick_data(ESP8266 _wifi, txGamePadData data)
 {
   uint8_t buffer[SIZE_OF_GPADDATA_STRUCT] = {0};
   uint8_t mux_id = 0;
@@ -215,7 +220,7 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
   data.gd.res3 = 0x00;
   data.gd.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
+  if (_wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_GPADDATA_STRUCT)) {
     Log.Info(THIS"send joystick data ok"CR);
   } else {
     Log.Error(THIS"send joystick data error"CR);
@@ -232,7 +237,7 @@ void ESP8266_loop_send_Joystick_data(txGamePadData data)
 }
 
 
-void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
+void ESP8266_loop_send_MPU_data(ESP8266 _wifi, angle_val_raw_acc data)
 {
 
   uint8_t buffer[SIZE_OF_MDATA_STRUCT] = {0};
@@ -245,7 +250,7 @@ void ESP8266_loop_send_MPU_data(angle_val_raw_acc data)
   data.data.res3 = 0x00;
   data.data.etx = 0x03;
 
-  if (wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
+  if (_wifi.send(/*mux_id,*/0, data.uc_data, SIZE_OF_MDATA_STRUCT)) {
     Log.Info(THIS"send MPU data ok"CR);
   } else {
     Log.Error(THIS"send MPU data error"CR);

@@ -143,16 +143,18 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
 #define MPU_ANGLE_Y_OFFSET (90-2)
 
 
+#define MPU_ANGLE_X_OFFSET (90+3)
+#define MPU_ANGLE_Y_OFFSET (90-2)
+
+
   servoVal[0] = map(gd.gd.gd.x, 0, 1023, SERVO0_MIN_LIMIT , SERVO0_MAX_LIMIT);
   servoVal[1] = map(gd.gd.gd.y, 0, 1023, SERVO1_MIN_LIMIT , SERVO1_MAX_LIMIT); // it could be opposite i.e. 120-60
   servoVal[2] = map(gd.gd.gd.x, 0, 1023, SERVO2_MIN_LIMIT , SERVO2_MAX_LIMIT);
   servoVal[3] = map(gd.gd.gd.y, 0, 1023, SERVO3_MIN_LIMIT , SERVO3_MAX_LIMIT);
-
+ 
   int yaw_twist = map(gd.gd.gd.twist, 0, 255, -30, 30);
 
   int thrust_compansation = map(gd.gd.gd.slider, 255, 0, 0, 10);
-
-
 
   // MPU default mech offset is to be checked
   //  byte pid_x_translate_setpoint =  servoVal[0] - servo0Offset;
@@ -251,132 +253,6 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
   servo[1].write(servoVal[1]);
   servo[2].write(servoVal[2]);
   servo[3].write(servoVal[3]);
-
-
-  if (Serial.available())
-  {
-    char inChar = (char)Serial.read();
-
-    static boolean state_p = false, state_i = false, state_d = false;
-    switch (inChar)
-    {
-      case '+' :
-        {
-          if (state_p)
-          {
-            kp = kp + 1;
-            kp = kp >= 0 ? kp : 1;
-
-            pid_y.kp = kp;
-          }
-          else if (state_i)
-          {
-            ki = ki + 0.1;
-            ki = ki >= 0 ? ki : 1;
-
-            pid_y.ki = ki;
-          }
-          else if (state_d)
-          {
-            kd = kd + 1;
-            kd = kd >= 0 ? kd : 1;
-
-            pid_y.kd = kd;
-          }
-          else
-          {
-
-          }
-
-          Serial.println();
-          Serial.print("kp =");
-          Serial.print(pid_y.kp);
-          Serial.print(" ki =");
-          Serial.print(pid_y.ki);
-          Serial.print(" kd =");
-          Serial.println(pid_y.kd);
-
-          myPID_y.SetTunings(pid_y.kp, pid_y.ki, pid_y.kd);
-
-
-          break;
-        }
-
-      case '-' :
-        {
-          if (state_p)
-          {
-            kp = kp - 1;
-            kp = kp >= 0 ? kp : 1;
-
-            pid_y.kp = kp;
-          }
-          else if (state_i)
-          {
-            ki = ki - 0.1;
-            ki = ki >= 0 ? ki : 1;
-
-            pid_y.ki = ki;
-          }
-          else if (state_d)
-          {
-            kd = kd - 1;
-            kd = kd >= 0 ? kd : 1;
-
-            pid_y.kd = kd;
-          }
-          else
-          {
-
-          }
-
-          Serial.println();
-          Serial.print("kp =");
-          Serial.print(pid_y.kp);
-          Serial.print(" ki =");
-          Serial.print(pid_y.ki);
-          Serial.print(" kd =");
-          Serial.println(pid_y.kd);
-
-          myPID_y.SetTunings(pid_y.kp, pid_y.ki, pid_y.kd);
-
-
-          break;
-        }
-
-      case 'p' :
-        {
-          state_p = true;
-          state_i = false;
-          state_d = false;
-          break;
-        }
-
-      case 'i' :
-        {
-          state_p = false;
-          state_i = true;
-          state_d = false;
-          break;
-        }
-
-      case 'd' :
-        {
-          state_p = false;
-          state_i = false;
-          state_d = true;
-          break;
-        }
-
-      default :
-        {
-
-        }
-    }
-
-    //state_machine(inChar);
-  }
-
 
 
   //Action pending
@@ -666,4 +542,134 @@ void state_machine(char inChar)
 
   }
 }
+
+
+void pid_tuning_states()
+{
+  if (Serial.available())
+  {
+    char inChar = (char)Serial.read();
+
+    static boolean state_p = false, state_i = false, state_d = false;
+    switch (inChar)
+    {
+      case '+' :
+        {
+          if (state_p)
+          {
+            kp = kp + 1;
+            kp = kp >= 0 ? kp : 1;
+
+            pid_y.kp = kp;
+          }
+          else if (state_i)
+          {
+            ki = ki + 0.1;
+            ki = ki >= 0 ? ki : 1;
+
+            pid_y.ki = ki;
+          }
+          else if (state_d)
+          {
+            kd = kd + 1;
+            kd = kd >= 0 ? kd : 1;
+
+            pid_y.kd = kd;
+          }
+          else
+          {
+
+          }
+
+          Serial.println();
+          Serial.print("kp =");
+          Serial.print(pid_y.kp);
+          Serial.print(" ki =");
+          Serial.print(pid_y.ki);
+          Serial.print(" kd =");
+          Serial.println(pid_y.kd);
+
+          myPID_y.SetTunings(pid_y.kp, pid_y.ki, pid_y.kd);
+
+
+          break;
+        }
+
+      case '-' :
+        {
+          if (state_p)
+          {
+            kp = kp - 1;
+            kp = kp >= 0 ? kp : 1;
+
+            pid_y.kp = kp;
+          }
+          else if (state_i)
+          {
+            ki = ki - 0.1;
+            ki = ki >= 0 ? ki : 1;
+
+            pid_y.ki = ki;
+          }
+          else if (state_d)
+          {
+            kd = kd - 1;
+            kd = kd >= 0 ? kd : 1;
+
+            pid_y.kd = kd;
+          }
+          else
+          {
+
+          }
+
+          Serial.println();
+          Serial.print("kp =");
+          Serial.print(pid_y.kp);
+          Serial.print(" ki =");
+          Serial.print(pid_y.ki);
+          Serial.print(" kd =");
+          Serial.println(pid_y.kd);
+
+          myPID_y.SetTunings(pid_y.kp, pid_y.ki, pid_y.kd);
+
+
+          break;
+        }
+
+      case 'p' :
+        {
+          state_p = true;
+          state_i = false;
+          state_d = false;
+          break;
+        }
+
+      case 'i' :
+        {
+          state_p = false;
+          state_i = true;
+          state_d = false;
+          break;
+        }
+
+      case 'd' :
+        {
+          state_p = false;
+          state_i = false;
+          state_d = true;
+          break;
+        }
+
+      default :
+        {
+
+        }
+    }
+
+    //state_machine(inChar);
+  }
+
+}
+
 
