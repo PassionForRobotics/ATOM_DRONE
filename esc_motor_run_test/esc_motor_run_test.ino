@@ -66,6 +66,14 @@ void setup() {
 #endif
 
 #if defined(SKY_SYSTEM)
+  Log.Info(THIS"Setting up Servos"CR);
+  servo_init();
+  Log.Info(THIS"DONE Servos"CR);
+#else
+  Log.Info(THIS"BYPASSED Servos"CR);
+#endif
+
+#if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up ECS"CR);
   ESC_init();
   Log.Info(THIS"DONE ECS"CR);
@@ -234,7 +242,7 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
                 , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
                 , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
-    steer_loop(gd);
+    steer_loop(gd, data);
   }
 
 #endif // SKY_SYSTEM MPU/Joystick
@@ -246,7 +254,7 @@ void loop() {
   if (Serial.available())
   {
     char inChar = (char)Serial.read();
-    state_machine(inChar);
+    //state_machine(inChar);
   }
 
   //delay(1);

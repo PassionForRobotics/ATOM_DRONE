@@ -2,54 +2,28 @@
 #include "data.h"
 #include "ESP8266.h"
 
-//ESP8266 wifi(Serial1, 115200);
+#define SSID        "D_ATOM_1" //"HHH7351HHH"
+#define PASSWORD    "D_ATOM_1"
+
+//#define SSID        "HHH7501HHH"
+//#define PASSWORD    "hh1057hhh"
+
+#define PEER_IP_ADDRESS "192.168.4.1" // SKY_SYSTEM address
+#define PEER_PORT (8090)
+
+ESP8266 wifi(Serial1, 115200);
 
 #define THIS "WIFI: "
 
 #define TCP_BASED_CONN
 
-
-//#define LOG_OUTPUT_DEBUG            (0)
-//#define LOG_OUTPUT_DEBUG_PREFIX     (1)
-
-//#define logDebug(arg)\
-//    do {\
-//        if (LOG_OUTPUT_DEBUG)\
-//        {\
-//            if (LOG_OUTPUT_DEBUG_PREFIX)\
-//            {\
-//                Serial.print("[LOG Debug: ");\
-//                /*Serial.print((const char*)__FILE__);*/\
-//                /*Serial.print(",");*/\
-//                Serial.print((unsigned int)__LINE__);\
-//                Serial.print(",");\
-//                Serial.print((const char*)__FUNCTION__);\
-//                Serial.print("] ");\
-//            }\
-//            Serial.println(arg);\
-//        }\
-//    } while(0)
-
-ESP8266 ESP8266_setup()//HardwareSerial serial)
+ESP8266 ESP8266_setup(void)
 {
-
-static const char * SSID = "HHH7351HHH";
-static const char * PASSWORD = "hh1537hhh";
-
-static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
-
-  ESP8266 wifi(Serial1, 115200);
-
   Log.Info(THIS"setup begins"CR);
 
   //    delay(1000);
   //    Serial1.print("AT+RST/n/r");
   //    delay(1000);
-
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
-
   if (wifi.restart())
   {
     Log.Info(THIS"wifi restarted"CR);
@@ -59,36 +33,46 @@ static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
     Log.Error(THIS"wifi restart"CR);
   }
 
-Serial.print("VERSION: ");  
-Serial.println(wifi.getVersion());
-//  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion()); // Not showing up ????
+  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion().c_str()); // Not showing up ????
 
+#if defined(SKY_SYSTEM)
 
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
-
-  if (wifi.setOprToStationSoftAP()) {
+  if (wifi.setOprToSoftAP()) { //setOprToStationSoftAP()) {
     Log.Info(THIS"to station + softap ok"CR);
   } else {
     Log.Error(THIS"to station + softap err"CR);
   }
 
+#elif defined(GROUND_SYSTEM)
 
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
+  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) {
+    Log.Info(THIS"to station + softap ok"CR);
+  } else {
+    Log.Error(THIS"to station + softap err"CR);
+  }
 
-  //if (wifi.joinAP(SSID, PASSWORD)) {
-  if (wifi.joinAP("HHH7351HHH", "hh1537hhh")) {
-    Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP());
+#else
+
+#endif
+
+#if defined(GROUND_SYSTEM)
+  if (wifi.joinAP(SSID, PASSWORD)) {
+    Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP().c_str());
   } else {
     Log.Error(THIS"Join AP failure"CR);
   }
 
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
+#elif defined(SKY_SYSTEM)
+
+  if (wifi.setSoftAPParam(SSID, PASSWORD)) {
+    Log.Info(THIS"Create AP success, IP: %s"CR, wifi.getLocalIP().c_str());
+  } else {
+    Log.Error(THIS"Create AP failure"CR);
+  }
+
+#else
+
+#endif
 
   //#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
@@ -104,22 +88,13 @@ Serial.println(wifi.getVersion());
   //  }
   //#endif
 
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
-
 #if defined(SKY_SYSTEM)
-  if (wifi.startTCPServer(8090))
+  if (wifi.startTCPServer(PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
   } else {
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
-
-
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
 
   if (wifi.setTCPServerTimeout(10)) {
     Log.Info(THIS"set tcp server timout 10 seconds"CR);
@@ -156,15 +131,9 @@ Serial.println(wifi.getVersion());
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
   int retry = 10;
 recreate:
-
-  Serial1.flush();
-  if (wifi.createTCP(0, PEER_IP_ADDRESS, 8090))
+  if (wifi.createTCP(0, PEER_IP_ADDRESS, PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
-    //    const GamePadEventData_Simple joydata = joystick_loop();
-    //    txGamePadData tgd;
-    //    tgd.gd.gd = joydata;
-    //    ESP8266_loop_send_Joystick_data(wifi, tgd);
     //txGamePadData data;
     //ESP8266_loop_send_Joystick_data(data);
   } else {
