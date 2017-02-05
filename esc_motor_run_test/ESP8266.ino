@@ -2,13 +2,15 @@
 #include "data.h"
 #include "ESP8266.h"
 
-#define SSID        "HHH7351HHH"
-#define PASSWORD    "hh1537hhh"
+#define SSID        "D_ATOM_1" //"HHH7351HHH"
+#define PASSWORD    "D_ATOM_1"
 
 //#define SSID        "HHH7501HHH"
 //#define PASSWORD    "hh1057hhh"
 
-#define PEER_IP_ADDRESS "192.168.1.5" // SKY_SYSTEM address
+#define PEER_IP_ADDRESS "192.168.4.1" // SKY_SYSTEM address
+
+#define PEER_PORT (8090)
 
 ESP8266 wifi(Serial1, 115200);
 
@@ -34,18 +36,44 @@ void ESP8266_setup(void)
 
   Log.Info(THIS"FW Version: %s"CR, wifi.getVersion().c_str()); // Not showing up ????
 
+#if defined(SKY_SYSTEM)
 
-  if (wifi.setOprToStationSoftAP()) {
+  if (wifi.setOprToSoftAP()) { //setOprToStationSoftAP()) {
     Log.Info(THIS"to station + softap ok"CR);
   } else {
     Log.Error(THIS"to station + softap err"CR);
   }
 
+#elif defined(GROUND_SYSTEM)
+
+  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) {
+    Log.Info(THIS"to station + softap ok"CR);
+  } else {
+    Log.Error(THIS"to station + softap err"CR);
+  }
+
+#else
+
+#endif
+
+#if defined(GROUND_SYSTEM)
   if (wifi.joinAP(SSID, PASSWORD)) {
     Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP().c_str());
   } else {
     Log.Error(THIS"Join AP failure"CR);
   }
+
+#elif defined(SKY_SYSTEM)
+
+  if (wifi.setSoftAPParam(SSID, PASSWORD)) {
+    Log.Info(THIS"Create AP success, IP: %s"CR, wifi.getLocalIP().c_str());
+  } else {
+    Log.Error(THIS"Create AP failure"CR);
+  }
+
+#else
+
+#endif
 
   //#if defined(GROUND_SYSTEM)
   if (wifi.enableMUX()) {
@@ -62,7 +90,7 @@ void ESP8266_setup(void)
   //#endif
 
 #if defined(SKY_SYSTEM)
-  if (wifi.startTCPServer(8090))
+  if (wifi.startTCPServer(PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
   } else {
@@ -102,9 +130,9 @@ void ESP8266_setup(void)
   }
 
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
-int retry = 10;
+  int retry = 10;
 recreate:
-  if (wifi.createTCP(0, PEER_IP_ADDRESS, 8090))
+  if (wifi.createTCP(0, PEER_IP_ADDRESS, PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
     //txGamePadData data;
@@ -113,7 +141,7 @@ recreate:
     retry--;
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power retry %d"CR, retry);
 
-    if(0<retry)
+    if (0 < retry)
     {
       delay(100);
       goto recreate;
