@@ -9,6 +9,7 @@
 //#define PASSWORD    "hh1057hhh"
 
 #define PEER_IP_ADDRESS "192.168.4.1" // SKY_SYSTEM address
+
 #define PEER_PORT (8090)
 
 ESP8266 wifi(Serial1, 115200);
@@ -45,12 +46,12 @@ ESP8266 ESP8266_setup(void)
 
 #elif defined(GROUND_SYSTEM)
 
-  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) {
+  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) { 
     Log.Info(THIS"to station + softap ok"CR);
   } else {
     Log.Error(THIS"to station + softap err"CR);
   }
-
+  
 #else
 
 #endif
@@ -162,18 +163,20 @@ const txGamePadData ESP8266_loop_recv_joystick_data(ESP8266 _wifi)
 
   uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
 
-    Log.Verbose(THIS"Received from: %d [ ",  mux_id );
+    //Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+ 
+
+    //Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
     for (uint32_t i = 0; i < len; i++) {
       if (i < SIZE_OF_GPADDATA_STRUCT) // buffer safety
       {
         gd.uc_data[i] = buffer[i];
       }
-      Log.Verbose("%c ", (char)buffer[i]);
+      //Log.Verbose("%c ", (char)buffer[i]);
     }
-    Log.Verbose(" (ASCII: %s)]"CR, buffer);
+    //Log.Verbose(" (ASCII: %s)]"CR, buffer);
   }
 
   return gd; // :P

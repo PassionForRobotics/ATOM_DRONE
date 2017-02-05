@@ -143,16 +143,18 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
 #define MPU_ANGLE_Y_OFFSET (90-2)
 
 
+#define MPU_ANGLE_X_OFFSET (90+3)
+#define MPU_ANGLE_Y_OFFSET (90-2)
+
+
   servoVal[0] = map(gd.gd.gd.x, 0, 1023, SERVO0_MIN_LIMIT , SERVO0_MAX_LIMIT);
   servoVal[1] = map(gd.gd.gd.y, 0, 1023, SERVO1_MIN_LIMIT , SERVO1_MAX_LIMIT); // it could be opposite i.e. 120-60
   servoVal[2] = map(gd.gd.gd.x, 0, 1023, SERVO2_MIN_LIMIT , SERVO2_MAX_LIMIT);
   servoVal[3] = map(gd.gd.gd.y, 0, 1023, SERVO3_MIN_LIMIT , SERVO3_MAX_LIMIT);
-
+ 
   int yaw_twist = map(gd.gd.gd.twist, 0, 255, -30, 30);
 
   int thrust_compansation = map(gd.gd.gd.slider, 255, 0, 0, 10);
-
-
 
   // MPU default mech offset is to be checked
   //  byte pid_x_translate_setpoint =  servoVal[0] - servo0Offset;
@@ -251,9 +253,6 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
   servo[1].write(servoVal[1]);
   servo[2].write(servoVal[2]);
   servo[3].write(servoVal[3]);
-
-
-  
 
 
   //Action pending

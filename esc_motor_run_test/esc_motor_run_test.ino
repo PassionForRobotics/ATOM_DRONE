@@ -24,7 +24,7 @@
 //#define GROUND_SYSTEM // or
 #define SKY_SYSTEM
 
-#define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
+#define LOGLEVEL LOG_LEVEL_ERRORS //LOG_LEVEL_VERBOSE //LOG_LEVEL_ERRORS //LOG_LEVEL_VERBOSE //LOG_LEVEL_ERRORS //
 
 
 float yaw = 0.0f;
@@ -111,14 +111,6 @@ void setup() {
   Log.Info(THIS"DONE MPU"CR);
 #else
   Log.Info(THIS"BYPASSED MPU"CR);
-#endif
-
-#if defined(SKY_SYSTEM)
-  Log.Info(THIS"Setting up Servos"CR);
-  servo_init();
-  Log.Info(THIS"DONE Servos"CR);
-#else
-  Log.Info(THIS"BYPASSED Servos"CR);
 #endif
 
   delay(100);
@@ -220,16 +212,19 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
 
   for (;;)
   {
+
     const GamePadEventData_Simple joydata = joystick_loop();
     txGamePadData tgd;
     tgd.gd.gd = joydata;
     ESP8266_loop_send_Joystick_data(_wifi, tgd);
     //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
+    
   }
 
 #endif // GROUND_SYSTEM MPU/Joystick
 
 #if defined(SKY_SYSTEM)
+
 
   angle_val_raw_acc data;
 
@@ -256,8 +251,7 @@ void loop() {
     char inChar = (char)Serial.read();
     //state_machine(inChar);
   }
-
-  //delay(1);
+ 
 }
 
 
