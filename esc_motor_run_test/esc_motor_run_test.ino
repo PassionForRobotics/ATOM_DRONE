@@ -37,6 +37,14 @@ void setup() {
 #endif
 
 #if defined(SKY_SYSTEM)
+  Log.Info(THIS"Setting up Servos"CR);
+  servo_init();
+  Log.Info(THIS"DONE Servos"CR);
+#else
+  Log.Info(THIS"BYPASSED Servos"CR);
+#endif
+
+#if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up ECS"CR);
   ESC_init();
   Log.Info(THIS"DONE ECS"CR);
@@ -76,14 +84,6 @@ void setup() {
   Log.Info(THIS"BYPASSED MPU"CR);
 #endif
 
-#if defined(SKY_SYSTEM)
-  Log.Info(THIS"Setting up Servos"CR);
-  servo_init();
-  Log.Info(THIS"DONE Servos"CR);
-#else
-  Log.Info(THIS"BYPASSED Servos"CR);
-#endif
-
   delay(100);
 
 #if defined(SKY_SYSTEM)
@@ -115,7 +115,7 @@ void loop() {
   if (Serial.available())
   {
     char inChar = (char)Serial.read();
-    state_machine(inChar);
+    //state_machine(inChar);
   }
 
 
@@ -123,11 +123,11 @@ void loop() {
   const txGamePadData gd = ESP8266_loop_recv_joystick_data(); //check
   angle_val_raw_acc data = mpu_loop(); // Must update here too
   // ESP8266_loop_send_MPU_data(data);
-  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
-              , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
-              , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
+  //  Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
+  //              , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
+  //              , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
-  steer_loop(gd);
+  steer_loop(gd, data);
 
 #endif // SKY_SYSTEM MPU/Joystick
   //microseconddelay(1);
