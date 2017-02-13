@@ -33,10 +33,19 @@
 ESP8266 ESP8266_setup()//HardwareSerial serial)
 {
 
-static const char * SSID = "HHH7351HHH";
-static const char * PASSWORD = "hh1537hhh";
+#define SSID        "D_ATOM_1" //"HHH7351HHH"
+#define PASSWORD    "D_ATOM_1"
 
-static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
+  //#define SSID        "HHH7501HHH"
+  //#define PASSWORD    "hh1057hhh"
+
+#define PEER_IP_ADDRESS "192.168.4.1" // SKY_SYSTEM address
+
+#define PEER_PORT (8090)
+  //  static const char * SSID = "HHH7351HHH";
+  //  static const char * PASSWORD = "hh1537hhh";
+  //
+  //  static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
 
   ESP8266 wifi(Serial1, 115200);
 
@@ -59,33 +68,57 @@ static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
     Log.Error(THIS"wifi restart"CR);
   }
 
-Serial.print("VERSION: ");  
-Serial.println(wifi.getVersion());
-//  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion()); // Not showing up ????
+  Serial.print("VERSION: ");
+  Serial.println(wifi.getVersion());
+  //  Log.Info(THIS"FW Version: %s"CR, wifi.getVersion()); // Not showing up ????
 
 
   Serial1.flush();
   while (Serial1.available())
     Serial1.read();
 
-  if (wifi.setOprToStationSoftAP()) {
+#if defined(SKY_SYSTEM)
+
+  if (wifi.setOprToSoftAP()) { //setOprToStationSoftAP()) {
     Log.Info(THIS"to station + softap ok"CR);
   } else {
     Log.Error(THIS"to station + softap err"CR);
   }
 
+#elif defined(GROUND_SYSTEM)
+
+  if (wifi.setOprToStation()) { //setOprToStationSoftAP()) {
+    Log.Info(THIS"to station + softap ok"CR);
+  } else {
+    Log.Error(THIS"to station + softap err"CR);
+  }
+
+#else
+
+#endif
 
   Serial1.flush();
   while (Serial1.available())
     Serial1.read();
 
-  //if (wifi.joinAP(SSID, PASSWORD)) {
-  if (wifi.joinAP("HHH7351HHH", "hh1537hhh")) {
+#if defined(GROUND_SYSTEM)
+  if (wifi.joinAP(SSID, PASSWORD)) {
     Log.Info(THIS"Join AP success, IP: %s"CR, wifi.getLocalIP());
   } else {
     Log.Error(THIS"Join AP failure"CR);
   }
 
+#elif defined(SKY_SYSTEM)
+
+  if (wifi.setSoftAPParam(SSID, PASSWORD)) {
+    Log.Info(THIS"Create AP success, IP: %s"CR, wifi.getLocalIP());
+  } else {
+    Log.Error(THIS"Create AP failure"CR);
+  }
+
+#else
+
+#endif
   Serial1.flush();
   while (Serial1.available())
     Serial1.read();
@@ -109,17 +142,12 @@ Serial.println(wifi.getVersion());
     Serial1.read();
 
 #if defined(SKY_SYSTEM)
-  if (wifi.startTCPServer(8090))
+  if (wifi.startTCPServer(PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
   } else {
     Log.Error(THIS"start tcp/udp server/connection err : Check IP/Power"CR);
   }
-
-
-  Serial1.flush();
-  while (Serial1.available())
-    Serial1.read();
 
   if (wifi.setTCPServerTimeout(10)) {
     Log.Info(THIS"set tcp server timout 10 seconds"CR);
@@ -156,15 +184,9 @@ Serial.println(wifi.getVersion());
 #else //  ulta GROUND_SYSTEM or #if defined(SKY_SYSTEM)
   int retry = 10;
 recreate:
-
-  Serial1.flush();
-  if (wifi.createTCP(0, PEER_IP_ADDRESS, 8090))
+  if (wifi.createTCP(0, PEER_IP_ADDRESS, PEER_PORT))
   {
     Log.Info(THIS"start tcp/udp server/connection ok"CR);
-    //    const GamePadEventData_Simple joydata = joystick_loop();
-    //    txGamePadData tgd;
-    //    tgd.gd.gd = joydata;
-    //    ESP8266_loop_send_Joystick_data(wifi, tgd);
     //txGamePadData data;
     //ESP8266_loop_send_Joystick_data(data);
   } else {
@@ -182,6 +204,7 @@ recreate:
   Log.Info(THIS"setup ends"CR);
 
   return wifi;
+
 }
 
 
