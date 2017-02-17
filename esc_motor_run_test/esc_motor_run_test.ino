@@ -21,8 +21,8 @@
 #include <Servo.h>
 #include "ESP8266.h"
 
-#define GROUND_SYSTEM // or
-//#define SKY_SYSTEM
+//#define GROUND_SYSTEM // or
+#define SKY_SYSTEM
 
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
