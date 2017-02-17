@@ -170,7 +170,7 @@ ESP8266 ESP8266_setup()//HardwareSerial serial)
 
   if (len > 0)
   {
-    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, wifi.getIPStatus() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -216,7 +216,7 @@ const txGamePadData ESP8266_loop_recv_joystick_data(ESP8266 _wifi)
 
   uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, SIZE_OF_GPADDATA_STRUCT, 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
@@ -241,7 +241,7 @@ const angle_val_raw_acc ESP8266_loop_recv_MPU_data(ESP8266 _wifi)
 
   uint32_t len = _wifi.recv(/*&mux_id,*/ buffer, sizeof(buffer), 100);
   if (len > 0) {
-    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus().c_str() );
+    Log.Verbose(THIS"Status:[ %s ]"CR, _wifi.getIPStatus() );
 
     Log.Verbose(THIS"Received from: %d [ ",  mux_id );
 
