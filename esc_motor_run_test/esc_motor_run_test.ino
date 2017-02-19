@@ -30,7 +30,13 @@
 float yaw = 0.0f;
 //ESP8266 _wifi(Serial1);
 
-#define THIS "MAIN: "
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+//#define AT __FILE__ ":" TOSTRING(__LINE__)
+
+#define THIS "MAIN: " TOSTRING(__LINE__) ": "
+//#define MAIN "MAIN: "
+//#define THIS "MAIN: " // __LINE__ ": "
 //SoftwareSerial Serial1(10, 11); // RX, TX
 
 
@@ -49,7 +55,7 @@ void setup() {
   //  LOG_LEVEL_VERBOSE
   //  http://playground.arduino.cc/Code/Logging
 
-  Log.Init( LOGLEVEL , 115200L );
+  Log.Init( LOGLEVEL , 230400L );
   Log.Info(THIS"HELLO WORLD"CR);
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
@@ -127,7 +133,7 @@ void setup() {
   xReturned = xTaskCreate(
                 JoyStickTask
                 ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
-                ,  (4 * 512) // This stack size can be checked & adjusted by reading the Stack Highwater
+                ,  (8 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
                 ,  NULL//(void*)(&_wifi)
                 ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
                 ,  NULL );
@@ -208,8 +214,6 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
 
 #if defined(GROUND_SYSTEM)
 
-
-
   for (;;)
   {
     const GamePadEventData_Simple joydata = joystick_loop();
@@ -230,11 +234,11 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     const txGamePadData gd = ESP8266_loop_recv_joystick_data(_wifi); //check
     data = mpu_loop(); // Must update here too
     // ESP8266_loop_send_MPU_data(data);
-    Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
-                , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
-                , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
-
-    steer_loop(gd);
+    //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
+    //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
+    //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
+#warning steer off
+    //steer_loop(gd);
   }
 
 #endif // SKY_SYSTEM MPU/Joystick

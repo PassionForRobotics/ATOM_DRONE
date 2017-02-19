@@ -4,7 +4,9 @@
 
 //ESP8266 wifi(Serial1, 115200);
 
-#define THIS "WIFI: "
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define THIS "WIFI: " TOSTRING(__LINE__) ": "
 
 #define TCP_BASED_CONN
 
@@ -166,7 +168,7 @@ ESP8266 ESP8266_setup()//HardwareSerial serial)
   uint8_t buffer[128] = {0};
   uint8_t mux_id;
 
-  uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 1000000);
+  uint32_t len = wifi.recv(&mux_id, buffer, sizeof(buffer), 100000);
 
   if (len > 0)
   {
