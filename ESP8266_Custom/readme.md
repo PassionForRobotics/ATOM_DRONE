@@ -1,8 +1,7 @@
 
-Data protocol:
+Data protocol struct:
 
-'''
-
+```
 typedef struct Header
 {
   struct // struct pad
@@ -73,7 +72,9 @@ typedef union Data
   };
 } data;
 
-'''
 
-Sending hello : from packetsender to ESP8266 which outputs it to serial port for further controller.
+```
+Sending hello : 
+From packetsender to ESP8266 which outputs it to serial port for further controller.
+
 02 ff fe 00 02 00 00 00 07 00 00 00 68 65 6c 6c 6f 0d 0a
