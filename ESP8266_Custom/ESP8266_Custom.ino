@@ -3,7 +3,9 @@
 
 */
 
+#include "Arduino.h"
 #include "data.h"
+#include <Esp.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
@@ -45,7 +47,7 @@ void WiFiEvent(WiFiEvent_t event) {
     case WIFI_EVENT_STAMODE_GOT_IP:
       Serial.println("ready");
       udp.begin(LOCAL_PORT);
-      sendmsg("I AM ON", 8);
+      //sendmsg("I AM ON", 8);
       Serial.println(system_mode);
       Serial.println("OK");
 
@@ -81,6 +83,7 @@ void setup() {
   debouncer.interval(200);
   SCmd.addCommand("AT", check);
   SCmd.addCommand("AT+RST", resetESP8266);
+  SCmd.addCommand("AT+RSTT", restartESP8266);
   //SCmd.addCommand("AT+MODE", operationMode);
   SCmd.addCommand("AT+START", startWiFi);
   SCmd.addCommand("AT+CIFSR", printIP);
@@ -122,11 +125,13 @@ void loop() {
     data.data.header.type1 = DATA_TYPE1_SERIAL;
     data.data.header.type2 = 0;
 
-    int datasize = udp.available();//udp.parsePacket();
+    int datasize = udp.parsePacket(); //udp.available();//
     //char buff[64] = {0};
     if (datasize)
     {
+      //datasize = udp.parsePacket();
       data.data.header.len = datasize; // this datasize is not valid
+      
       udp.read(data.uc_buffer, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
       //server.send(data.uc_buffer);
       //server.send(200, "text/plain", data.c_buffer);
@@ -195,6 +200,10 @@ void setRemoteIPPort()
     unrecognized();
     return;
   }
+
+  //udp.begin(LOCAL_PORT);
+  //sendmsg("I AM ON", 8);
+      
   Serial.println();
   Serial.println("OK");
 }
@@ -224,7 +233,7 @@ void printIP()
 void startWiFi()
 {
   // delete old config
- // WiFi.disconnect(true);
+  WiFi.disconnect(false);
 
   delay(200);
   WiFi.onEvent(WiFiEvent);
@@ -247,11 +256,18 @@ void operationMode()
   }
 }
 
+void restartESP8266()
+{
+  Serial.println("OK");
+  delay(1000);
+  ESP.restart();
+}
 void resetESP8266()
 {
   Serial.println("OK");
-  delay(100);
-  Serial.println("<Not_Implemented>");
+  delay(1000);
+  ESP.reset();
+  //Serial.println("<Not_Implemented>");
 }
 
 void check()
