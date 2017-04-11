@@ -1,6 +1,27 @@
 #ifndef DATA_H
 #define DATA_H
 
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+#define VER 0
+
+#undef SMARTVER_HELPER_
+#undef RESVER
+#if VER < 10
+#define SMARTVER_HELPER_(x) 0000 ## x
+#elif VER < 100
+#define SMARTVER_HELPER_(x) 000 ## x
+#elif VER < 1000
+#define SMARTVER_HELPER_(x) 00 ## x
+#elif VER < 10000
+#define SMARTVER_HELPER_(x) 0 ## x
+#else
+#define SMARTVER_HELPER_(x) x
+#endif
+#define RESVER(x) SMARTVER_HELPER_(x)
+
 typedef enum type1
 {
   DATA_TYPE1_DEFAULT = 0xFFFF,
@@ -16,7 +37,9 @@ typedef enum type1
 
 typedef enum type2_error
 {
-  DATA_TYPE2_ERROR_0 = 0x00, // No errors
+  DATA_TYPE2_ERROR_DEFAULT = 0xFFFF,
+  DATA_TYPE2_ERROR = DATA_TYPE2_ERROR_DEFAULT,
+  DATA_TYPE2_ERROR_0 = 0x0000, // No errors
   DATA_TYPE2_ERROR_1, // Serial number is invalid
   DATA_TYPE2_ERROR_2,
   DATA_TYPE2_ERROR_3,
@@ -113,5 +136,17 @@ typedef union Data
   };
 } data;
 
+// type2_serial can be generalized
+int DATA_validateHeader(Data * data, type1 t1, type2_serial t2)
+{
+  return data->data.header.header1 == 0x02 &&
+         data->data.header.header2 == 0xFF &&
+         data->data.header.header3 == 0xFE &&
+         data->data.header.type1 == t1 &&
+         data->data.header.type2 == t2;
+  // data.data.header.res = 0x00; // version
+}
+
+extern int DATA_validateHeader(Data * data, type1 t1, type2_serial t2);
 
 #endif // DATA_H

@@ -131,7 +131,7 @@ void loop() {
     {
       //datasize = udp.parsePacket();
       data.data.header.len = datasize; // this datasize is not valid
-      
+
       udp.read(data.uc_buffer, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
       //server.send(data.uc_buffer);
       //server.send(200, "text/plain", data.c_buffer);
@@ -140,8 +140,19 @@ void loop() {
       //Serial.print("0,");
       //Serial.print(datasize);
       //Serial.print(":");
-      // Protocol
-      Serial.write(data.uc_buffer, datasize);
+
+      // Validate Protocol
+
+      if (DATA_validateHeader(&data, DATA_TYPE1_SERIAL, DATA_TYPE2_SERIAL_0))
+      {
+        Serial.write(data.data.c_payload, data.data.header.len);
+        sendmsg("ERR: 0x0000", 11);// STR(DATA_TYPE2_ERROR_0), 11);
+      }
+      else
+      {
+        sendmsg("ERR: 0xFFFF", 11);// STR(DATA_TYPE2_ERROR), 11);
+      }
+
     }
 
     datasize = Serial.available();
@@ -161,7 +172,7 @@ void loop() {
 
       Serial.readBytes(data.data.c_payload, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
       //server.send(200, "text/plain", data.c_buffer);
-      sendmsg(data.c_buffer, datasize+DATA_HEADER_LEN );
+      sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );
     }
   }
   else
@@ -203,7 +214,7 @@ void setRemoteIPPort()
 
   //udp.begin(LOCAL_PORT);
   //sendmsg("I AM ON", 8);
-      
+
   Serial.println();
   Serial.println("OK");
 }
