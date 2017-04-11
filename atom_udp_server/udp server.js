@@ -2,7 +2,7 @@ var LOCAL_PORT = 20000;
 //var HOST = '127.0.0.1';
 
 var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.43.25';
+var REMOTE_IP = '192.168.4.4'; //'192.168.43.25';
 
 const colors = {
  Reset: "\x1b[0m",

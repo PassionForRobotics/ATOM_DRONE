@@ -25,8 +25,13 @@ ESP8266WebServer server(80);
 const char* www_username = "admin";
 const char* www_password = "esp8266";
 
-const char* ssid     = "RICK";
+const char* _ssid     = "RICK";
+const char* _password = "88888888";
+
+const char* ssid     = "__ATOM__";
 const char* password = "88888888";
+
+
 
 int system_mode = -1;
 
@@ -40,16 +45,21 @@ void sendmsg(char* msg, int size)
   udp.endPacket();
 }
 
+void startUDPServer()
+{
+  Serial.println("ready");
+  udp.begin(LOCAL_PORT);
+  //sendmsg("I AM ON", 8);
+  Serial.println(system_mode);
+  Serial.println("OK");
+}
+
 void WiFiEvent(WiFiEvent_t event) {
   //Serial.printf("[WiFi-event] event: %d\n", event);
 
   switch (event) {
     case WIFI_EVENT_STAMODE_GOT_IP:
-      Serial.println("ready");
-      udp.begin(LOCAL_PORT);
-      //sendmsg("I AM ON", 8);
-      Serial.println(system_mode);
-      Serial.println("OK");
+      startUDPServer();
 
       server.on("/", []() {
         if (!server.authenticate(www_username, www_password))
@@ -239,17 +249,31 @@ void sendData()
 void printIP()
 {
   Serial.println(WiFi.localIP());
+  Serial.println(WiFi.softAPIP());
+  Serial.println("OK");
 }
 
 void startWiFi()
 {
+
   // delete old config
   WiFi.disconnect(false);
 
+  WiFi.mode(WIFI_AP);
+  IPAddress ip(192, 168, 4, 4);
+  IPAddress gateway(192, 168, 4, 1);
+  IPAddress subnet(255, 255, 255, 0);
+  WiFi.softAPConfig(ip, gateway, subnet);
+  WiFi.softAP(ssid, password); //Access point is open - See more at: http://www.esp8266.com/viewtopic.php?f=29&t=12124#sthash.HXUoeE1P.dpuf
+
+
   delay(200);
-  WiFi.onEvent(WiFiEvent);
-  WiFi.begin(ssid, password);
+  //WiFi.onEvent(WiFiEvent);
+  //WiFi.mode(WIFI_AP);
+  //WiFi.softAP(ssid, password);
+  //WiFi.begin(ssid, password);
   Serial.println("+STARTing...");
+  startUDPServer();
 }
 
 void operationMode()
