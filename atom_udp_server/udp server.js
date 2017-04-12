@@ -82,16 +82,26 @@ server.on('listening', function () {
     console.log('UDP Server listening on ' + address.address + ":" + address.port);
 });
 
+var last_rec_packet_len = 0;
+var rec_packet_len = 0;
+
 var complete_msg = 'ERR: 0x0000';
+var incoming_msg = new Buffer('02fffe00020000002d0000004f6c6c65314f6c6c65324f6c6c65334f6c6c65344f6c6c65354f6c6c65364f6c6c65374f6c6c65384f6c6c6539');//Olle1Olle2Olle3Olle4Olle5Olle6Olle7Olle8Olle9';
 server.on('message', function (message, remote) {
+var buf = Buffer.from(message, 'hex');
 
 	if(complete_msg.toString() == message.toString())
     	{
     		send();
     	}
+    	else if(incoming_msg.toString() == buf.toString('hex'))
+    	{
+    		//console.log( remote.size + ':' + remote.address + ':' + remote.port +' - ' + ascii_to_hex(message) + '  ' +buf + ' ' + incoming_msg);
+    		rec_packet_len = rec_packet_len + remote.size;
+    	}
     	else
     	{
-    		console.log( remote.size + ':' + remote.address + ':' + remote.port +' - ' + ascii_to_hex(message) + '  ' +message);
+    		console.log( remote.size + ':' + remote.address + ':' + remote.port +' - ' + ascii_to_hex(message) + ' ' + message );
     	}
 
 });
@@ -99,7 +109,7 @@ server.on('message', function (message, remote) {
 server.bind(LOCAL_PORT);//, HOST);
 
 
-var packet_len = 0;
+var send_packet_len = 0;
 //MESSAGE = [0x02, 0xff, 0xfe, 0x00, 0x02, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x0d, 0x0a] 
 const MESSAGE = new Buffer('02fffe00020000001B00000068656c6c6f68656c6c6f68656c6c6f68656c6c6f68656c6c6f0d0a', 'hex');
 function send()
@@ -108,7 +118,7 @@ function send()
 	function(err, bytes) 
 	{
         	if (err) throw err;
-        	packet_len = packet_len + MESSAGE.length
+        	send_packet_len = send_packet_len + MESSAGE.length
         //console.log('UDP message sent to ' + HOST + ':' + PORT + ':' + buffer6.toString('hex') + ':' + (bytes - message.length /*-2*/ )); 
         });
         
@@ -118,24 +128,32 @@ function send()
 //setInterval(send, 3000); 
 
 var timeinterval = 1000;
-var last_pacekt_len = 0;
+var last_send_packet_len = 0;
 function printthroughput()
 {	
-	if((packet_len-last_pacekt_len)!=0)
+	if((send_packet_len-last_send_packet_len)!=0)
 	{
 		console.log(colors.Reset + getDateTime() + ' udp bandwidth ' 
-		+(Math.round(((packet_len-last_pacekt_len)/timeinterval) * 1000) / 1000).toFixed(3)
-		//+ ((packet_len-last_pacekt_len)/timeinterval).toString() 
-		+ ' KBps |' + packet_len);
+		+(Math.round(((send_packet_len-last_send_packet_len)/timeinterval) * 1000) / 1000).toFixed(3)
+		//+ ((send_packet_len-last_pacekt_len)/timeinterval).toString() 
+		+ ' KBps |' + send_packet_len + ' | rec: ' 
+		+ (Math.round(((rec_packet_len-last_rec_packet_len)/timeinterval) * 1000) / 1000).toFixed(3)
+		+ ' KBps |' + rec_packet_len );
+		
 	}
 	else
 	{
 		console.log(colors.bg.Red + getDateTime() + ' udp bandwidth ' 
-		+(Math.round(((packet_len-last_pacekt_len)/timeinterval) * 1000) / 1000).toFixed(3)
-		//+ ((packet_len-last_pacekt_len)/timeinterval).toString() 
-		+ ' KBps |' + packet_len + colors.Reset);
+		+(Math.round(((send_packet_len-last_send_packet_len)/timeinterval) * 1000) / 1000).toFixed(3)
+		//+ ((send_packet_len-last_pacekt_len)/timeinterval).toString() 
+		+ ' KBps |' + send_packet_len + ' | rec: ' 
+		+ (Math.round(((rec_packet_len-last_rec_packet_len)/timeinterval) * 1000) / 1000).toFixed(3)
+		+ ' KBps |' + rec_packet_len  + colors.Reset);
+		
+		send();
 	}
-	last_pacekt_len = packet_len;
+	last_send_packet_len = send_packet_len;
+	last_rec_packet_len = rec_packet_len;
 }
 
 setInterval(printthroughput, timeinterval);
