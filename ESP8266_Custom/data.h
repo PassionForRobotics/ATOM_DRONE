@@ -22,6 +22,7 @@
 #endif
 #define RESVER(x) SMARTVER_HELPER_(x)
 
+
 typedef enum type1
 {
   DATA_TYPE1_DEFAULT = 0xFFFF,
@@ -65,6 +66,28 @@ typedef enum type2_serial
   DATA_TYPE2_SERIAL_MAX
 } type2_serial;
 
+typedef enum type2_ping
+{
+  DATA_TYPE2_PING_DEFAULT = 0xFFFF, // Idle
+  DATA_TYPE2_PING = DATA_TYPE2_PING_DEFAULT,
+  DATA_TYPE2_PING_0 = 0x00, // RX-ack-TX with counter
+  DATA_TYPE2_PING_1,        // RX, TX without counter and ack
+  DATA_TYPE2_PING_2,
+  DATA_TYPE2_PING_3,
+  DATA_TYPE2_PING_4,
+  DATA_TYPE2_PING_5,
+  DATA_TYPE2_PING_6,
+  DATA_TYPE2_PING_7,
+  DATA_TYPE2_PING_MAX
+} type2_ping;
+
+
+typedef struct reliencenperformance
+{
+  type1 type;
+  type2_ping type_ping;
+  uint32_t payloadcheckcntr;
+} reliencenperformance;
 
 typedef struct Header
 {
@@ -147,6 +170,17 @@ int DATA_validateHeader(Data * data, type1 t1, type2_serial t2)
   // data.data.header.res = 0x00; // version
 }
 
+int DATA_validateHeader(Data * data, type1 t1, type2_ping t2)
+{
+  return data->data.header.header1 == 0x02 &&
+         data->data.header.header2 == 0xFF &&
+         data->data.header.header3 == 0xFE &&
+         data->data.header.type1 == t1 &&
+         data->data.header.type2 == t2;
+  // data.data.header.res = 0x00; // version
+}
+
 extern int DATA_validateHeader(Data * data, type1 t1, type2_serial t2);
+extern int DATA_validateHeader(Data * data, type1 t1, type2_ping t2);
 
 #endif // DATA_H

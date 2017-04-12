@@ -18,7 +18,7 @@ SerialCommand SCmd(&Serial);
 WiFiUDP udp;
 #define LOCAL_PORT (10000)
 int remote_port = 20000;
-IPAddress remote_ip(192, 168, 1, 3);
+IPAddress remote_ip(192,168,4,103);//192, 168, 1, 3);
 
 ESP8266WebServer server(80);
 
@@ -32,7 +32,7 @@ const char* ssid     = "__ATOM__";
 const char* password = "88888888";
 
 
-
+reliencenperformance ping_test_state = {DATA_TYPE1_PING, DATA_TYPE2_PING_DEFAULT};
 int system_mode = -1;
 
 #define BUTTON_PIN 0
@@ -99,6 +99,8 @@ void setup() {
   SCmd.addCommand("AT+CIFSR", printIP);
   //SCmd.addCommand("AT+SEND", sendData);
   SCmd.addCommand("AT+SRIPP", setRemoteIPPort);
+  SCmd.addCommand("AT+RELPERFTEST", setRelianceAndPerformanceTest); // ping_test_state
+
 
   SCmd.addDefaultHandler(unrecognized);
 
@@ -111,6 +113,7 @@ void setup() {
 int button_state = 0;
 void loop() {
   Data data;
+  memset(data.uc_buffer, 0, DATA_SIZE);
   data.data.header.header1 = 0x02;
   data.data.header.header2 = 0xFF;
   data.data.header.header3 = 0xFE;
@@ -135,6 +138,12 @@ void loop() {
     data.data.header.type1 = DATA_TYPE1_SERIAL;
     data.data.header.type2 = 0;
 
+    if (DATA_TYPE2_PING_0 == ping_test_state.type_ping)
+    {
+      data.data.header.type1 = DATA_TYPE1_PING;
+      data.data.header.type2 = DATA_TYPE2_PING_0;
+    }
+
     int datasize = udp.parsePacket(); //udp.available();//
     //char buff[64] = {0};
     if (datasize)
@@ -143,6 +152,9 @@ void loop() {
       data.data.header.len = datasize; // this datasize is not valid
 
       udp.read(data.uc_buffer, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
+      //Serial.print("data cntr: ");
+      //Serial.println(data.data.payloadcheckcntr);
+
       //server.send(data.uc_buffer);
       //server.send(200, "text/plain", data.c_buffer);
       //EthernetClient client = server.available();
@@ -153,16 +165,40 @@ void loop() {
 
       // Validate Protocol
 
-      if (DATA_validateHeader(&data, DATA_TYPE1_SERIAL, DATA_TYPE2_SERIAL_0))
+      if (DATA_TYPE2_PING_0 == ping_test_state.type_ping)
       {
-        Serial.write(data.data.c_payload, data.data.header.len);
-        sendmsg("ERR: 0x0000", 11);// STR(DATA_TYPE2_ERROR_0), 11);
+        if (DATA_validateHeader(&data, DATA_TYPE1_PING, DATA_TYPE2_PING_0))
+        {
+          //data.data.payloadcheckcntr = ping_test_state.payloadcheckcntr;
+         
+          if (data.data.payloadcheckcntr == ping_test_state.payloadcheckcntr)
+          {
+            Serial.write(data.data.c_payload, data.data.header.len);
+            ping_test_state.payloadcheckcntr++;
+            sendmsg("ERR: 0x0000", 11);// sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );// STR(DATA_TYPE2_ERROR_0), 11);
+          }
+          else
+            sendmsg(data.c_buffer, datasize );
+        }
+        else
+        {
+          sendmsg("ERR: 0xFFFF", 11);// STR(DATA_TYPE2_ERROR), 11);
+        }
+
       }
       else
       {
-        sendmsg("ERR: 0xFFFF", 11);// STR(DATA_TYPE2_ERROR), 11);
-      }
+        if (DATA_validateHeader(&data, DATA_TYPE1_SERIAL, DATA_TYPE2_SERIAL_0))
+        {
+          Serial.write(data.data.c_payload, data.data.header.len);
+          sendmsg("ERR: 0x0000", 11);// STR(DATA_TYPE2_ERROR_0), 11);
+        }
+        else
+        {
+          sendmsg("ERR: 0xFFFF", 11);// STR(DATA_TYPE2_ERROR), 11);
+        }
 
+      }
     }
 
     datasize = Serial.available();
@@ -180,9 +216,18 @@ void loop() {
       //Serial.print(datasize);
       //Serial.println(">");
 
-      Serial.readBytes(data.data.c_payload, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
-      //server.send(200, "text/plain", data.c_buffer);
-      sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );
+      if (DATA_TYPE2_PING_0 == ping_test_state.type_ping) // sort RX-TX or echo from other uC
+      {
+        data.data.header.type1 = DATA_TYPE1_PING;
+        data.data.header.type2 = DATA_TYPE2_PING_0;
+      }
+      else
+      {
+
+        Serial.readBytes(data.data.c_payload, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
+        //server.send(200, "text/plain", data.c_buffer);
+        sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );
+      }
     }
   }
   else
@@ -192,6 +237,35 @@ void loop() {
 
 }
 
+void setRelianceAndPerformanceTest() // ping_test_state
+{
+
+  char *arg = NULL;
+  arg = SCmd.next();
+  type2_ping state = ping_test_state.type_ping;
+
+  if (arg != NULL)      // As long as it existed, take it
+  {
+    state = (type2_ping)atoi(arg); // set IP
+    if (DATA_TYPE2_PING_MAX < state)
+    {
+      unrecognized();
+      //Serial.println("ERROR");
+      return;
+    }
+    ping_test_state.type_ping = state;
+    ping_test_state.payloadcheckcntr = 0;
+    Serial.print(ping_test_state.type_ping);
+  }
+  else {
+    unrecognized();
+    return;
+  }
+
+  Serial.println();
+  Serial.println("OK");
+
+}
 
 // AT+SETREMOTEIPPORT IP1.IP2.IP3.IP4 PPORTT
 void setRemoteIPPort()
