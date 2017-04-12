@@ -220,6 +220,9 @@ void loop() {
       {
         data.data.header.type1 = DATA_TYPE1_PING;
         data.data.header.type2 = DATA_TYPE2_PING_0;
+        Serial.readBytes(data.data.c_payload, datasize > MAX_PAYLOAD_SIZE ? MAX_PAYLOAD_SIZE : datasize);
+        //server.send(200, "text/plain", data.c_buffer);
+        sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );
       }
       else
       {

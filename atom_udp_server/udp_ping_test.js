@@ -98,9 +98,14 @@ const arr = new Uint8Array(counternumdig);
 const zerostr = new Buffer(arr).fill('0')
 console.log(zerostr + ':' + counternumdig + ':' + max_value);
 
+function getVstr()
+{
+	return (zerostr + i.toString(16)).substr(-counternumdig);
+}
+ 
 function createpacket()
 {
-	var vstr = (zerostr + i.toString(16)).substr(-counternumdig);
+	var vstr = getVstr();// (zerostr + i.toString(16)).substr(-counternumdig);
 	
 	//vstr = "48484849";
     //console.log(':' + vstr + ':' + endian(vstr,0));
@@ -138,7 +143,8 @@ var last_rec_packet_len = 0;
 var rec_packet_len = 0;
 
 var complete_msg = 'ERR: 0x0000';
-var incoming_msg = new Buffer('02fffe00020000002d0000004f6c6c65314f6c6c65324f6c6c65334f6c6c65344f6c6c65354f6c6c65364f6c6c65374f6c6c65384f6c6c6539');//Olle1Olle2Olle3Olle4Olle5Olle6Olle7Olle8Olle9';
+var incoming_msg = new Buffer('02fffe000100000004000000');
+ //'02fffe00020000002d0000004f6c6c65314f6c6c65324f6c6c65334f6c6c65344f6c6c65354f6c6c65364f6c6c65374f6c6c65384f6c6c6539');//Olle1Olle2Olle3Olle4Olle5Olle6Olle7Olle8Olle9';
 server.on('message', function (message, remote) {
 var buf = Buffer.from(message, 'hex');
 
@@ -146,7 +152,7 @@ var buf = Buffer.from(message, 'hex');
     	{
     		send();
     	}
-    	else if(incoming_msg.toString() == buf.toString('hex'))
+    	else if(buf.toString('hex').includes(incoming_msg.toString()))
     	{
     		//console.log( remote.size + ':' + remote.address + ':' + remote.port +' - ' + ascii_to_hex(message) + '  ' +buf + ' ' + incoming_msg);
     		rec_packet_len = rec_packet_len + remote.size;
@@ -216,6 +222,38 @@ function printthroughput()
 	last_send_packet_len = send_packet_len;
 	last_rec_packet_len = rec_packet_len;
 }
+
+var SerialPort = require("serialport");
+debugger;
+var port = new SerialPort("/dev/ttyUSB0", {
+  baudRate: 115200,
+  parser: SerialPort.parsers.byteLength(4)
+});
+
+port.on('open', function() {
+  /*port.write('main screen turn on', function(err) {
+    if (err) {
+      return console.log('Error on write: ', err.message);
+    }
+    console.log('message written');
+  });*/
+});
+ 
+// open errors will be emitted as an error event 
+port.on('error', function(err) {
+  console.log('Error: ', err.message);
+});
+
+
+port.on('data', function (data) {
+	port.write(data, function () {
+	    port.drain();
+	  });
+  //console.log('Data: ' + ascii_to_hex(data));
+  //port.write(getVstr().toString('hex'));
+  //port.write(data);
+});
+
 
 setInterval(printthroughput, timeinterval);
 send();
