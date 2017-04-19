@@ -73,6 +73,8 @@ End
 #include <time.h>
 #endif
 
+#define ACTIVATION_TEST_ONLY // no train and use trained data
+
 const int PatternCount = 10;
 const int InputNodes = 7;
 const int HiddenNodes = 8;
@@ -134,6 +136,7 @@ float ChangeOutputWeights[HiddenNodes + 1][OutputNodes];
 #if defined(C_PRINT)
 
 void writeToaFile();
+void loadWeightsFromFile();
 
 int random(int n)
 {
@@ -161,6 +164,11 @@ void setup() {
 
 void loop () {
 
+#if defined(ACTIVATION_TEST_ONLY)
+
+	loadWeightsFromFile();
+
+#else
 
   /******************************************************************
     Initialize HiddenWeights and ChangeHiddenWeights
@@ -357,10 +365,85 @@ void loop () {
 #endif
 
   writeToaFile();
+  
+  
+  #endif //ACTIVATION_TEST_ONLY
 
 
   while (1);
 
+}
+
+void loadWeightsFromFile()
+{
+	 FILE *fp;
+	 char temp[128] = {0};
+	   /* read the values */
+  if ((fp = fopen("test.csv", "rb")) == NULL) {
+    printf("Cannot open file.\n");
+  }
+
+  
+  fscanf(fp, "%s\r\n", temp);
+  printf("HiddenWeights(%s)=\r\n{\r\n",temp);
+  
+  for (i = 0; i < HiddenNodes; i++) {
+    printf("{");
+    for (j = 0; j < InputNodes+1; j++) {
+		
+		
+	    if (j + 1 == InputNodes+1)
+      fscanf(fp, "%f,,\r\n", (&HiddenWeights[j][i]));
+      else
+		fscanf(fp, "%f,", (&HiddenWeights[j][i]));
+        
+	    if (j + 1 == InputNodes+1)
+        printf("%f", HiddenWeights[j][i]);
+      else
+        printf("%f,", HiddenWeights[j][i]);
+
+    }
+	if (i + 1 == HiddenNodes)
+		printf("}\r\n}\r\n");
+	else
+		printf("},\r\n");
+
+  }
+
+  fscanf(fp, "%s\r\n", temp);
+  printf("OutputWeights(%s)=\r\n{\r\n",temp);
+  
+  for (i = 0; i < OutputNodes; i++) {
+    printf("{");
+    for (j = 0; j < HiddenNodes+1; j++) {
+      //fscanf(fp, "%f,", (&OutputWeights[j][i]));
+	  
+	    if (j + 1 == HiddenNodes+1)
+      fscanf(fp, "%f,\r\n", (&OutputWeights[j][i]));
+      else
+		fscanf(fp, "%f,", (&OutputWeights[j][i]));
+
+      if (j + 1 == HiddenNodes+1)
+        printf("%f", OutputWeights[j][i]);
+      else
+        printf("%f,", OutputWeights[j][i]);
+
+
+    }
+	if (i + 1 == OutputNodes)
+		printf("}\r\n}\r\n");
+	else
+		printf("},\r\n");
+
+  }
+  
+  fclose(fp);
+  
+  printf("End\r\n");
+  
+  toTerminal();
+
+  printf("\r\n");
 }
 
 void writeToaFile()
@@ -369,8 +452,6 @@ void writeToaFile()
   if ((fp = fopen("test.csv", "wb")) == NULL) {
     printf("Cannot open file.\n");
   }
-
-// bias implementation is remaining
 
   fprintf(fp, "HiddenWeights:");
   for (i = 0; i < HiddenNodes+1; i++) {
@@ -404,6 +485,17 @@ void writeToaFile()
 
   fclose(fp);
 
+
+ printf("End\r\n");
+  
+  toTerminal();
+	#if !defined(C_PRINT)
+	#else
+	 printf("\r\nYou can close it now. ");
+	 printf("\r\n");
+	#endif
+
+return;
   /* read the values */
   if ((fp = fopen("test.csv", "rb")) == NULL) {
     printf("Cannot open file.\n");
