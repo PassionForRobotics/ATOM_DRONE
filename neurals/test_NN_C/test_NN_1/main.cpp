@@ -77,10 +77,10 @@ const int PatternCount = 10;
 const int InputNodes = 7;
 const int HiddenNodes = 8;
 const int OutputNodes = 4;
-const float LearningRate = 0.13;
-const float Momentum = 0.19;
+const float LearningRate = 0.3;
+const float Momentum = 0.9;
 const float InitialWeightMax = 0.5;
-const float Success = 0.01;
+const float Success = 0.000004;
 
 const float Input[PatternCount][InputNodes] = {
   { 1, 1, 1, 1, 1, 1, 0 },  // 0
@@ -307,9 +307,9 @@ void loop () {
       Serial.print ("TrainingCycle: ");
       Serial.print (TrainingCycle);
       Serial.print ("  Error = ");
-      Serial.println (Error, 5);
+      Serial.println (Error, 14);
 #else
-      printf("\n\nTrainingCycle: %ld  Error = %5.5f\n", TrainingCycle, Error);
+      printf("\n\nTrainingCycle: %ld  Error = %5.9f\n", TrainingCycle, Error);
 #endif
       toTerminal();
 
@@ -451,6 +451,11 @@ void writeToaFile()
   printf("End\r\n");
   
   toTerminal();
+#if !defined(C_PRINT)
+#else
+ printf("\r\nYou can close it now. ");
+ printf("\r\n");
+#endif
 
 }
 
@@ -524,8 +529,11 @@ void toTerminal()
 #endif
     }
   }
-
-
+#if !defined(C_PRINT)
+#else
+ //printf("\r\nYou can close it now. ");
+ printf("\r\n");
+#endif
 }
 
 #if defined(C_PRINT)
