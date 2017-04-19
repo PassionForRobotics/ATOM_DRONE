@@ -382,7 +382,7 @@ void writeToaFile()
     for ( j = 0 ; j < InputNodes+1 ; j++ ) {
       fprintf(fp, "%f,", HiddenWeights[j][i]);
     }
-    fprintf(fp, "\r\n");
+    fprintf(fp, ",\r\n");
   }
 
   fprintf(fp, "OutputWeights:");
@@ -394,7 +394,7 @@ void writeToaFile()
     for ( j = 0 ; j < HiddenNodes+1 ; j++ ) {
       fprintf(fp, "%f,", OutputWeights[j][i]);
     }
-    fprintf(fp, ",\r\n");
+    fprintf(fp, "\r\n");
   }
   fprintf(fp, "End");
   for (i = 0; i < HiddenNodes+1; i++) {
