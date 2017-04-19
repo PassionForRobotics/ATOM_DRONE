@@ -373,7 +373,7 @@ void writeToaFile()
 // bias implementation is remaining
 
   fprintf(fp, "HiddenWeights:");
-  for (i = 0; i < HiddenNodes; i++) {
+  for (i = 0; i < HiddenNodes+1; i++) {
 	fprintf(fp,",");
 	  }
 	  fprintf(fp, "\r\n");
@@ -386,7 +386,7 @@ void writeToaFile()
   }
 
   fprintf(fp, "OutputWeights:");
-  for (i = 0; i < HiddenNodes; i++) {
+  for (i = 0; i < HiddenNodes+1; i++) {
 	fprintf(fp,",");
 	  }
 	fprintf(fp, "\r\n");
@@ -397,7 +397,7 @@ void writeToaFile()
     fprintf(fp, "\r\n");
   }
   fprintf(fp, "End");
-  for (i = 0; i < HiddenNodes; i++) {
+  for (i = 0; i < HiddenNodes+1; i++) {
 	fprintf(fp,",");
 	  }
   fprintf(fp, "\r\n");
