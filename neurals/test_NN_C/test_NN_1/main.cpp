@@ -57,7 +57,7 @@ End
 
  * 
  * 
- * /
+ */
 
 #define C_PRINT
 
@@ -80,7 +80,7 @@ const int OutputNodes = 4;
 const float LearningRate = 0.13;
 const float Momentum = 0.19;
 const float InitialWeightMax = 0.5;
-const float Success = 0.00001;
+const float Success = 0.01;
 
 const float Input[PatternCount][InputNodes] = {
   { 1, 1, 1, 1, 1, 1, 0 },  // 0
@@ -372,7 +372,12 @@ void writeToaFile()
 
 // bias implementation is remaining
 
-  fprintf(fp, "HiddenWeights:\r\n");
+  fprintf(fp, "HiddenWeights:");
+  for (i = 0; i < HiddenNodes; i++) {
+	fprintf(fp,",");
+	  }
+	  fprintf(fp, "\r\n");
+  
   for ( i = 0 ; i < HiddenNodes ; i++ ) {
     for ( j = 0 ; j < InputNodes+1 ; j++ ) {
       fprintf(fp, "%f,", HiddenWeights[j][i]);
@@ -381,13 +386,21 @@ void writeToaFile()
   }
 
   fprintf(fp, "OutputWeights:\r\n");
+  for (i = 0; i < OutputNodes; i++) {
+	fprintf(fp,",");
+	  }
+	fprintf(fp, "\r\n");
   for ( i = 0 ; i < OutputNodes ; i++ ) {
     for ( j = 0 ; j < HiddenNodes+1 ; j++ ) {
       fprintf(fp, "%f,", OutputWeights[j][i]);
     }
     fprintf(fp, "\r\n");
   }
-  fprintf(fp, "End\r\n");
+  fprintf(fp, "End");
+  for (i = 0; i < OutputNodes; i++) {
+	fprintf(fp,",");
+	  }
+  fprintf(fp, "\r\n");
 
   fclose(fp);
 
@@ -397,6 +410,7 @@ void writeToaFile()
   }
 
   printf("HiddenWeights=\r\n{\r\n");
+  
   for (i = 0; i < HiddenNodes; i++) {
     printf("{");
     for (j = 0; j < InputNodes+1; j++) {

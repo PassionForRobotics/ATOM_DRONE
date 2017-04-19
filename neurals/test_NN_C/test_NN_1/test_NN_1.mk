@@ -5,8 +5,8 @@
 ## Debug
 ProjectName            :=test_NN_1
 ConfigurationName      :=Debug
-WorkspacePath          :=/home/rahuldeo/Arduino/commonntests/test_NN
-ProjectPath            :=/home/rahuldeo/Arduino/commonntests/test_NN/test_NN_1
+WorkspacePath          :=/home/rahuldeo/ATOM/ATOM_drone_robot_platform/neurals/test_NN_C
+ProjectPath            :=/home/rahuldeo/ATOM/ATOM_drone_robot_platform/neurals/test_NN_C/test_NN_1
 IntermediateDirectory  :=./Debug
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
@@ -92,7 +92,7 @@ PreBuild:
 ## Objects
 ##
 $(IntermediateDirectory)/main.cpp$(ObjectSuffix): main.cpp $(IntermediateDirectory)/main.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/rahuldeo/Arduino/commonntests/test_NN/test_NN_1/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IncludePath)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/rahuldeo/ATOM/ATOM_drone_robot_platform/neurals/test_NN_C/test_NN_1/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/main.cpp$(DependSuffix): main.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/main.cpp$(DependSuffix) -MM main.cpp
 
