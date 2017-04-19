@@ -74,6 +74,7 @@ End
 #endif
 
 #define ACTIVATION_TEST_ONLY // no train and use trained data
+//#undef ACTIVATION_TEST_ONLY
 
 const int PatternCount = 10;
 const int InputNodes = 7;
@@ -95,6 +96,7 @@ const float Input[PatternCount][InputNodes] = {
     { 1, 1, 1, 0, 0, 0, 0 },  // 7
     { 1, 1, 1, 1, 1, 1, 1 },  // 8
     { 1, 1, 1, 0, 0, 1, 1 }   // 9
+	//{ 0, 0, 0, 0, 0, 0, 0 }   // none
 };
 
 const float Target[PatternCount][OutputNodes] = {
@@ -108,6 +110,7 @@ const float Target[PatternCount][OutputNodes] = {
     { 0, 1, 1, 1 },
     { 1, 0, 0, 0 },
     { 1, 0, 0, 1 }
+	//{ 0, 0, 0, 0 }
 };
 
 /******************************************************************
@@ -350,7 +353,7 @@ void loop () {
             Serial.print ("  Error = ");
             Serial.println (Error, 14);
 #else
-            printf("\n\nTrainingCycle: %ld  Error = %5.9f\n", TrainingCycle, Error);
+            printf("\n\nTrainingCycle: %ld  Error = %2.9f\n", TrainingCycle, Error);
 #endif
             toTerminal();
 
@@ -379,7 +382,7 @@ void loop () {
     Serial.print ("  Error = ");
     Serial.println (Error, 5);
 #else
-    printf("\n\nTrainingCycle: %ld  Error = %5.5f\n", TrainingCycle, Error );
+    printf("\n\nTrainingCycle: %ld  Error = %2.9f\n", TrainingCycle, Error );
 #endif
 
 
