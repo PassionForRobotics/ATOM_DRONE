@@ -94,5 +94,7 @@
   </Settings>
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
+    <File Name="neuralnet1.h"/>
+    <File Name="neuralnet1.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

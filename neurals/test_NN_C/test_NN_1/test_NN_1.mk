@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/neuralnet1.cpp$(ObjectSuffix) 
 
 
 
@@ -98,6 +98,14 @@ $(IntermediateDirectory)/main.cpp$(DependSuffix): main.cpp
 
 $(IntermediateDirectory)/main.cpp$(PreprocessSuffix): main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.cpp$(PreprocessSuffix) main.cpp
+
+$(IntermediateDirectory)/neuralnet1.cpp$(ObjectSuffix): neuralnet1.cpp $(IntermediateDirectory)/neuralnet1.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/home/rahuldeo/ATOM/ATOM_drone_robot_platform/neurals/test_NN_C/test_NN_1/neuralnet1.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/neuralnet1.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/neuralnet1.cpp$(DependSuffix): neuralnet1.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/neuralnet1.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/neuralnet1.cpp$(DependSuffix) -MM neuralnet1.cpp
+
+$(IntermediateDirectory)/neuralnet1.cpp$(PreprocessSuffix): neuralnet1.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/neuralnet1.cpp$(PreprocessSuffix) neuralnet1.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
