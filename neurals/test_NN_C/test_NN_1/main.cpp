@@ -137,6 +137,7 @@ float ChangeOutputWeights[HiddenNodes + 1][OutputNodes];
 
 void writeToaFile();
 void loadWeightsFromFile();
+void activate(float inarray[], int inlen, float outarray[], int outlen);
 
 int random(int n)
 {
@@ -176,6 +177,29 @@ void loop () {
 #if defined(ACTIVATION_TEST_ONLY)
 
     //loadWeightsFromFile(); // must be loaded first
+	
+	
+	float outarray[OutputNodes] = {0};
+	float inarray[InputNodes] = {0,0,0,0,0,0,0}; // is misclasifying as 7, Target[7]
+	
+	/*
+	for ( i = 0 ; i < InputNodes ; i++ ) 
+	{
+		inarray[i] = Input[0][i];
+	}
+	 */
+	 
+	activate(inarray, InputNodes, outarray, OutputNodes);
+	
+	
+	for ( i = 0 ; i < OutputNodes ; i++ ) 
+	{
+		printf(" %5.5f ", outarray[i]);
+	}
+	
+	printf("\r\n\r\n");
+	
+	while(1);
 
 #else
 
@@ -638,6 +662,50 @@ void toTerminal()
     printf("\r\n");
 #endif
 }
+
+
+
+void activate(float inarray[], int inlen, float outarray[], int outlen)
+{
+	int i = 0;
+	    /******************************************************************
+          Compute hidden layer activations
+        ******************************************************************/
+
+        for ( i = 0 ; i < HiddenNodes ; i++ ) {
+            Accum = HiddenWeights[InputNodes][i] ;
+            for ( j = 0 ; j < InputNodes ; j++ ) {
+                Accum += inarray[j] * HiddenWeights[j][i] ;
+            }
+            Hidden[i] = 1.0 / (1.0 + exp(-Accum)) ;
+        }
+
+        /******************************************************************
+          Compute output layer activations and calculate errors
+        ******************************************************************/
+
+        for ( i = 0 ; i < OutputNodes ; i++ ) {
+            Accum = OutputWeights[HiddenNodes][i] ;
+            for ( j = 0 ; j < HiddenNodes ; j++ ) {
+                Accum += Hidden[j] * OutputWeights[j][i] ;
+            }
+            outarray[i] = 1.0 / (1.0 + exp(-Accum)) ;
+        }
+		/*
+		for ( i = 0 ; i < OutputNodes ; i++ ) {
+#if !defined(C_PRINT)
+			Serial.print (outarray[i], 5);
+            Serial.print (" ");
+#else
+            printf(" %5.5f ", outarray[i]);
+#endif
+        }
+		 */
+		printf("\r\n\r\n");
+		
+}
+
+
 
 #if defined(C_PRINT)
 int  main ()
