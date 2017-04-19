@@ -6,22 +6,22 @@
  ******************************************************************/
 
 /*
- * 
- * 
+ *
+ *
  * TrainingCycle: 41076119  Error = 0.00001
 
-  Training Pattern: 0  Input  1.000  1.000  1.000  1.000  1.000  1.000  0.000   Target  0.000  0.000  0.000  0.000   Output  0.00083  0.00083  0.00070  0.00075 
-  Training Pattern: 1  Input  0.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  0.000  0.000  1.000   Output  0.00012  0.00100  0.00083  0.99921 
-  Training Pattern: 2  Input  1.000  1.000  0.000  1.000  1.000  0.000  1.000   Target  0.000  0.000  1.000  0.000   Output  0.00092  0.00021  1.00000  0.00098 
-  Training Pattern: 3  Input  1.000  1.000  1.000  1.000  0.000  0.000  1.000   Target  0.000  0.000  1.000  1.000   Output  0.00072  0.00088  0.99910  0.99914 
-  Training Pattern: 4  Input  0.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  0.000   Output  0.00041  0.99958  0.00063  0.00040 
-  Training Pattern: 5  Input  1.000  0.000  1.000  1.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  1.000   Output  0.00049  0.99929  0.00120  0.99963 
-  Training Pattern: 6  Input  0.000  0.000  1.000  1.000  1.000  1.000  1.000   Target  0.000  1.000  1.000  0.000   Output  0.00000  0.99927  0.99897  0.00000 
-  Training Pattern: 7  Input  1.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  1.000  1.000  1.000   Output  0.00000  0.99881  0.99893  0.99999 
-  Training Pattern: 8  Input  1.000  1.000  1.000  1.000  1.000  1.000  1.000   Target  1.000  0.000  0.000  0.000   Output  0.99865  0.00000  0.00026  0.00050 
-  Training Pattern: 9  Input  1.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  1.000  0.000  0.000  1.000   Output  0.99918  0.00032  0.00000  0.99950 
+  Training Pattern: 0  Input  1.000  1.000  1.000  1.000  1.000  1.000  0.000   Target  0.000  0.000  0.000  0.000   Output  0.00083  0.00083  0.00070  0.00075
+  Training Pattern: 1  Input  0.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  0.000  0.000  1.000   Output  0.00012  0.00100  0.00083  0.99921
+  Training Pattern: 2  Input  1.000  1.000  0.000  1.000  1.000  0.000  1.000   Target  0.000  0.000  1.000  0.000   Output  0.00092  0.00021  1.00000  0.00098
+  Training Pattern: 3  Input  1.000  1.000  1.000  1.000  0.000  0.000  1.000   Target  0.000  0.000  1.000  1.000   Output  0.00072  0.00088  0.99910  0.99914
+  Training Pattern: 4  Input  0.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  0.000   Output  0.00041  0.99958  0.00063  0.00040
+  Training Pattern: 5  Input  1.000  0.000  1.000  1.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  1.000   Output  0.00049  0.99929  0.00120  0.99963
+  Training Pattern: 6  Input  0.000  0.000  1.000  1.000  1.000  1.000  1.000   Target  0.000  1.000  1.000  0.000   Output  0.00000  0.99927  0.99897  0.00000
+  Training Pattern: 7  Input  1.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  1.000  1.000  1.000   Output  0.00000  0.99881  0.99893  0.99999
+  Training Pattern: 8  Input  1.000  1.000  1.000  1.000  1.000  1.000  1.000   Target  1.000  0.000  0.000  0.000   Output  0.99865  0.00000  0.00026  0.00050
+  Training Pattern: 9  Input  1.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  1.000  0.000  0.000  1.000   Output  0.99918  0.00032  0.00000  0.99950
 
-Training Set Solved! 
+Training Set Solved!
 --------
 
 HiddenWeights=
@@ -44,19 +44,19 @@ OutputWeights=
 }
 End
 
-  Training Pattern: 0  Input  1.000  1.000  1.000  1.000  1.000  1.000  0.000   Target  0.000  0.000  0.000  0.000   Output  0.00083  0.00083  0.00070  0.00075 
-  Training Pattern: 1  Input  0.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  0.000  0.000  1.000   Output  0.00012  0.00100  0.00083  0.99921 
-  Training Pattern: 2  Input  1.000  1.000  0.000  1.000  1.000  0.000  1.000   Target  0.000  0.000  1.000  0.000   Output  0.00092  0.00021  1.00000  0.00098 
-  Training Pattern: 3  Input  1.000  1.000  1.000  1.000  0.000  0.000  1.000   Target  0.000  0.000  1.000  1.000   Output  0.00072  0.00088  0.99910  0.99914 
-  Training Pattern: 4  Input  0.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  0.000   Output  0.00041  0.99958  0.00063  0.00040 
-  Training Pattern: 5  Input  1.000  0.000  1.000  1.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  1.000   Output  0.00049  0.99929  0.00120  0.99963 
-  Training Pattern: 6  Input  0.000  0.000  1.000  1.000  1.000  1.000  1.000   Target  0.000  1.000  1.000  0.000   Output  0.00000  0.99927  0.99897  0.00000 
-  Training Pattern: 7  Input  1.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  1.000  1.000  1.000   Output  0.00000  0.99881  0.99893  0.99999 
-  Training Pattern: 8  Input  1.000  1.000  1.000  1.000  1.000  1.000  1.000   Target  1.000  0.000  0.000  0.000   Output  0.99865  0.00000  0.00026  0.00050 
+  Training Pattern: 0  Input  1.000  1.000  1.000  1.000  1.000  1.000  0.000   Target  0.000  0.000  0.000  0.000   Output  0.00083  0.00083  0.00070  0.00075
+  Training Pattern: 1  Input  0.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  0.000  0.000  1.000   Output  0.00012  0.00100  0.00083  0.99921
+  Training Pattern: 2  Input  1.000  1.000  0.000  1.000  1.000  0.000  1.000   Target  0.000  0.000  1.000  0.000   Output  0.00092  0.00021  1.00000  0.00098
+  Training Pattern: 3  Input  1.000  1.000  1.000  1.000  0.000  0.000  1.000   Target  0.000  0.000  1.000  1.000   Output  0.00072  0.00088  0.99910  0.99914
+  Training Pattern: 4  Input  0.000  1.000  1.000  0.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  0.000   Output  0.00041  0.99958  0.00063  0.00040
+  Training Pattern: 5  Input  1.000  0.000  1.000  1.000  0.000  1.000  1.000   Target  0.000  1.000  0.000  1.000   Output  0.00049  0.99929  0.00120  0.99963
+  Training Pattern: 6  Input  0.000  0.000  1.000  1.000  1.000  1.000  1.000   Target  0.000  1.000  1.000  0.000   Output  0.00000  0.99927  0.99897  0.00000
+  Training Pattern: 7  Input  1.000  1.000  1.000  0.000  0.000  0.000  0.000   Target  0.000  1.000  1.000  1.000   Output  0.00000  0.99881  0.99893  0.99999
+  Training Pattern: 8  Input  1.000  1.000  1.000  1.000  1.000  1.000  1.000   Target  1.000  0.000  0.000  0.000   Output  0.99865  0.00000  0.00026  0.00050
 
 
- * 
- * 
+ *
+ *
  */
 
 #define C_PRINT
@@ -85,29 +85,29 @@ const float InitialWeightMax = 0.5;
 const float Success = 0.000004;
 
 const float Input[PatternCount][InputNodes] = {
-  { 1, 1, 1, 1, 1, 1, 0 },  // 0
-  { 0, 1, 1, 0, 0, 0, 0 },  // 1
-  { 1, 1, 0, 1, 1, 0, 1 },  // 2
-  { 1, 1, 1, 1, 0, 0, 1 },  // 3
-  { 0, 1, 1, 0, 0, 1, 1 },  // 4
-  { 1, 0, 1, 1, 0, 1, 1 },  // 5
-  { 0, 0, 1, 1, 1, 1, 1 },  // 6
-  { 1, 1, 1, 0, 0, 0, 0 },  // 7
-  { 1, 1, 1, 1, 1, 1, 1 },  // 8
-  { 1, 1, 1, 0, 0, 1, 1 }   // 9
+    { 1, 1, 1, 1, 1, 1, 0 },  // 0
+    { 0, 1, 1, 0, 0, 0, 0 },  // 1
+    { 1, 1, 0, 1, 1, 0, 1 },  // 2
+    { 1, 1, 1, 1, 0, 0, 1 },  // 3
+    { 0, 1, 1, 0, 0, 1, 1 },  // 4
+    { 1, 0, 1, 1, 0, 1, 1 },  // 5
+    { 0, 0, 1, 1, 1, 1, 1 },  // 6
+    { 1, 1, 1, 0, 0, 0, 0 },  // 7
+    { 1, 1, 1, 1, 1, 1, 1 },  // 8
+    { 1, 1, 1, 0, 0, 1, 1 }   // 9
 };
 
 const float Target[PatternCount][OutputNodes] = {
-  { 0, 0, 0, 0 },
-  { 0, 0, 0, 1 },
-  { 0, 0, 1, 0 },
-  { 0, 0, 1, 1 },
-  { 0, 1, 0, 0 },
-  { 0, 1, 0, 1 },
-  { 0, 1, 1, 0 },
-  { 0, 1, 1, 1 },
-  { 1, 0, 0, 0 },
-  { 1, 0, 0, 1 }
+    { 0, 0, 0, 0 },
+    { 0, 0, 0, 1 },
+    { 0, 0, 1, 0 },
+    { 0, 0, 1, 1 },
+    { 0, 1, 0, 0 },
+    { 0, 1, 0, 1 },
+    { 0, 1, 1, 0 },
+    { 0, 1, 1, 1 },
+    { 1, 0, 0, 0 },
+    { 1, 0, 0, 1 }
 };
 
 /******************************************************************
@@ -140,7 +140,7 @@ void loadWeightsFromFile();
 
 int random(int n)
 {
-  return (int)(rand() % n);
+    return (int)(rand() % n);
 }
 #endif
 
@@ -149,404 +149,415 @@ void toTerminal();
 void setup() {
 
 #if !defined(C_PRINT)
-  Serial.begin(250000);
+    Serial.begin(250000);
 #else
-  time_t t;
-  srand((unsigned) time(&t));
+    time_t t;
+    srand((unsigned) time(&t));
 #endif //C_PRINT
 
-  //randomSeed(analogRead(3));
-  ReportEvery1000 = 1;
-  for ( p = 0 ; p < PatternCount ; p++ ) {
-    RandomizedIndex[p] = p ;
-  }
+    //randomSeed(analogRead(3));
+    ReportEvery1000 = 1;
+    for ( p = 0 ; p < PatternCount ; p++ ) {
+        RandomizedIndex[p] = p ;
+    }
+	
+	
+#if defined(ACTIVATION_TEST_ONLY)
+
+    loadWeightsFromFile();
+
+#else
+
+#endif // ACTIVATION_TEST_ONLY
 }
 
 void loop () {
 
 #if defined(ACTIVATION_TEST_ONLY)
 
-	loadWeightsFromFile();
+    //loadWeightsFromFile(); // must be loaded first
 
 #else
-
-  /******************************************************************
-    Initialize HiddenWeights and ChangeHiddenWeights
-  ******************************************************************/
-
-  for ( i = 0 ; i < HiddenNodes ; i++ ) {
-    for ( j = 0 ; j <= InputNodes ; j++ ) {
-      ChangeHiddenWeights[j][i] = 0.0 ;
-
-      float rr = float(random(100));
-      // #if !defined(C_PRINT)
-      //       //Serial.println("Initial/Untrained Outputs: ");
-      // #else
-      //       printf("\nRrrR %f", rr);
-      // #endif
-      Rando = rr / 100;
-
-      HiddenWeights[j][i] = 2.0 * ( Rando - 0.5 ) * InitialWeightMax ;
-
-      //  #if !defined(C_PRINT)
-      // //       //Serial.println("Initial/Untrained Outputs: ");
-      //  #else
-      //        printf("\nRrrR %f", HiddenWeights[j][i]);
-      //  #endif
-
-    }
-  }
-  /******************************************************************
-    Initialize OutputWeights and ChangeOutputWeights
-  ******************************************************************/
-
-  for ( i = 0 ; i < OutputNodes ; i ++ ) {
-    for ( j = 0 ; j <= HiddenNodes ; j++ ) {
-      ChangeOutputWeights[j][i] = 0.0 ;
-      Rando = float(random(100)) / 100;
-      OutputWeights[j][i] = 2.0 * ( Rando - 0.5 ) * InitialWeightMax ;
-    }
-  }
-#if !defined(C_PRINT)
-  Serial.println("Initial/Untrained Outputs: ");
-#else
-  printf("Initial/Untrained Outputs: ");
-#endif
-  toTerminal();
-  /******************************************************************
-    Begin training
-  ******************************************************************/
-
-  for ( TrainingCycle = 1 ; TrainingCycle < 2147483647 ; TrainingCycle++) {
 
     /******************************************************************
-      Randomize order of training patterns
+      Initialize HiddenWeights and ChangeHiddenWeights
     ******************************************************************/
 
-    for ( p = 0 ; p < PatternCount ; p++) {
-      q = random(PatternCount);
-      r = RandomizedIndex[p] ;
-      RandomizedIndex[p] = RandomizedIndex[q] ;
-      RandomizedIndex[q] = r ;
+    for ( i = 0 ; i < HiddenNodes ; i++ ) {
+        for ( j = 0 ; j <= InputNodes ; j++ ) {
+            ChangeHiddenWeights[j][i] = 0.0 ;
+
+            float rr = float(random(100));
+            // #if !defined(C_PRINT)
+            //       //Serial.println("Initial/Untrained Outputs: ");
+            // #else
+            //       printf("\nRrrR %f", rr);
+            // #endif
+            Rando = rr / 100;
+
+            HiddenWeights[j][i] = 2.0 * ( Rando - 0.5 ) * InitialWeightMax ;
+
+            //  #if !defined(C_PRINT)
+            // //       //Serial.println("Initial/Untrained Outputs: ");
+            //  #else
+            //        printf("\nRrrR %f", HiddenWeights[j][i]);
+            //  #endif
+
+        }
     }
-    Error = 0.0 ;
     /******************************************************************
-      Cycle through each training pattern in the randomized order
+      Initialize OutputWeights and ChangeOutputWeights
     ******************************************************************/
-    for ( q = 0 ; q < PatternCount ; q++ ) {
-      p = RandomizedIndex[q];
 
-      /******************************************************************
-        Compute hidden layer activations
-      ******************************************************************/
-
-      for ( i = 0 ; i < HiddenNodes ; i++ ) {
-        Accum = HiddenWeights[InputNodes][i] ;
-        for ( j = 0 ; j < InputNodes ; j++ ) {
-          Accum += Input[p][j] * HiddenWeights[j][i] ;
+    for ( i = 0 ; i < OutputNodes ; i ++ ) {
+        for ( j = 0 ; j <= HiddenNodes ; j++ ) {
+            ChangeOutputWeights[j][i] = 0.0 ;
+            Rando = float(random(100)) / 100;
+            OutputWeights[j][i] = 2.0 * ( Rando - 0.5 ) * InitialWeightMax ;
         }
-        Hidden[i] = 1.0 / (1.0 + exp(-Accum)) ;
-      }
-
-      /******************************************************************
-        Compute output layer activations and calculate errors
-      ******************************************************************/
-
-      for ( i = 0 ; i < OutputNodes ; i++ ) {
-        Accum = OutputWeights[HiddenNodes][i] ;
-        for ( j = 0 ; j < HiddenNodes ; j++ ) {
-          Accum += Hidden[j] * OutputWeights[j][i] ;
-        }
-        Output[i] = 1.0 / (1.0 + exp(-Accum)) ;
-        OutputDelta[i] = (Target[p][i] - Output[i]) * Output[i] * (1.0 - Output[i]) ;
-        Error += 0.5 * (Target[p][i] - Output[i]) * (Target[p][i] - Output[i]) ;
-      }
-
-      /******************************************************************
-        Backpropagate errors to hidden layer
-      ******************************************************************/
-
-      for ( i = 0 ; i < HiddenNodes ; i++ ) {
-        Accum = 0.0 ;
-        for ( j = 0 ; j < OutputNodes ; j++ ) {
-          Accum += OutputWeights[i][j] * OutputDelta[j] ;
-        }
-        HiddenDelta[i] = Accum * Hidden[i] * (1.0 - Hidden[i]) ;
-      }
-
-
-      /******************************************************************
-        Update Inner-->Hidden Weights
-      ******************************************************************/
-
-
-      for ( i = 0 ; i < HiddenNodes ; i++ ) {
-        ChangeHiddenWeights[InputNodes][i] = LearningRate * HiddenDelta[i] + Momentum * ChangeHiddenWeights[InputNodes][i] ;
-        HiddenWeights[InputNodes][i] += ChangeHiddenWeights[InputNodes][i] ;
-        for ( j = 0 ; j < InputNodes ; j++ ) {
-          ChangeHiddenWeights[j][i] = LearningRate * Input[p][j] * HiddenDelta[i] + Momentum * ChangeHiddenWeights[j][i];
-          HiddenWeights[j][i] += ChangeHiddenWeights[j][i] ;
-        }
-      }
-
-      /******************************************************************
-        Update Hidden-->Output Weights
-      ******************************************************************/
-
-      for ( i = 0 ; i < OutputNodes ; i ++ ) {
-        ChangeOutputWeights[HiddenNodes][i] = LearningRate * OutputDelta[i] + Momentum * ChangeOutputWeights[HiddenNodes][i] ;
-        OutputWeights[HiddenNodes][i] += ChangeOutputWeights[HiddenNodes][i] ;
-        for ( j = 0 ; j < HiddenNodes ; j++ ) {
-          ChangeOutputWeights[j][i] = LearningRate * Hidden[j] * OutputDelta[i] + Momentum * ChangeOutputWeights[j][i] ;
-          OutputWeights[j][i] += ChangeOutputWeights[j][i] ;
-        }
-      }
     }
-
-    /******************************************************************
-      Every 1000 cycles send data to terminal for display
-    ******************************************************************/
-    ReportEvery1000 = ReportEvery1000 - 1;
-    if (ReportEvery1000 == 0)
-    {
 #if !defined(C_PRINT)
-      Serial.println();
-      Serial.println();
-      Serial.print ("TrainingCycle: ");
-      Serial.print (TrainingCycle);
-      Serial.print ("  Error = ");
-      Serial.println (Error, 14);
+    Serial.println("Initial/Untrained Outputs: ");
 #else
-      printf("\n\nTrainingCycle: %ld  Error = %5.9f\n", TrainingCycle, Error);
+    printf("Initial/Untrained Outputs: ");
 #endif
-      toTerminal();
+    toTerminal();
+    /******************************************************************
+      Begin training
+    ******************************************************************/
 
-      if (TrainingCycle == 1)
-      {
-        ReportEvery1000 = 999;
-      }
-      else
-      {
-        ReportEvery1000 = 1000;
-      }
+    for ( TrainingCycle = 1 ; TrainingCycle < 2147483647 ; TrainingCycle++) {
+
+        /******************************************************************
+          Randomize order of training patterns
+        ******************************************************************/
+
+        for ( p = 0 ; p < PatternCount ; p++) {
+            q = random(PatternCount);
+            r = RandomizedIndex[p] ;
+            RandomizedIndex[p] = RandomizedIndex[q] ;
+            RandomizedIndex[q] = r ;
+        }
+        Error = 0.0 ;
+        /******************************************************************
+          Cycle through each training pattern in the randomized order
+        ******************************************************************/
+        for ( q = 0 ; q < PatternCount ; q++ ) {
+            p = RandomizedIndex[q];
+
+            /******************************************************************
+              Compute hidden layer activations
+            ******************************************************************/
+
+            for ( i = 0 ; i < HiddenNodes ; i++ ) {
+                Accum = HiddenWeights[InputNodes][i] ;
+                for ( j = 0 ; j < InputNodes ; j++ ) {
+                    Accum += Input[p][j] * HiddenWeights[j][i] ;
+                }
+                Hidden[i] = 1.0 / (1.0 + exp(-Accum)) ;
+            }
+
+            /******************************************************************
+              Compute output layer activations and calculate errors
+            ******************************************************************/
+
+            for ( i = 0 ; i < OutputNodes ; i++ ) {
+                Accum = OutputWeights[HiddenNodes][i] ;
+                for ( j = 0 ; j < HiddenNodes ; j++ ) {
+                    Accum += Hidden[j] * OutputWeights[j][i] ;
+                }
+                Output[i] = 1.0 / (1.0 + exp(-Accum)) ;
+                OutputDelta[i] = (Target[p][i] - Output[i]) * Output[i] * (1.0 - Output[i]) ;
+                Error += 0.5 * (Target[p][i] - Output[i]) * (Target[p][i] - Output[i]) ;
+            }
+
+            /******************************************************************
+              Backpropagate errors to hidden layer
+            ******************************************************************/
+
+            for ( i = 0 ; i < HiddenNodes ; i++ ) {
+                Accum = 0.0 ;
+                for ( j = 0 ; j < OutputNodes ; j++ ) {
+                    Accum += OutputWeights[i][j] * OutputDelta[j] ;
+                }
+                HiddenDelta[i] = Accum * Hidden[i] * (1.0 - Hidden[i]) ;
+            }
+
+
+            /******************************************************************
+              Update Inner-->Hidden Weights
+            ******************************************************************/
+
+
+            for ( i = 0 ; i < HiddenNodes ; i++ ) {
+                ChangeHiddenWeights[InputNodes][i] = LearningRate * HiddenDelta[i] + Momentum * ChangeHiddenWeights[InputNodes][i] ;
+                HiddenWeights[InputNodes][i] += ChangeHiddenWeights[InputNodes][i] ;
+                for ( j = 0 ; j < InputNodes ; j++ ) {
+                    ChangeHiddenWeights[j][i] = LearningRate * Input[p][j] * HiddenDelta[i] + Momentum * ChangeHiddenWeights[j][i];
+                    HiddenWeights[j][i] += ChangeHiddenWeights[j][i] ;
+                }
+            }
+
+            /******************************************************************
+              Update Hidden-->Output Weights
+            ******************************************************************/
+
+            for ( i = 0 ; i < OutputNodes ; i ++ ) {
+                ChangeOutputWeights[HiddenNodes][i] = LearningRate * OutputDelta[i] + Momentum * ChangeOutputWeights[HiddenNodes][i] ;
+                OutputWeights[HiddenNodes][i] += ChangeOutputWeights[HiddenNodes][i] ;
+                for ( j = 0 ; j < HiddenNodes ; j++ ) {
+                    ChangeOutputWeights[j][i] = LearningRate * Hidden[j] * OutputDelta[i] + Momentum * ChangeOutputWeights[j][i] ;
+                    OutputWeights[j][i] += ChangeOutputWeights[j][i] ;
+                }
+            }
+        }
+
+        /******************************************************************
+          Every 1000 cycles send data to terminal for display
+        ******************************************************************/
+        ReportEvery1000 = ReportEvery1000 - 1;
+        if (ReportEvery1000 == 0)
+        {
+#if !defined(C_PRINT)
+            Serial.println();
+            Serial.println();
+            Serial.print ("TrainingCycle: ");
+            Serial.print (TrainingCycle);
+            Serial.print ("  Error = ");
+            Serial.println (Error, 14);
+#else
+            printf("\n\nTrainingCycle: %ld  Error = %5.9f\n", TrainingCycle, Error);
+#endif
+            toTerminal();
+
+            if (TrainingCycle == 1)
+            {
+                ReportEvery1000 = 999;
+            }
+            else
+            {
+                ReportEvery1000 = 1000;
+            }
+        }
+
+
+        /******************************************************************
+          If error rate is less than pre-determined threshold then end
+        ******************************************************************/
+
+        if ( Error < Success ) break ;
     }
-
-
-    /******************************************************************
-      If error rate is less than pre-determined threshold then end
-    ******************************************************************/
-
-    if ( Error < Success ) break ;
-  }
 #if !defined(C_PRINT)
-  Serial.println ();
-  Serial.println();
-  Serial.print ("TrainingCycle: ");
-  Serial.print (TrainingCycle);
-  Serial.print ("  Error = ");
-  Serial.println (Error, 5);
+    Serial.println ();
+    Serial.println();
+    Serial.print ("TrainingCycle: ");
+    Serial.print (TrainingCycle);
+    Serial.print ("  Error = ");
+    Serial.println (Error, 5);
 #else
-  printf("\n\nTrainingCycle: %ld  Error = %5.5f\n", TrainingCycle, Error );
+    printf("\n\nTrainingCycle: %ld  Error = %5.5f\n", TrainingCycle, Error );
 #endif
 
 
-  toTerminal();
+    toTerminal();
 
 #if !defined(C_PRINT)
-  Serial.println ();
-  Serial.println ();
-  Serial.println ("Training Set Solved! ");
-  Serial.println ("--------");
-  Serial.println ();
-  Serial.println ();
-  ReportEvery1000 = 1;
+    Serial.println ();
+    Serial.println ();
+    Serial.println ("Training Set Solved! ");
+    Serial.println ("--------");
+    Serial.println ();
+    Serial.println ();
+    ReportEvery1000 = 1;
 #else
-  printf("\n\nTraining Set Solved! \n--------\n\n");
+    printf("\n\nTraining Set Solved! \n--------\n\n");
 #endif
 
-  writeToaFile();
-  
-  
-  #endif //ACTIVATION_TEST_ONLY
+    writeToaFile();
 
 
-  while (1);
+#endif //ACTIVATION_TEST_ONLY
+
+
+    while (1);
 
 }
 
 void loadWeightsFromFile()
 {
-	 FILE *fp;
-	 char temp[128] = {0};
-	   /* read the values */
-  if ((fp = fopen("test.csv", "rb")) == NULL) {
-    printf("Cannot open file.\n");
-  }
+    FILE *fp;
+    char temp[128] = {0};
+    /* read the values */
+    if ((fp = fopen("test.csv", "rb")) == NULL) {
+        printf("Cannot open file.\n");
+    }
 
-  
-  fscanf(fp, "%s\r\n", temp);
-  printf("HiddenWeights(%s)=\r\n{\r\n",temp);
-  
-  for (i = 0; i < HiddenNodes; i++) {
-    printf("{");
-    for (j = 0; j < InputNodes+1; j++) {
-		
-		
-	    if (j + 1 == InputNodes+1)
-      fscanf(fp, "%f,,\r\n", (&HiddenWeights[j][i]));
-      else
-		fscanf(fp, "%f,", (&HiddenWeights[j][i]));
-        
-	    if (j + 1 == InputNodes+1)
-        printf("%f", HiddenWeights[j][i]);
-      else
-        printf("%f,", HiddenWeights[j][i]);
+
+    fscanf(fp, "%s\r\n", temp);
+    printf("HiddenWeights(%s)=\r\n{\r\n",temp);
+
+    for (i = 0; i < HiddenNodes; i++) {
+        printf("{");
+        for (j = 0; j < InputNodes+1; j++) {
+
+
+            if (j + 1 == InputNodes+1)
+                fscanf(fp, "%f,,\r\n", (&HiddenWeights[j][i]));
+            else
+                fscanf(fp, "%f,", (&HiddenWeights[j][i]));
+
+            if (j + 1 == InputNodes+1)
+                printf("%f", HiddenWeights[j][i]);
+            else
+                printf("%f,", HiddenWeights[j][i]);
+
+        }
+        if (i + 1 == HiddenNodes)
+            printf("}\r\n}\r\n");
+        else
+            printf("},\r\n");
 
     }
-	if (i + 1 == HiddenNodes)
-		printf("}\r\n}\r\n");
-	else
-		printf("},\r\n");
 
-  }
+    fscanf(fp, "%s\r\n", temp);
+    printf("OutputWeights(%s)=\r\n{\r\n",temp);
 
-  fscanf(fp, "%s\r\n", temp);
-  printf("OutputWeights(%s)=\r\n{\r\n",temp);
-  
-  for (i = 0; i < OutputNodes; i++) {
-    printf("{");
-    for (j = 0; j < HiddenNodes+1; j++) {
-      //fscanf(fp, "%f,", (&OutputWeights[j][i]));
-	  
-	    if (j + 1 == HiddenNodes+1)
-      fscanf(fp, "%f,\r\n", (&OutputWeights[j][i]));
-      else
-		fscanf(fp, "%f,", (&OutputWeights[j][i]));
+    for (i = 0; i < OutputNodes; i++) {
+        printf("{");
+        for (j = 0; j < HiddenNodes+1; j++) {
+			
 
-      if (j + 1 == HiddenNodes+1)
-        printf("%f", OutputWeights[j][i]);
-      else
-        printf("%f,", OutputWeights[j][i]);
+            if (j + 1 == HiddenNodes+1)
+                fscanf(fp, "%f,\r\n", (&OutputWeights[j][i]));
+            else
+                fscanf(fp, "%f,", (&OutputWeights[j][i]));
 
+            if (j + 1 == HiddenNodes+1)
+                printf("%f", OutputWeights[j][i]);
+            else
+                printf("%f,", OutputWeights[j][i]);
+
+        }
+        if (i + 1 == OutputNodes)
+            printf("}\r\n}\r\n");
+        else
+            printf("},\r\n");
 
     }
-	if (i + 1 == OutputNodes)
-		printf("}\r\n}\r\n");
-	else
-		printf("},\r\n");
 
-  }
-  
-  fclose(fp);
-  
-  printf("End\r\n");
-  
-  toTerminal();
+    fclose(fp);
 
-  printf("\r\n");
+    printf("End\r\n");
+
+    toTerminal();
+
+    printf("\r\n");
 }
 
 void writeToaFile()
 {
-  FILE *fp;
-  if ((fp = fopen("test.csv", "wb")) == NULL) {
-    printf("Cannot open file.\n");
-  }
-
-  fprintf(fp, "HiddenWeights:");
-  for (i = 0; i < HiddenNodes+1; i++) {
-	fprintf(fp,",");
-	  }
-	  fprintf(fp, "\r\n");
-  
-  for ( i = 0 ; i < HiddenNodes ; i++ ) {
-    for ( j = 0 ; j < InputNodes+1 ; j++ ) {
-      fprintf(fp, "%f,", HiddenWeights[j][i]);
+    FILE *fp;
+    if ((fp = fopen("test.csv", "wb")) == NULL) {
+        printf("Cannot open file.\n");
     }
-    fprintf(fp, ",\r\n");
-  }
 
-  fprintf(fp, "OutputWeights:");
-  for (i = 0; i < HiddenNodes+1; i++) {
-	fprintf(fp,",");
-	  }
-	fprintf(fp, "\r\n");
-  for ( i = 0 ; i < OutputNodes ; i++ ) {
-    for ( j = 0 ; j < HiddenNodes+1 ; j++ ) {
-      fprintf(fp, "%f,", OutputWeights[j][i]);
+    fprintf(fp, "HiddenWeights:");
+    for (i = 0; i < HiddenNodes+1; i++) {
+        fprintf(fp,",");
     }
     fprintf(fp, "\r\n");
-  }
-  fprintf(fp, "End");
-  for (i = 0; i < HiddenNodes+1; i++) {
-	fprintf(fp,",");
-	  }
-  fprintf(fp, "\r\n");
 
-  fclose(fp);
-
-
- printf("End\r\n");
-  
-  toTerminal();
-	#if !defined(C_PRINT)
-	#else
-	 printf("\r\nYou can close it now. ");
-	 printf("\r\n");
-	#endif
-
-return;
-  /* read the values */
-  if ((fp = fopen("test.csv", "rb")) == NULL) {
-    printf("Cannot open file.\n");
-  }
-
-  printf("HiddenWeights=\r\n{\r\n");
-  
-  for (i = 0; i < HiddenNodes; i++) {
-    printf("{");
-    for (j = 0; j < InputNodes+1; j++) {
-      fscanf(fp, "%f", (&HiddenWeights[j][i]));
-      
-	    if (j + 1 == InputNodes+1)
-        printf("%f", HiddenWeights[j][i]);
-      else
-        printf("%f,", HiddenWeights[j][i]);
-
+    for ( i = 0 ; i < HiddenNodes ; i++ ) {
+        for ( j = 0 ; j < InputNodes+1 ; j++ ) {
+            fprintf(fp, "%f,", HiddenWeights[j][i]);
+        }
+        fprintf(fp, ",\r\n");
     }
-	if (i + 1 == HiddenNodes)
-		printf("}\r\n}\r\n");
-	else
-		printf("},\r\n");
 
-  }
-
-  printf("OutputWeights=\r\n{\r\n");
-  for (i = 0; i < OutputNodes; i++) {
-    printf("{");
-    for (j = 0; j < HiddenNodes+1; j++) {
-      fscanf(fp, "%f,", (&OutputWeights[j][i]));
-
-      if (j + 1 == HiddenNodes+1)
-        printf("%f", OutputWeights[j][i]);
-      else
-        printf("%f,", OutputWeights[j][i]);
-
-
+    fprintf(fp, "OutputWeights:");
+    for (i = 0; i < HiddenNodes+1; i++) {
+        fprintf(fp,",");
     }
-	if (i + 1 == OutputNodes)
-		printf("}\r\n}\r\n");
-	else
-		printf("},\r\n");
+    fprintf(fp, "\r\n");
+    for ( i = 0 ; i < OutputNodes ; i++ ) {
+        for ( j = 0 ; j < HiddenNodes+1 ; j++ ) {
+            fprintf(fp, "%f,", OutputWeights[j][i]);
+        }
+        fprintf(fp, "\r\n");
+    }
+    fprintf(fp, "End");
+    for (i = 0; i < HiddenNodes+1; i++) {
+        fprintf(fp,",");
+    }
+    fprintf(fp, "\r\n");
 
-  }
-  printf("End\r\n");
-  
-  toTerminal();
+    fclose(fp);
+
+
+    printf("End\r\n");
+
+    toTerminal();
 #if !defined(C_PRINT)
 #else
- printf("\r\nYou can close it now. ");
- printf("\r\n");
+    printf("\r\nYou can close it now. ");
+    printf("\r\n");
+#endif
+
+    return;
+    /* read the values */
+    if ((fp = fopen("test.csv", "rb")) == NULL) {
+        printf("Cannot open file.\n");
+    }
+
+    printf("HiddenWeights=\r\n{\r\n");
+
+    for (i = 0; i < HiddenNodes; i++) {
+        printf("{");
+        for (j = 0; j < InputNodes+1; j++) {
+			
+            fscanf(fp, "%f", (&HiddenWeights[j][i]));
+
+            if (j + 1 == InputNodes+1)
+                printf("%f", HiddenWeights[j][i]);
+            else
+                printf("%f,", HiddenWeights[j][i]);
+
+        }
+        if (i + 1 == HiddenNodes)
+            printf("}\r\n}\r\n");
+        else
+            printf("},\r\n");
+
+    }
+
+    printf("OutputWeights=\r\n{\r\n");
+	
+    for (i = 0; i < OutputNodes; i++) {
+        printf("{");
+        for (j = 0; j < HiddenNodes+1; j++) {
+			
+            fscanf(fp, "%f,", (&OutputWeights[j][i]));
+
+            if (j + 1 == HiddenNodes+1)
+                printf("%f", OutputWeights[j][i]);
+            else
+                printf("%f,", OutputWeights[j][i]);
+
+
+        }
+        if (i + 1 == OutputNodes)
+            printf("}\r\n}\r\n");
+        else
+            printf("},\r\n");
+
+    }
+    printf("End\r\n");
+
+    toTerminal();
+#if !defined(C_PRINT)
+#else
+    printf("\r\nYou can close it now. ");
+    printf("\r\n");
 #endif
 
 }
@@ -554,88 +565,88 @@ return;
 void toTerminal()
 {
 
-  for ( p = 0 ; p < PatternCount ; p++ ) {
+    for ( p = 0 ; p < PatternCount ; p++ ) {
 #if !defined(C_PRINT)
-    Serial.println();
-    Serial.print ("  Training Pattern: ");
-    Serial.println (p);
-    Serial.print ("  Input ");
+        Serial.println();
+        Serial.print ("  Training Pattern: ");
+        Serial.println (p);
+        Serial.print ("  Input ");
 #else
-    printf("\n  Training Pattern: %d  Input ", p);
+        printf("\n  Training Pattern: %d  Input ", p);
 #endif
-    for ( i = 0 ; i < InputNodes ; i++ ) {
+        for ( i = 0 ; i < InputNodes ; i++ ) {
 #if !defined(C_PRINT)
-      Serial.print (Input[p][i], DEC);
-      Serial.print (" ");
+            Serial.print (Input[p][i], DEC);
+            Serial.print (" ");
 #else
-      printf(" %2.3f ", Input[p][i]);
+            printf(" %2.3f ", Input[p][i]);
 #endif
-    }
+        }
 #if !defined(C_PRINT)
-    Serial.print ("  Target ");
+        Serial.print ("  Target ");
 #else
-    printf("  Target ");
+        printf("  Target ");
 #endif
-    for ( i = 0 ; i < OutputNodes ; i++ ) {
+        for ( i = 0 ; i < OutputNodes ; i++ ) {
 #if !defined(C_PRINT)
-      Serial.print (Target[p][i], DEC);
-      Serial.print (" ");
+            Serial.print (Target[p][i], DEC);
+            Serial.print (" ");
 #else
-      printf(" %2.3f ", Target[p][i]);
+            printf(" %2.3f ", Target[p][i]);
 #endif
-    }
-    /******************************************************************
-      Compute hidden layer activations
-    ******************************************************************/
+        }
+        /******************************************************************
+          Compute hidden layer activations
+        ******************************************************************/
 
-    for ( i = 0 ; i < HiddenNodes ; i++ ) {
-      Accum = HiddenWeights[InputNodes][i] ;
-      for ( j = 0 ; j < InputNodes ; j++ ) {
-        Accum += Input[p][j] * HiddenWeights[j][i] ;
-      }
-      Hidden[i] = 1.0 / (1.0 + exp(-Accum)) ;
-    }
+        for ( i = 0 ; i < HiddenNodes ; i++ ) {
+            Accum = HiddenWeights[InputNodes][i] ;
+            for ( j = 0 ; j < InputNodes ; j++ ) {
+                Accum += Input[p][j] * HiddenWeights[j][i] ;
+            }
+            Hidden[i] = 1.0 / (1.0 + exp(-Accum)) ;
+        }
 
-    /******************************************************************
-      Compute output layer activations and calculate errors
-    ******************************************************************/
+        /******************************************************************
+          Compute output layer activations and calculate errors
+        ******************************************************************/
 
-    for ( i = 0 ; i < OutputNodes ; i++ ) {
-      Accum = OutputWeights[HiddenNodes][i] ;
-      for ( j = 0 ; j < HiddenNodes ; j++ ) {
-        Accum += Hidden[j] * OutputWeights[j][i] ;
-      }
-      Output[i] = 1.0 / (1.0 + exp(-Accum)) ;
+        for ( i = 0 ; i < OutputNodes ; i++ ) {
+            Accum = OutputWeights[HiddenNodes][i] ;
+            for ( j = 0 ; j < HiddenNodes ; j++ ) {
+                Accum += Hidden[j] * OutputWeights[j][i] ;
+            }
+            Output[i] = 1.0 / (1.0 + exp(-Accum)) ;
+        }
+#if !defined(C_PRINT)
+        Serial.print ("  Output ");
+#else
+        printf("  Output ");
+#endif
+        for ( i = 0 ; i < OutputNodes ; i++ ) {
+#if !defined(C_PRINT)
+            Serial.print (Output[i], 5);
+            Serial.print (" ");
+#else
+            printf(" %5.5f ", Output[i]);
+#endif
+        }
     }
 #if !defined(C_PRINT)
-    Serial.print ("  Output ");
 #else
-    printf("  Output ");
-#endif
-    for ( i = 0 ; i < OutputNodes ; i++ ) {
-#if !defined(C_PRINT)
-      Serial.print (Output[i], 5);
-      Serial.print (" ");
-#else
-      printf(" %5.5f ", Output[i]);
-#endif
-    }
-  }
-#if !defined(C_PRINT)
-#else
- //printf("\r\nYou can close it now. ");
- printf("\r\n");
+//printf("\r\nYou can close it now. ");
+    printf("\r\n");
 #endif
 }
 
 #if defined(C_PRINT)
 int  main ()
 {
-  setup();
-  while (1)
-  {
-    loop();
-  }
-  return 0;
+    setup();
+    while (1)
+    {
+        loop();
+    }
+    return 0;
 }
 #endif
