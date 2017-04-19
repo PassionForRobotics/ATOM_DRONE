@@ -385,7 +385,7 @@ void writeToaFile()
     fprintf(fp, "\r\n");
   }
 
-  fprintf(fp, "OutputWeights:\r\n");
+  fprintf(fp, "OutputWeights:");
   for (i = 0; i < OutputNodes; i++) {
 	fprintf(fp,",");
 	  }
