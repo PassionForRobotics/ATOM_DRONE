@@ -9,7 +9,11 @@
 class Neuralnet1
 {
 public:
-    Neuralnet1();
+    Neuralnet1(float ** Input_test, float ** Target_test
+, int _PatternCount  
+, int _InputNodes  , int _HiddenNodes, int _OutputNodes 
+, float _LearningRate  , float _Momentum, float _InitialWeightMax 
+, float _Success);
     ~Neuralnet1();
     void initialize(); // return as error
     void train();

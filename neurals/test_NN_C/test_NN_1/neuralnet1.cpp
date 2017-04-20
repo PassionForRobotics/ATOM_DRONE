@@ -1,3 +1,17 @@
+
+//////////////////////////////////////////////////////////////////
+//  
+//	TODO :
+//		1. Document for function
+//		2. Generalize the constructor for data intake
+//		3. Generalize the lib for Arduino too.
+//
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////
+
 #include "neuralnet1.h"
 
 #if !defined(CHECK_FIXED_TRAINING)
@@ -10,9 +24,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <cstdlib>
 #endif
 
-#include <cstdlib>
 
 #include <math.h>
 
@@ -25,16 +39,25 @@ static int random(int n)
 }
 #endif
 
-Neuralnet1::Neuralnet1()
+/*Neuralnet1::Neuralnet1(float ** Input_test, float ** Target_test
+, int _PatternCount = 10
+, int _InputNodes = 7, int _HiddenNodes = 8, int _OutputNodes = 4
+, float _LearningRate = 0.3, float _Momentum = 0.9, float _InitialWeightMax = 0.5
+, float _Success = 0.0004 )*/
+Neuralnet1::Neuralnet1(float ** Input_test, float ** Target_test
+, int _PatternCount
+, int _InputNodes, int _HiddenNodes, int _OutputNodes
+, float _LearningRate, float _Momentum, float _InitialWeightMax
+, float _Success )
 {
-	PatternCount = 10;
-	InputNodes = 7;
-	HiddenNodes = 8;
-	OutputNodes = 4;
-	LearningRate = 0.3;
-	Momentum = 0.9;
-	InitialWeightMax = 0.5;
-	Success = 0.000004;
+	PatternCount = _PatternCount ;//= 10;
+	InputNodes = _InputNodes; //7;
+	HiddenNodes = _HiddenNodes; //8;
+	OutputNodes = _OutputNodes; //4;
+	LearningRate = _LearningRate; //0.3;
+	Momentum = _Momentum; //0.9;
+	InitialWeightMax = _InitialWeightMax; //0.5;
+	Success = _Success; //0.000004;
 	
 	// wild :P
 	//float _ChangeHiddenWeights[InputNodes + 1][HiddenNodes];
@@ -51,6 +74,7 @@ Neuralnet1::Neuralnet1()
 	Error = 0;
 	Accum = 0;
 	
+	/*
 	const float Input_test[PatternCount][InputNodes] = {
 		{ 1, 1, 1, 1, 1, 1, 0 },  // 0
 		{ 0, 1, 1, 0, 0, 0, 0 },  // 1
@@ -78,6 +102,7 @@ Neuralnet1::Neuralnet1()
 		{ 1, 0, 0, 1 }
 		//{ 0, 0, 0, 0 }
 	};
+	*/
 	
 	if (( Input = ( float** )malloc( PatternCount*sizeof( float *))) == NULL )
 	{  

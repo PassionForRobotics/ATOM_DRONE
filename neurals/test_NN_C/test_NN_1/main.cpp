@@ -67,8 +67,82 @@ End
 int main ()
 {
 	int i = 0 ;
+	int PatternCount = 10;
+	int InputNodes = 7;
+	int HiddenNodes = 8;
+	int OutputNodes = 4;
+	float LearningRate = 0.3;
+	float Momentum = 0.9;
+	float InitialWeightMax = 0.5;
+	float Success = 0.000004;
+	
+	float Input_test[PatternCount][InputNodes] = {
+		{ 1, 1, 1, 1, 1, 1, 0 },  // 0
+		{ 0, 1, 1, 0, 0, 0, 0 },  // 1
+		{ 1, 1, 0, 1, 1, 0, 1 },  // 2
+		{ 1, 1, 1, 1, 0, 0, 1 },  // 3
+		{ 0, 1, 1, 0, 0, 1, 1 },  // 4
+		{ 1, 0, 1, 1, 0, 1, 1 },  // 5
+		{ 0, 0, 1, 1, 1, 1, 1 },  // 6
+		{ 1, 1, 1, 0, 0, 0, 0 },  // 7
+		{ 1, 1, 1, 1, 1, 1, 1 },  // 8
+		{ 1, 1, 1, 0, 0, 1, 1 }   // 9
+		//{ 0, 0, 0, 0, 0, 0, 0 }   // none
+	};
+	
+	float Target_test[PatternCount][OutputNodes] = {
+		{ 0, 0, 0, 0 },
+		{ 0, 0, 0, 1 },
+		{ 0, 0, 1, 0 },
+		{ 0, 0, 1, 1 },
+		{ 0, 1, 0, 0 },
+		{ 0, 1, 0, 1 },
+		{ 0, 1, 1, 0 },
+		{ 0, 1, 1, 1 },
+		{ 1, 0, 0, 0 },
+		{ 1, 0, 0, 1 }
+		//{ 0, 0, 0, 0 }
+	};
+	
+	//////////////////////
+	// Manual work here ////////////|
+	//////////////////////         \||/
+	//								 .  
+	
+	float * input_test_rows[PatternCount] = { 
+		Input_test[0]
+		, Input_test[1]
+		, Input_test[2]
+		, Input_test[3]
+		, Input_test[4]
+		, Input_test[5]
+		, Input_test[6]
+		, Input_test[7]
+		, Input_test[8]
+		, Input_test[9] 
+		};
+		
+	float * target_test_rows[PatternCount] = { 
+		Target_test[0]
+		, Target_test[1]
+		, Target_test[2]
+		, Target_test[3]
+		, Target_test[4]
+		, Target_test[5]
+		, Target_test[6]
+		, Target_test[7]
+		, Target_test[8]
+		, Target_test[9] 
+		} ;
+	
+	float ** input_test = input_test_rows;
+	float ** target_test = target_test_rows;
+	
 	// Comman part
-	Neuralnet1 nnet1;
+	Neuralnet1 nnet1(input_test, target_test
+	, PatternCount, InputNodes, HiddenNodes, OutputNodes
+	, LearningRate, Momentum, InitialWeightMax, Success);
+	
 	nnet1.initialize();
 	
 	float outarray[nnet1.GetOutputNodes()] = {0};
@@ -103,5 +177,6 @@ int main ()
 	printf("\r\n\r\n"); 
 	////////////////////////////////////////////////////////////////////
 	 
-	while(1); 
+	//while(1); 
+	return 0;
 }
