@@ -28,8 +28,8 @@ const char* www_password = "esp8266";
 const char* _ssid     = "RICK";
 const char* _password = "88888888";
 
-const char* ssid     = "__ATOM__";
-const char* password = "88888888";
+const char* ssid     = "D_ATOM_1";
+const char* password = "D_ATOM_1";
 
 
 reliencenperformance ping_test_state = {DATA_TYPE1_PING, DATA_TYPE2_PING_DEFAULT};
@@ -47,11 +47,11 @@ void sendmsg(char* msg, int size)
 
 void startUDPServer()
 {
-  Serial.println("ready");
+  //Serial.println("ready");
   udp.begin(LOCAL_PORT);
   //sendmsg("I AM ON", 8);
-  Serial.println(system_mode);
-  Serial.println("OK");
+  //Serial.println(system_mode);
+  //Serial.println("OK");
 }
 
 void WiFiEvent(WiFiEvent_t event) {
@@ -91,6 +91,7 @@ void setup() {
 
   debouncer.attach(BUTTON_PIN);
   debouncer.interval(200);
+  
   SCmd.addCommand("AT", check);
   SCmd.addCommand("AT+RST", resetESP8266);
   SCmd.addCommand("AT+RSTT", restartESP8266);
@@ -349,8 +350,8 @@ void startWiFi()
   //WiFi.mode(WIFI_AP);
   //WiFi.softAP(ssid, password);
   //WiFi.begin(ssid, password);
-  Serial.println("+STARTing...");
   startUDPServer();
+  Serial.println("ready");
 }
 
 void operationMode()
@@ -359,7 +360,7 @@ void operationMode()
   //  arg = SCmd.next();    // Get the next argument from the SerialCommand object buffer
   if (arg != NULL)      // As long as it existed, take it
   {
-    Serial.print("+MODE");
+    Serial.print("+MODE=");
     system_mode = atoi(arg); // check 0 or 1
     Serial.println(arg);
   }
@@ -371,13 +372,13 @@ void operationMode()
 void restartESP8266()
 {
   Serial.println("OK");
-  delay(1000);
+  delay(100);
   ESP.restart();
 }
 void resetESP8266()
 {
   Serial.println("OK");
-  delay(1000);
+  delay(100);
   ESP.reset();
   //Serial.println("<Not_Implemented>");
 }
@@ -390,5 +391,5 @@ void check()
 
 void unrecognized()
 {
-  Serial.println("ERROR What?");
+  Serial.println("ERROR");
 }

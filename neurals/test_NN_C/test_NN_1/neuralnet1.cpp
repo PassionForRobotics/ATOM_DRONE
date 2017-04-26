@@ -1,13 +1,16 @@
 
+// Credit : 
 //////////////////////////////////////////////////////////////////
 //  
 //	TODO :
 //		1. Document for function
-//		2. Generalize the constructor for data intake
+//		2. <DONE> Generalize the constructor for data intake
 //		3. Generalize the lib for Arduino too.
-//
-//
-//
+//		4. Check with float values between 0 and 1
+//		5. Think of a use case i.e. an AGV, MAV
+//			In -> /*UltraSonic, (<- might not be relevant)*/ 
+//				IMU.Acc.(x1-x0,y1-y0,z1-z0), IMU.Gyr.(x1-x0,y1-y0,z1-z0), Encoder(X1-X1), Encoder(Y1-Y0)
+//			Out-> PWMX, PWMY, Time or Vel, Angle, Time
 //
 //
 //////////////////////////////////////////////////////////////////

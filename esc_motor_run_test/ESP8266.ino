@@ -49,7 +49,7 @@ ESP8266 ESP8266_setup()//HardwareSerial serial)
   //
   //  static const char * PEER_IP_ADDRESS = "192.168.1.2"; // SKY_SYSTEM address
 
- static ESP8266 wifi(Serial1, 115200);
+ //static ESP8266 wifi(Serial1, 115200);
 
   Log.Info(THIS"setup begins"CR);
 
