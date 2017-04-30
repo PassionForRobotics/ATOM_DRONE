@@ -1,5 +1,5 @@
 /*
-    This sketch shows the WiFi event usage
+This sketch shows the WiFi event usage
 
 */
 
@@ -60,40 +60,42 @@ void WiFiEvent(WiFiEvent_t event) {
 
   switch (event) {
     case WIFI_EVENT_STAMODE_GOT_IP:
-      wifi_mode = WIFI_STA; // or both STA and AP
-      startUDPServer();
-      Serial.println("ready");
-      // server.on("/", []() {
-      //   if (!server.authenticate(www_username, www_password))
-      //     return server.requestAuthentication();
-      //   server.send(200, "text/plain", "Login OK");
-      // });
-      // server.begin();
+    wifi_mode = WIFI_STA; // or both STA and AP
+    startUDPServer();
+    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.softAPIP());
+    Serial.println("ready");
+    // server.on("/", []() {
+    //   if (!server.authenticate(www_username, www_password))
+    //     return server.requestAuthentication();
+    //   server.send(200, "text/plain", "Login OK");
+    // });
+    // server.begin();
 
-      // Serial.print("Open http://");
-      // Serial.print(WiFi.localIP());
-      // Serial.println("/ in your browser to see it working");
+    // Serial.print("Open http://");
+    // Serial.print(WiFi.localIP());
+    // Serial.println("/ in your browser to see it working");
 
-      //udp.beginPacket(addr, port)
-      //Serial.println("IP address: ");
-      //Serial.println(WiFi.localIP());
-      break;
+    //udp.beginPacket(addr, port)
+    //Serial.println("IP address: ");
+
+    break;
     case WIFI_EVENT_STAMODE_DISCONNECTED:
-      Serial.println("WiFi lost connection");
-      udp.stop();
-      break;
+    Serial.println("WiFi lost connection");
+    udp.stop();
+    break;
   }
 }
 
 /**
- * [setup Expecting following config for wifi module]
- * AT
- * AT+START 0
- * // or
- * AT+START 1
- * AT+SRIPP IP1.IP2.IP3.IP4 PPORTT
- * // if AT+START 1
- */
+* [setup Expecting following config for wifi module]
+* AT
+* AT+START 0
+* // or
+* AT+START 1
+* AT+SRIPP IP1.IP2.IP3.IP4 PPORTT
+* // if AT+START 1
+*/
 void setup() {
   Serial.begin(115200);
   //Serial.println("START DIRECTLY WITH TRANSPARENT MODE");
@@ -189,7 +191,7 @@ void loop() {
             sendmsg("ERR: 0x0000", 11);// sendmsg(data.c_buffer, datasize + DATA_HEADER_LEN );// STR(DATA_TYPE2_ERROR_0), 11);
           }
           else
-            sendmsg(data.c_buffer, datasize );
+          sendmsg(data.c_buffer, datasize );
         }
         else
         {
@@ -288,11 +290,11 @@ void setRemoteIPPort()
 {
   char *arg = NULL;
 
-  if(WIFI_STA!=wifi_mode) // or both
-  {
-    unrecognized();
-    return;
-  }
+  // if(WIFI_AP!=wifi_mode) // or both
+  // {
+  //   unrecognized();
+  //   return;
+  // }
 
   arg = SCmd.next();
 
@@ -351,10 +353,10 @@ void printIP()
 }
 
 /**
- * [startWiFi to start the wifi module in ap or station mode]
- * AT+START 0 AP mode
- * AT+START 1 STA mdoe
- */
+* [startWiFi to start the wifi module in ap or station mode]
+* AT+START 0 AP mode
+* AT+START 1 STA mdoe
+*/
 void startWiFi()
 {
   int _mode = -1;
@@ -373,7 +375,7 @@ void startWiFi()
   {
     wifi_mode = WIFI_AP;
     WiFi.mode(WIFI_AP);
-      // WIFI_AP);
+    // WIFI_AP);
     IPAddress ip(192, 168, 4, 4);
     IPAddress gateway(192, 168, 4, 1);
     IPAddress subnet(255, 255, 255, 0);
@@ -381,6 +383,8 @@ void startWiFi()
     WiFi.softAP(ssid, password); //Access point is open - See more at: http://www.esp8266.com/viewtopic.php?f=29&t=12124#sthash.HXUoeE1P.dpuf
     delay(200);
     startUDPServer();
+    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.softAPIP());
     Serial.println("ready");
   }
   else if(1==_mode)
@@ -391,14 +395,14 @@ void startWiFi()
   }
   else
   {
-      unrecognized();
-      return;
+    unrecognized();
+    return;
   }
 }
 
 /**
- * [operationMode description]
- */
+* [operationMode description]
+*/
 void operationMode()
 {
   char *arg;
