@@ -352,10 +352,19 @@ void printIP()
   Serial.println("OK");
 }
 
+// void onGotIP(const WiFiEventStationModeGotIP& event)
+// {
+//
+// }
+
 /**
 * [startWiFi to start the wifi module in ap or station mode]
 * AT+START 0 AP mode
 * AT+START 1 STA mdoe
+* OK
+* IP
+* IP
+* ready
 */
 void startWiFi()
 {
@@ -373,6 +382,7 @@ void startWiFi()
 
   if(0==_mode)
   {
+    Serial.println("OK");
     wifi_mode = WIFI_AP;
     WiFi.mode(WIFI_AP);
     // WIFI_AP);
@@ -381,6 +391,7 @@ void startWiFi()
     IPAddress subnet(255, 255, 255, 0);
     WiFi.softAPConfig(ip, gateway, subnet);
     WiFi.softAP(ssid, password); //Access point is open - See more at: http://www.esp8266.com/viewtopic.php?f=29&t=12124#sthash.HXUoeE1P.dpuf
+    //WiFi.onSoftAPModeStationConnected(onGotIP);//std::function<void (const WiFiEventSoftAPModeStationConnected &)>)
     delay(200);
     startUDPServer();
     Serial.println(WiFi.localIP());
@@ -389,6 +400,8 @@ void startWiFi()
   }
   else if(1==_mode)
   {
+    Serial.println("OK");
+    wifi_mode = WIFI_STA;
     WiFi.mode(WIFI_STA);
     WiFi.onEvent(WiFiEvent);
     WiFi.begin(ssid, password);

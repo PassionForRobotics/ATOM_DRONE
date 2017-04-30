@@ -334,6 +334,12 @@ int wifi_check()
 * [wifi_set_mode description]
 * @param  _mode [0 or 1]
 * @return       [return 0 if all fine -1 otherwise]
+*
+* OK
+* IP
+* IP
+* ready
+*
 */
 int wifi_set_mode(int _mode)
 {
@@ -351,6 +357,49 @@ int wifi_set_mode(int _mode)
     if (0 < readline(WIFICOM->read(), buffer, 32))
     {
       ret = ( NULL != strstr(buffer, "OK") );
+      break;
+    }
+  }
+
+  memset(buffer, 0, 32);
+
+  while (WIFICOM->available())
+  {
+    if (0 < readline(WIFICOM->read(), buffer, 32))
+    {
+      Log.Verbose(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+      break;
+      // This line will contain the IP1.IP2.IP3.IP4/r/n ignore it for now
+    }
+    else
+    {
+      Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+    }
+  }
+
+  memset(buffer, 0, 32);
+
+  while (WIFICOM->available())
+  {
+    if (0 < readline(WIFICOM->read(), buffer, 32))
+    {
+      Log.Verbose(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+      break;
+      // This line will contain the IP1.IP2.IP3.IP4/r/n ignore it for now
+    }
+    else
+    {
+      Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+    }
+  }
+
+  memset(buffer, 0, 32);
+
+  while (WIFICOM->available())
+  {
+    if (0 < readline(WIFICOM->read(), buffer, 32))
+    {
+      ret = ( NULL != strstr(buffer, "ready") );
       break;
     }
   }
