@@ -196,7 +196,11 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
 
   #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
   Log.Info(THIS"Setting up wifi"CR);
-  wifi_setup();
+  if(-1==wifi_setup())
+  {
+    Log.Error(THIS"WIFI fault"CR);
+    while(1);
+  }
   Log.Info(THIS"DONE WIFI"CR);
   #else
   Log.Info(THIS"BYPASSED WIFI"CR);
