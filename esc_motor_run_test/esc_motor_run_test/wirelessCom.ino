@@ -90,11 +90,11 @@ inline int readline(int readch, char *buffer, const int tlen, int * len)
       (*len) = pos;
       linrec = 1;
       pos = 0;  // Reset position index ready for next time
-      Log.Verbose(THIS"readline : [LF] %d %d (%s)", linrec, (*len), buffer);
-      for(temp = 0 ; temp<(*len) ; temp++)
-      {
-        Log.Verbose(" [%c (%x)]"CR, buffer[temp], buffer[temp]);
-      }
+      Log.Verbose(THIS"readline : [LF] %d %d (%s)"CR, linrec, (*len), buffer);
+      //for(temp = 0 ; temp<(*len) ; temp++)
+      //{
+      //  Log.Verbose(" [%d %c (%x)]"CR, temp, buffer[temp], buffer[temp]);
+      //}
       Log.Verbose(CR);
       return linrec;
       default:
@@ -152,7 +152,7 @@ int wifi_setup()//int _mode)
 
   if (0 == wifi_set_mode(0)) //
   {
-    Log.Info(THIS"wifi mode set"CR);
+    Log.Info(THIS"wifi mode set for SKY_SYSTEM"CR);
   }
   else
   {
@@ -175,7 +175,7 @@ int wifi_setup()//int _mode)
 
   if (0 == wifi_set_mode(1)) //
   {
-    Log.Info(THIS"wifi mode set"CR);
+    Log.Info(THIS"wifi mode set for GROUND_SYSTEM"CR);
   }
   else
   {
@@ -302,35 +302,28 @@ int wifi_reset()
   int rec = 0;
   int len = -1;
   int temp = -1;
-  //Log.Verbose(THIS"check ms %d"CR, millis());
-  selectCommandMode(1); //digitalWrite(WIFI_CMD_MODE_PIN, LOW); // CMD mode
-  //Log.Verbose(THIS"check ms %d"CR, millis());
+
+  selectCommandMode(1);  // CMD mode on
+
   WIFICOM->println("AT+RST");
 
-  // Log.Verbose(THIS"check ms %d"CR, millis());
   while (4>WIFICOM->available());
-  // Log.Verbose(THIS"check ms %d"CR, millis());
-
 
   while (WIFICOM->available())
   {
-    len = WIFICOM->available();
-    Log.Verbose(THIS"check len %d"CR, len);
-    //Log.Verbose(THIS"check ms %d"CR, millis());
     rec = readline(WIFICOM->read(), buffer, 32, &len);
     if (1==rec && 0<=len)
     {
       ret = ( NULL != strstr(buffer, "OK") );
 
-      Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+      //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
       if(0!=ret)
       {
         // getout of mode or else ESP8266 will go into bootloader mode.
         // within 100 ms
         // Here it is done instantly
-        selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // CMD mode off
-        //Delay(100);
-        //selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // CMD mode off
+        //
+        selectCommandMode(0); // CMD mode off
         break;
       }
       else
@@ -342,20 +335,14 @@ int wifi_reset()
     }
   }
 
-  // Log.Verbose(THIS"check ms %d"CR, millis());
-  // while (!WIFICOM->available());
-  // Log.Verbose(THIS"check ms %d"CR, millis());
+  Delay(100);
+  selectCommandMode(1);
 
-  //selectCommandMode(0);
-  //selectCommandMode(1);
-  //Delay(100);
-  while (4>WIFICOM->available());
+  memset(buffer, 0, 32);
+  while (2>WIFICOM->available());
 
-  //for(rep = 0 ; rep < 10 ; rep++)
   while (WIFICOM->available())
   {
-    //Log.Verbose(THIS"check ms %d"CR, millis());
-
     /*
     10 lines inlcuding <- this emptyline as well
     ets Jan  8 2013,rst cause:2, boot mode:(3,6)
@@ -368,13 +355,11 @@ int wifi_reset()
     v09f0c112
     ~ld
     */
-    memset(buffer, 0, 32);
     rec = readline(WIFICOM->read(), buffer, 32, &len);
-    //Log.Verbose(THIS"response %d %d %s"CR, rec, len, buffer);
     if (1==rec && 0<=len)
     {
       ret = ( NULL != strstr(buffer, "Initialized") );
-      //ret = 0;
+
       if( (0 == ret) )
       {
         rep++;
@@ -385,41 +370,11 @@ int wifi_reset()
         Log.Verbose(THIS"response %d %d %s"CR, rep, len, buffer);
         break;
       }
+      memset(buffer, 0, 32);
     }
   }
 
-  //delay(100); // For reset to take effect // use rtos delay
-
-  //Delay(100) ;
-
-  selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // CMD mode on
-
-  while (WIFICOM->available())
-  {
-
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
-    {
-      ret &= ( NULL != strstr(buffer, "Initialized") );
-      if(0!=ret)
-      {
-        // getout of mode or else ESP8266 will go into bootloader mode.
-        // within 100 ms
-        // Here it is done instantly
-        selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // CMD mode off
-        break;
-      }
-      else
-      {
-        Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
-        selectCommandMode(0);
-        return -1;
-      }
-      break;
-    }
-
-  }
-
-  selectCommandMode(0); //digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
+  selectCommandMode(0); // Back in transparent mode
 
   return (1 == ret ? 0 : -1);
 
@@ -433,8 +388,108 @@ int wifi_reset()
 int wifi_set_remote_IP_PORT()
 {
 
-  int ret = 0;
+  int ret = -1;
+  int rep = 0;
+  int rec = 0;
   int len = -1;
+  int temp = -1;
+
+  selectCommandMode(1);  // CMD mode on
+
+  sprintf(buffer, "AT+SRIPP %s %d", PEER_IP_ADDRESS, PEER_PORT); // check just filling up the buffer
+
+  WIFICOM->println(buffer);
+  memset(buffer, 0, 32);
+
+  //while (9>WIFICOM->available());
+// Issue
+// WIFI: 155: wifi mode set for SKY_SYSTEM
+// WIFI: 448: check
+// ERROR: WIFI: 170: wifi remote ip port
+// WIFI: 171: Please check for delay and/or implementation
+// ERROR: MAIN: 201: WIFI fault
+
+  do
+  {
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    //Log.Verbose(THIS"check %d",rec);
+
+    if (1==rec && 0<=len)
+    {
+      // ret = ( NULL != strstr(buffer, "OK") );
+      Log.Verbose(THIS"wifi implementation %s %d %s"CR, __func__, __LINE__, buffer);
+    }
+
+  } while ( (0==rec) );//|| WIFICOM->available() );
+
+  // while ( (0==rec) || WIFICOM->available() )
+  // {
+  //   rec = readline(WIFICOM->read(), buffer, 32, &len);
+  //   //Log.Verbose(THIS"check %d",rec);
+  //
+  //   if (1==rec && 0<=len)
+  //   {
+  //     // ret = ( NULL != strstr(buffer, "OK") );
+  //     Log.Verbose(THIS"wifi implementation %s %d %s"CR, __func__, __LINE__, buffer);
+  //     //
+  //     // //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+  //     // if(0!=ret)
+  //     // {
+  //     //   // getout of mode or else ESP8266 will go into bootloader mode.
+  //     //   // within 100 ms
+  //     //   // Here it is done instantly
+  //     //   //
+  //     //   selectCommandMode(0); // CMD mode off
+  //     //   break;
+  //     // }
+  //     // else
+  //     // {
+  //     //   selectCommandMode(0);
+  //     //   return -1;
+  //     // }
+  //   }
+  // }
+
+  // NOW OK will be received
+  Log.Verbose(THIS"check %s"CR, buffer);
+  memset(buffer, 0, 32);
+
+  while (4>WIFICOM->available());
+
+  while (WIFICOM->available())
+  {
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1==rec && 0<=len)
+    {
+      ret = ( NULL != strstr(buffer, "OK") );
+
+      //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+      if(0!=ret)
+      {
+        // getout of mode or else ESP8266 will go into bootloader mode.
+        // within 100 ms
+        // Here it is done instantly
+        //
+        selectCommandMode(0); // CMD mode off
+        break;
+      }
+      else
+      {
+        selectCommandMode(0);
+        Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
+        return -1;
+      }
+    }
+  }
+
+
+  selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
+
+  return (1 == ret ? 0 : -1);
+
+
+  //int ret = 0;
+  //int len = -1;
 
   selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // Switch to command mode
 
@@ -477,16 +532,40 @@ int wifi_set_remote_IP_PORT()
 int wifi_check()
 {
   int ret = 0;
+  int rec = 0;
   int len = -1;
-  selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // CMD mode
+
+  memset(buffer, 0, 32);
+
+  selectCommandMode(1);  // CMD mode on
+
   WIFICOM->println("AT");
+
+  while (4>WIFICOM->available());
 
   while (WIFICOM->available())
   {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1==rec && 0<=len)
     {
       ret = ( NULL != strstr(buffer, "OK") );
-      break;
+
+      //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+      if(0!=ret)
+      {
+        // getout of mode or else ESP8266 will go into bootloader mode.
+        // within 100 ms
+        // Here it is done instantly
+        //
+        selectCommandMode(0); // CMD mode off
+        break;
+      }
+      else
+      {
+        selectCommandMode(0);
+        Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
+        return -1;
+      }
     }
   }
 
@@ -513,22 +592,64 @@ int wifi_check()
 */
 int wifi_set_mode(int _mode)
 {
-  int ret = 0;
-  int len = -1;
-  selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // CMD mode
-  memset(buffer, 0, 32);
-  sprintf(buffer, "AT+START %d", _mode); // check just filling up the buffer
 
+
+  int ret = 0;
+  int rec = 0;
+  int len = -1;
+
+  memset(buffer, 0, 32);
+
+  selectCommandMode(1);  // CMD mode on
+
+  sprintf(buffer, "AT+START %d", _mode); // check just filling up the buffer
   WIFICOM->println(buffer);
 
+  while (4>WIFICOM->available());
   memset(buffer, 0, 32);
 
   while (WIFICOM->available())
   {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1==rec && 0<=len)
     {
       ret = ( NULL != strstr(buffer, "OK") );
+
+      //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+      if(0!=ret)
+      {
+        // getout of mode or else ESP8266 will go into bootloader mode.
+        // within 100 ms
+        // Here it is done instantly
+        //
+        selectCommandMode(0); // CMD mode off
+        break;
+      }
+      else
+      {
+        selectCommandMode(0);
+        Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
+        return -1;
+      }
+    }
+  }
+
+  selectCommandMode(0); // CMD mode off
+
+  memset(buffer, 0, 32);
+
+  while (WIFICOM->available())
+  {
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1 == rec)
+    {
+      Log.Verbose(THIS"wifi implementation pass for %s() %d : %s"CR, __func__, __LINE__, buffer);
       break;
+      // This line will contain the IP1.IP2.IP3.IP4/r/n ignore it for now
+    }
+    else
+    {
+      //Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
     }
   }
 
@@ -536,31 +657,16 @@ int wifi_set_mode(int _mode)
 
   while (WIFICOM->available())
   {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1 == rec)
     {
-      Log.Verbose(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+      Log.Verbose(THIS"wifi implementation pass for %s() %d : %s"CR, __func__, __LINE__, buffer);
       break;
       // This line will contain the IP1.IP2.IP3.IP4/r/n ignore it for now
     }
     else
     {
-      Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
-    }
-  }
-
-  memset(buffer, 0, 32);
-
-  while (WIFICOM->available())
-  {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
-    {
-      Log.Verbose(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
-      break;
-      // This line will contain the IP1.IP2.IP3.IP4/r/n ignore it for now
-    }
-    else
-    {
-      Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
+      //Log.Error(THIS"wifi implementation %s %d : %s"CR, __func__, __LINE__, buffer);
     }
   }
 

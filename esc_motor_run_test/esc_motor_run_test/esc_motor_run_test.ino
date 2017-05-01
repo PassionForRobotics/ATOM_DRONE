@@ -202,6 +202,7 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     while(1);
   }
   Log.Info(THIS"DONE WIFI"CR);
+  while(1);
   #else
   Log.Info(THIS"BYPASSED WIFI"CR);
   Log.Error(THIS"WIFI is must for either type of the systems"CR);
