@@ -19,8 +19,14 @@
 //#define SSID        "HHH7501HHH"
 //#define PASSWORD    "hh1057hhh"
 
-#define PEER_IP_ADDRESS "192.168.4.1" // SKY_SYSTEM address
-#define PEER_PORT (8090)
+#if defined(GROUND_SYSTEM)
+#define PEER_IP_ADDRESS "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
+#define PEER_PORT (20000) //(8090)
+#elif defined(SKY_SYSTEM)
+#define PEER_IP_ADDRESS "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
+#define PEER_PORT (20000) //(8090)
+#else
+#endif
 #define WIFI_CMD_MODE_PIN (42)
 #define WIFICOM (&Serial1)
 
@@ -193,6 +199,18 @@ int wifi_setup()//int _mode)
     return -1;
   }
 
+  // AT+SRIPP IP1.IP2.IP3.IP4 PORTT
+  if (0 == wifi_set_remote_IP_PORT())
+  {
+    Log.Info(THIS"wifi remote ip port set"CR);
+  }
+  else
+  {
+    Log.Error(THIS"wifi remote ip port"CR);
+    Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
+  }
+
   #else
 
   #error no system mode selected
@@ -213,7 +231,7 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
 {
   int ret = -1;
   int len = -1;
-  int rec = 0;
+  int rec = -1;
   //  uint8_t mux_id = 0;
   //
   data->gd.stx = 0x02;
@@ -223,7 +241,7 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
   data->gd.res3 = 0x00;
   data->gd.etx = 0x03;
 
-  WIFICOM->write(data->uc_data, SIZE_OF_GPADDATA_STRUCT);;
+  WIFICOM->write(data->uc_data, SIZE_OF_GPADDATA_STRUCT);
 
   while (WIFICOM->available())
   {
@@ -231,9 +249,10 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
     if (1==rec)
     {
       ret = ( NULL != strstr(buffer, "+sent") );
-      if(0!=ret)
+      if(1==ret)
       {
         // all fine
+        break;
       }
     }
   }
@@ -259,25 +278,33 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
     {
 
       ret &= recvlen == (SIZE_OF_GPADDATA_STRUCT - 3);
-
-      Serial.readBytes(gd->uc_data, recvlen > SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
-
-      // Validate
-
-      ret &= gd->gd.stx == 0x02 &&
-      gd->gd.header == 0xFF &&
-      gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
-      gd->gd.data_type == 0x01 &&
-      gd->gd.res3 == 0x00 &&
-      gd->gd.etx == 0x03;
-
       for ( i = 0; i < recvlen; i++)
       {
         Log.Verbose("%c ", (char)gd->uc_data[i]);
       }
       Log.Verbose(" (ASCII: %s)]"CR, gd->uc_data);
 
-      ret &= (recvlen == SIZE_OF_GPADDATA_STRUCT);
+      if(1==ret)
+      {
+        Serial.readBytes(gd->uc_data, recvlen > SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
+
+        // Validate
+
+        ret &= gd->gd.stx == 0x02 &&
+        gd->gd.header == 0xFF &&
+        gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
+        gd->gd.data_type == 0x01 &&
+        gd->gd.res3 == 0x00 &&
+        gd->gd.etx == 0x03;
+
+        for ( i = 0; i < recvlen; i++)
+        {
+          Log.Verbose("%c ", (char)gd->uc_data[i]);
+        }
+        Log.Verbose(" (ASCII: %s)]"CR, gd->uc_data);
+
+        //ret &= (recvlen == SIZE_OF_GPADDATA_STRUCT);
+      }
     }
 
   } while(recvlen);

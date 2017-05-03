@@ -28,25 +28,27 @@
 #include <Servo.h>
 //#include "ESP8266.h"
 
-#define GROUND_SYSTEM // or
-//#define SKY_SYSTEM
-
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 
 float yaw = 0.0f;
 //ESP8266 _wifi(Serial1);
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
+//#define STRINGIFY(x) #x
+//#define TOSTRING(x) STRINGIFY(x)
 //#define AT __FILE__ ":" TOSTRING(__LINE__)
 
 #if defined(GROUND_SYSTEM)
 #define THIS "GND_SYS: MAIN: " TOSTRING(__LINE__) ": "
 #elif defined(SKY_SYSTEM)
+#define THIS "SKY_SYS: MAIN: " TOSTRING(__LINE__) ": "
 #else
-#define THIS "SKY_SYS: MAIN: " TOSTRING(__LINE__) ": ""
+#define THIS "???_SYS: MAIN: " TOSTRING(__LINE__) ": "
 #endif
+// #if defined(SKY_SYSTEM)
+// #else
+// #define THIS "SKY_SYS: MAIN: " TOSTRING(__LINE__) ": "
+//#endif
 //#define MAIN "MAIN: "
 //#define THIS "MAIN: " // __LINE__ ": "
 //SoftwareSerial Serial1(10, 11); // RX, TX
@@ -216,13 +218,24 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
 
   #if defined(GROUND_SYSTEM)
   txGamePadData tgd;
+  int ret = -1;
 
   for (;;)
   {
-    const GamePadEventData_Simple joydata = joystick_loop();
+    const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
     tgd.gd.gd = joydata;
-    wifi_loop_send_Joystick_data(&tgd);
-    Log.Verbose(THIS"Joystick data send attempted"CR);
+
+    ret = wifi_loop_send_Joystick_data(&tgd);
+
+    if(0!=ret)
+    {
+      Log.Warning(THIS"Joystick data send failed"CR);
+    }
+    else
+    {
+      Log.Verbose(THIS"Joystick data send attempted"CR);
+      //02 FF FE 00 02 00 00 00 0F 00 00 00 02 FF 0C 01 00 00 00 00 00 00 00 00 00 00 03
+    }
     while(1);
     //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
   }
@@ -250,9 +263,18 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     if(0==ret) // all good
     {
       #warning steer off
+      while(1);
       //steer_loop(gd);
     }
-    while(1);
+    else
+    {
+
+      Log.Warning(THIS"Joystick data rec failed"CR);
+
+    }
+
+    Delay(10000);
+    //while(1);
   }
   #else
 
