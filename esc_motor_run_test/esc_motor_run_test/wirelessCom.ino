@@ -91,10 +91,10 @@ inline int readline(int readch, char *buffer, const int tlen, int * len)
       linrec = 1;
       pos = 0;  // Reset position index ready for next time
       Log.Verbose(THIS"readline : [LF] %d %d (%s)"CR, linrec, (*len), buffer);
-      //for(temp = 0 ; temp<(*len) ; temp++)
-      //{
-      //  Log.Verbose(" [%d %c (%x)]"CR, temp, buffer[temp], buffer[temp]);
-      //}
+      // for(temp = 0 ; temp<(*len) ; temp++)
+      // {
+      //   Log.Verbose(" [%d %c (%x)]"CR, temp, buffer[temp], buffer[temp]);
+      // }
       Log.Verbose(CR);
       return linrec;
       default:
@@ -142,8 +142,9 @@ int wifi_setup()//int _mode)
   }
   else
   {
-    Log.Error(THIS"wifi check"CR);
+    Log.Error(THIS"wifi functional"CR);
     Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
   }
 
   // AT+START 0 / 1
@@ -158,6 +159,7 @@ int wifi_setup()//int _mode)
   {
     Log.Error(THIS"wifi mode"CR);
     Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
   }
 
   // AT+SRIPP IP1.IP2.IP3.IP4 PORTT
@@ -169,6 +171,7 @@ int wifi_setup()//int _mode)
   {
     Log.Error(THIS"wifi remote ip port"CR);
     Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
   }
 
   #elif ( defined(GROUND_SYSTEM) )
@@ -181,6 +184,7 @@ int wifi_setup()//int _mode)
   {
     Log.Error(THIS"wifi mode"CR);
     Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
   }
 
   #else
@@ -189,7 +193,7 @@ int wifi_setup()//int _mode)
 
   #endif
 
-
+  return 0;
 
 }
 
@@ -396,31 +400,55 @@ int wifi_set_remote_IP_PORT()
 
   selectCommandMode(1);  // CMD mode on
 
+  memset(buffer, 0, 32);
+  // AT+SRIPP 255.255.255.255 12345
+  // 123456789012345678901234567890
+  // 30
   sprintf(buffer, "AT+SRIPP %s %d", PEER_IP_ADDRESS, PEER_PORT); // check just filling up the buffer
-
+  Log.Verbose(THIS"wifi implementation %s %d %s"CR, __func__, __LINE__, buffer);
   WIFICOM->println(buffer);
   memset(buffer, 0, 32);
 
-  //while (9>WIFICOM->available());
-// Issue
-// WIFI: 155: wifi mode set for SKY_SYSTEM
-// WIFI: 448: check
-// ERROR: WIFI: 170: wifi remote ip port
-// WIFI: 171: Please check for delay and/or implementation
-// ERROR: MAIN: 201: WIFI fault
+  selectCommandMode(0); // CMD mode off
 
-  do
+  while (4>WIFICOM->available());
+  Log.Verbose(THIS"wifi implementation %d"CR, WIFICOM->available());
+  // Issue
+  // WIFI: 155: wifi mode set for SKY_SYSTEM
+  // WIFI: 448: check
+  // ERROR: WIFI: 170: wifi remote ip port
+  // WIFI: 171: Please check for delay and/or implementation
+  // ERROR: MAIN: 201: WIFI fault
+  //
+
+  while (WIFICOM->available())
   {
     rec = readline(WIFICOM->read(), buffer, 32, &len);
     //Log.Verbose(THIS"check %d",rec);
+    ret = ( NULL != strstr(buffer, "OK") );
 
-    if (1==rec && 0<=len)
+    if (1==rec && 0<=len && 1==ret)
     {
       // ret = ( NULL != strstr(buffer, "OK") );
       Log.Verbose(THIS"wifi implementation %s %d %s"CR, __func__, __LINE__, buffer);
-    }
+      selectCommandMode(0); // CMD mode off
 
-  } while ( (0==rec) );//|| WIFICOM->available() );
+      break;
+    }
+    // else if (1==rec)
+    // {
+    //   Log.Verbose(THIS"wifi implementation %s %d %s"CR, __func__, __LINE__, buffer);
+    //   memset(buffer, 0, 32);
+    // }
+    // else
+    // {
+    //   //Log.Verbose(THIS"wifi implementation %d %d %d %s"CR, rec, len, ret, buffer);
+    // }
+
+  }
+  //while ( (0==rec && 0==ret) );//|| WIFICOM->available() );
+
+  return (1 == ret ? 0 : -1);
 
   // while ( (0==rec) || WIFICOM->available() )
   // {
@@ -451,78 +479,78 @@ int wifi_set_remote_IP_PORT()
   // }
 
   // NOW OK will be received
-  Log.Verbose(THIS"check %s"CR, buffer);
-  memset(buffer, 0, 32);
-
-  while (4>WIFICOM->available());
-
-  while (WIFICOM->available())
-  {
-    rec = readline(WIFICOM->read(), buffer, 32, &len);
-    if (1==rec && 0<=len)
-    {
-      ret = ( NULL != strstr(buffer, "OK") );
-
-      //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
-      if(0!=ret)
-      {
-        // getout of mode or else ESP8266 will go into bootloader mode.
-        // within 100 ms
-        // Here it is done instantly
-        //
-        selectCommandMode(0); // CMD mode off
-        break;
-      }
-      else
-      {
-        selectCommandMode(0);
-        Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
-        return -1;
-      }
-    }
-  }
-
-
-  selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
-
-  return (1 == ret ? 0 : -1);
-
-
-  //int ret = 0;
-  //int len = -1;
-
-  selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // Switch to command mode
-
-  memset(buffer, 0, 32);
-  sprintf(buffer, "AT+SRIPP %s %d", PEER_IP_ADDRESS, PEER_PORT); // check just filling up the buffer
-
-  WIFICOM->println(buffer);
-
-  memset(buffer, 0, 32);
-
-  while (WIFICOM->available())
-  {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
-    {
-      break;
-      // This line will contain the IP1.IP2.IP3.IP4 PORTT/r/n ignore it for now
-    }
-  }
-
-  memset(buffer, 0, 32);
-
-  while (WIFICOM->available())
-  {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
-    {
-      ret = ( NULL != strstr(buffer, "OK") );
-      break;
-    }
-  }
-
-  selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
-
-  return (1 == ret ? 0 : -1);
+  // Log.Verbose(THIS"check %s"CR, buffer);
+  // memset(buffer, 0, 32);
+  //
+  // while (4>WIFICOM->available());
+  //
+  // while (WIFICOM->available())
+  // {
+  //   rec = readline(WIFICOM->read(), buffer, 32, &len);
+  //   if (1==rec && 0<=len)
+  //   {
+  //     ret = ( NULL != strstr(buffer, "OK") );
+  //
+  //     //Log.Verbose(THIS"check %d %s"CR, ret, buffer);
+  //     if(0!=ret)
+  //     {
+  //       // getout of mode or else ESP8266 will go into bootloader mode.
+  //       // within 100 ms
+  //       // Here it is done instantly
+  //       //
+  //       selectCommandMode(0); // CMD mode off
+  //       break;
+  //     }
+  //     else
+  //     {
+  //       selectCommandMode(0);
+  //       Log.Error(THIS"wifi implementation %s %d"CR, __func__, __LINE__);
+  //       return -1;
+  //     }
+  //   }
+  // }
+  //
+  //
+  // selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
+  //
+  // return (1 == ret ? 0 : -1);
+  //
+  //
+  // //int ret = 0;
+  // //int len = -1;
+  //
+  // selectCommandMode(1); // digitalWrite(WIFI_CMD_MODE_PIN, LOW); // Switch to command mode
+  //
+  // memset(buffer, 0, 32);
+  // sprintf(buffer, "AT+SRIPP %s %d", PEER_IP_ADDRESS, PEER_PORT); // check just filling up the buffer
+  //
+  // WIFICOM->println(buffer);
+  //
+  // memset(buffer, 0, 32);
+  //
+  // while (WIFICOM->available())
+  // {
+  //   if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+  //   {
+  //     break;
+  //     // This line will contain the IP1.IP2.IP3.IP4 PORTT/r/n ignore it for now
+  //   }
+  // }
+  //
+  // memset(buffer, 0, 32);
+  //
+  // while (WIFICOM->available())
+  // {
+  //   if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+  //   {
+  //     ret = ( NULL != strstr(buffer, "OK") );
+  //     break;
+  //   }
+  // }
+  //
+  // selectCommandMode(0); // digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Back in transparent mode
+  //
+  // return (1 == ret ? 0 : -1);
 }
 
 /**
