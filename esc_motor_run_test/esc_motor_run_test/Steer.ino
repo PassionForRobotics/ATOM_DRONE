@@ -3,7 +3,14 @@
 
 #include "data.h"
 
-#define THIS "Steer: "
+#if defined(GROUND_SYSTEM)
+#define THIS "GND_SYS: STEER: " TOSTRING(__LINE__) ": "
+#elif defined(SKY_SYSTEM)
+#else
+#define THIS "SKY_SYS: STEER: " TOSTRING(__LINE__) ": ""
+#endif
+
+//#define THIS "Steer: "
 
 #define MAX_THROTTLE (2000) //(1864)
 #define MIN_THROTTLE (1064)
@@ -48,7 +55,7 @@ void steer_loop(const txGamePadData gd)
   // SLIDER MAP FROM 255-0 TO 1024-1864
   // TWIST/YAW MAP FROM ? TO ?
 
-#define servo1Offset 0 // F 
+#define servo1Offset 0 // F
 #define servo2Offset -10  // R
 #define servo3Offset 7  // B
 #define servo4Offset 0  // L
@@ -241,4 +248,3 @@ void state_machine(char inChar)
 
   }
 }
-

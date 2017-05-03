@@ -28,8 +28,8 @@
 #include <Servo.h>
 //#include "ESP8266.h"
 
-//#define GROUND_SYSTEM // or
-#define SKY_SYSTEM
+#define GROUND_SYSTEM // or
+//#define SKY_SYSTEM
 
 #define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
@@ -41,7 +41,12 @@ float yaw = 0.0f;
 #define TOSTRING(x) STRINGIFY(x)
 //#define AT __FILE__ ":" TOSTRING(__LINE__)
 
-#define THIS "MAIN: " TOSTRING(__LINE__) ": "
+#if defined(GROUND_SYSTEM)
+#define THIS "GND_SYS: MAIN: " TOSTRING(__LINE__) ": "
+#elif defined(SKY_SYSTEM)
+#else
+#define THIS "SKY_SYS: MAIN: " TOSTRING(__LINE__) ": ""
+#endif
 //#define MAIN "MAIN: "
 //#define THIS "MAIN: " // __LINE__ ": "
 //SoftwareSerial Serial1(10, 11); // RX, TX
@@ -65,6 +70,7 @@ void setup() {
   Log.Init( LOGLEVEL , 230400L );
   Log.Info(THIS"HELLO WORLD"CR);
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
+  Log.Warning(THIS"LOGLEVEL - WARNING LEVEL - MSG CHECK"CR);
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
 
@@ -83,7 +89,7 @@ void setup() {
   ESC_init();
   Log.Info(THIS"DONE ECS"CR);
   #else
-  Log.Info(THIS"BYPASSED ECS"CR);
+  Log.Warning(THIS"BYPASSED ECS"CR);
   #endif
 
   #if defined(GROUND_SYSTEM)
@@ -91,7 +97,7 @@ void setup() {
   joystick_setup();
   Log.Info(THIS"DONE Joystick"CR);
   #else
-  Log.Info(THIS"BYPASSED Joystick"CR);
+  Log.Warning(THIS"BYPASSED Joystick"CR);
   #endif
   /* // test
   while (1)
@@ -115,7 +121,7 @@ Log.Info(THIS"Setting up MPU"CR);
 mpu_setup();
 Log.Info(THIS"DONE MPU"CR);
 #else
-Log.Info(THIS"BYPASSED MPU"CR);
+Log.Warning(THIS"BYPASSED MPU"CR);
 #endif
 
 #if defined(SKY_SYSTEM)
@@ -123,7 +129,7 @@ Log.Info(THIS"Setting up Servos"CR);
 servo_init();
 Log.Info(THIS"DONE Servos"CR);
 #else
-Log.Info(THIS"BYPASSED Servos"CR);
+Log.Warning(THIS"BYPASSED Servos"CR);
 #endif
 
 delay(100);
@@ -202,9 +208,9 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     while(1);
   }
   Log.Info(THIS"DONE WIFI"CR);
-  while(1);
+
   #else
-  Log.Info(THIS"BYPASSED WIFI"CR);
+  Log.Warning(THIS"BYPASSED WIFI"CR);
   Log.Error(THIS"WIFI is must for either type of the systems"CR);
   #endif
 
@@ -215,7 +221,9 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
   {
     const GamePadEventData_Simple joydata = joystick_loop();
     tgd.gd.gd = joydata;
-    wifi_loop_send_Joystick_data( tgd);
+    wifi_loop_send_Joystick_data(&tgd);
+    Log.Verbose(THIS"Joystick data send attempted"CR);
+    while(1);
     //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
   }
 
@@ -237,11 +245,14 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
     ret = wifi_loop_recv_joystick_data(&gd); //check
+    Log.Verbose(THIS"Joystick data rec attempted"CR);
+
     if(0==ret) // all good
     {
       #warning steer off
       //steer_loop(gd);
     }
+    while(1);
   }
   #else
 

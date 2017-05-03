@@ -15,9 +15,10 @@ extern "C" {
 
 #define LOG_LEVEL_NOOUTPUT 0 
 #define LOG_LEVEL_ERRORS 1
-#define LOG_LEVEL_INFOS 2
-#define LOG_LEVEL_DEBUG 3
-#define LOG_LEVEL_VERBOSE 4
+#define LOG_LEVEL_WARNINGS 2
+#define LOG_LEVEL_INFOS 3
+#define LOG_LEVEL_DEBUG 4
+#define LOG_LEVEL_VERBOSE 5
 
 // default loglevel if nothing is set from user
 #define LOGLEVEL LOG_LEVEL_DEBUG 
@@ -104,6 +105,17 @@ public:
 	* \return void
 	*/
     void Error(char* msg, ...);
+    
+    /**
+	* Output a warning message. Output message contains
+	* ERROR: followed by original msg
+	* Error messages are printed out, at every loglevel
+	* except 0 ;-)
+	* \param msg format string to output
+	* \param ... any number of variables
+	* \return void
+	*/
+    void Warning(char* msg, ...);
 	
     /**
 	* Output an info message. Output message contains

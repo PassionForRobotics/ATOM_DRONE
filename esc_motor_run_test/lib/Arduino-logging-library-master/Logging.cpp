@@ -12,7 +12,16 @@ void Logging::Reinit(int level){
 
 void Logging::Error(char* msg, ...){
     if (LOG_LEVEL_ERRORS <= _level) {   
-		print ("ERROR: ",0);
+		print ("ERR: ",0);
+        va_list args;
+        va_start(args, msg);
+        print(msg,args);
+    }
+}
+
+void Logging::Warning(char* msg, ...){
+    if (LOG_LEVEL_WARNINGS <= _level) {   
+		print ("WRN: ",0);
         va_list args;
         va_start(args, msg);
         print(msg,args);
@@ -22,6 +31,7 @@ void Logging::Error(char* msg, ...){
 
 void Logging::Info(char* msg, ...){
     if (LOG_LEVEL_INFOS <= _level) {
+    	print ("INF: ",0);
         va_list args;
         va_start(args, msg);
         print(msg,args);
@@ -30,6 +40,7 @@ void Logging::Info(char* msg, ...){
 
 void Logging::Debug(char* msg, ...){
     if (LOG_LEVEL_DEBUG <= _level) {
+        print ("DBG: ",0);
         va_list args;
         va_start(args, msg);
         print(msg,args);
@@ -39,6 +50,7 @@ void Logging::Debug(char* msg, ...){
 
 void Logging::Verbose(char* msg, ...){
     if (LOG_LEVEL_VERBOSE <= _level) {
+    	print ("VRB: ",0);
         va_list args;
         va_start(args, msg);
         print(msg,args);

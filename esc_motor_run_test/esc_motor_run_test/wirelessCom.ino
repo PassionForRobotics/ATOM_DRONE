@@ -3,9 +3,15 @@
 #include <Logging.h>
 #include "data.h"
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define THIS "WIFI: " TOSTRING(__LINE__) ": "
+//#define STRINGIFY(x) #x
+//#define TOSTRING(x) STRINGIFY(x)
+
+#if defined(GROUND_SYSTEM)
+#define THIS "GND_SYS: WIFI: " TOSTRING(__LINE__) ": "
+#elif defined(SKY_SYSTEM)
+#else
+#define THIS "SKY_SYS: WIFI: " TOSTRING(__LINE__) ": ""
+#endif
 
 #define SSID        "D_ATOM_1" //"HHH7351HHH"
 #define PASSWORD    "D_ATOM_1"
@@ -90,11 +96,11 @@ inline int readline(int readch, char *buffer, const int tlen, int * len)
       (*len) = pos;
       linrec = 1;
       pos = 0;  // Reset position index ready for next time
-      Log.Verbose(THIS"readline : [LF] %d %d (%s)"CR, linrec, (*len), buffer);
-      // for(temp = 0 ; temp<(*len) ; temp++)
-      // {
-      //   Log.Verbose(" [%d %c (%x)]"CR, temp, buffer[temp], buffer[temp]);
-      // }
+      Log.Debug(THIS"readline : [LF] %d %d (%s)"CR, linrec, (*len), buffer);
+      for(temp = 0 ; temp<(*len) ; temp++)
+      {
+        Log.Verbose(" [%d %c (%x)]"CR, temp, buffer[temp], buffer[temp]);
+      }
       Log.Verbose(CR);
       return linrec;
       default:
@@ -622,8 +628,8 @@ int wifi_set_mode(int _mode)
 {
 
 
-  int ret = 0;
-  int rec = 0;
+  int ret = -1;
+  int rec = -1;
   int len = -1;
 
   memset(buffer, 0, 32);
@@ -699,13 +705,18 @@ int wifi_set_mode(int _mode)
   }
 
   memset(buffer, 0, 32);
+  ret = 0;
 
-  while (WIFICOM->available())
+  while (WIFICOM->available() || 0==ret)
   {
-    if (0 < readline(WIFICOM->read(), buffer, 32, &len))
+    rec = readline(WIFICOM->read(), buffer, 32, &len);
+    if (1 == rec)
     {
       ret = ( NULL != strstr(buffer, "ready") );
-      break;
+      if(1==ret)
+      {
+        break;
+      }
     }
   }
 

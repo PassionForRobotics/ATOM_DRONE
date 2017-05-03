@@ -22,9 +22,13 @@ JoystickEvents                                  JoyEvents;
 JoystickReportParser                            Joy(&JoyEvents);
 GamePadEventData_Simple                         gpadevt;
 
-
-#define THIS "JOYS: "
-
+#if defined(GROUND_SYSTEM)
+#define THIS "GND_SYS: JOYS: " TOSTRING(__LINE__) ": "
+#elif defined(SKY_SYSTEM)
+#else
+#define THIS "SKY_SYS: JOYS: " TOSTRING(__LINE__) ": ""
+#endif
+ 
 void joystick_setup()
 {
   //  //analogWrite(13, 200);
@@ -102,4 +106,3 @@ void JoystickEvents::OnGamePadChanged(const GamePadEventData *evt)
   //  PrintHex<uint8_t>(evt->buttons_b, 0x80);
   //  Serial.println("");
 }
-

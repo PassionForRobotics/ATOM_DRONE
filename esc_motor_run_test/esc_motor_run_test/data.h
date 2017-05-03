@@ -2,6 +2,9 @@
 #ifndef DATA_H
 #define DATA_H
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 #include <Arduino.h>
 
 // I know to much of cross refs
