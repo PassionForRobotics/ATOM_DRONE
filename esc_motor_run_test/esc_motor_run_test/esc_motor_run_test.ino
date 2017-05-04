@@ -257,6 +257,7 @@ void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a T
     //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
     //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
+    memset(gd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
     ret = wifi_loop_recv_joystick_data(&gd); //check
     Log.Verbose(THIS"Joystick data rec attempted"CR);
 

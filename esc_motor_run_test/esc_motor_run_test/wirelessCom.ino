@@ -23,7 +23,7 @@
 #define PEER_IP_ADDRESS "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
 #define PEER_PORT (20000) //(8090)
 #elif defined(SKY_SYSTEM)
-#define PEER_IP_ADDRESS "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
+#define PEER_IP_ADDRESS "192.168.4.103" //"192.168.4.1" // SKY_SYSTEM address
 #define PEER_PORT (20000) //(8090)
 #else
 #endif
@@ -270,47 +270,42 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
   int recvlen = 0;
   int i=0;
 
-  do
+
+  recvlen = WIFICOM->available();
+  while(recvlen)
   {
-    recvlen = WIFICOM->available();
 
-    if(0<recvlen)
-    {
+     ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
+     Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
 
-      ret &= recvlen == (SIZE_OF_GPADDATA_STRUCT - 3);
-      for ( i = 0; i < recvlen; i++)
-      {
-        Log.Verbose("%c ", (char)gd->uc_data[i]);
-      }
-      Log.Verbose(" (ASCII: %s)]"CR, gd->uc_data);
+     if(1==ret)
+     {
+       WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
 
-      if(1==ret)
-      {
-        Serial.readBytes(gd->uc_data, recvlen > SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
+       // Validate
 
-        // Validate
+       ret &= gd->gd.stx == 0x02 &&
+       gd->gd.header == 0xFF &&
+       gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
+       gd->gd.data_type == 0x01 &&
+       gd->gd.res3 == 0x00 &&
+       gd->gd.etx == 0x03;
 
-        ret &= gd->gd.stx == 0x02 &&
-        gd->gd.header == 0xFF &&
-        gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
-        gd->gd.data_type == 0x01 &&
-        gd->gd.res3 == 0x00 &&
-        gd->gd.etx == 0x03;
+       for ( i = 0; i < recvlen; i++)
+       {
+         Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
+       }
+       Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
 
-        for ( i = 0; i < recvlen; i++)
-        {
-          Log.Verbose("%c ", (char)gd->uc_data[i]);
-        }
-        Log.Verbose(" (ASCII: %s)]"CR, gd->uc_data);
+       break;
+     }
 
-        //ret &= (recvlen == SIZE_OF_GPADDATA_STRUCT);
-      }
-    }
+     recvlen = WIFICOM->available();
 
-  } while(recvlen);
+  }
 
   return (1 == ret ? 0 : -1);
-
+ 
 }
 
 
