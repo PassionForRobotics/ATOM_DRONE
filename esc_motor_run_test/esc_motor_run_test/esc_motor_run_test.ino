@@ -12,7 +12,7 @@
 //#include <portable.h>
 //#include <StackMacros.h>
 //#include <event_groups.h>
-//#include <queue.h>
+#include <queue.h>
 //#include <FreeRTOSVariant.h>
 //#include <semphr.h>
 //#include <projdefs.h>
@@ -56,6 +56,12 @@ float yaw = 0.0f;
 
 #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
 void JoyStickTask( void *pvParameters);
+
+TaskHandle_t WifiDataTaskHandler = NULL;
+
+QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU data
+
+void WifiDataTask( void *pvParameters);
 #endif
 
 void setup() {
@@ -148,151 +154,264 @@ BaseType_t xReturned;
 xReturned = xTaskCreate(
   JoyStickTask
   ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
-  ,  (8 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
+  ,  (4 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
   ,  NULL//(void*)(&_wifi)
   ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
   ,  NULL );
 
-  if (pdFALSE == xReturned)
-  {
-    Log.Error(THIS"xTaskCreate failed"CR);
-  }
-  else
-  {
-    Log.Info(THIS"xTaskCreated"CR);
-  }
+  xReturned &= xTaskCreate(
+    WifiDataTask
+    ,  (const portCHAR *)"WifiDataTask"  // A name just for humans
+    ,  (4 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
+    ,  NULL//(void*)(&_wifi)
+    ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+    ,  &WifiDataTaskHandler );
 
-  //  xReturned = xTaskCreate(
-  //                SerialRxTask
-  //                ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
-  //                ,  (1 * 512) // This stack size can be checked & adjusted by reading the Stack Highwater
-  //                ,  NULL //(void*)(&_wifi)
-  //                ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
-  //                ,  NULL );
-  //
-  //  if (pdFALSE == xReturned)
-  //  {
-  //    Log.Error(THIS"xTaskCreate failed"CR);
-  //  }
-  //  else
-  //  {
-  //    Log.Info(THIS"xTaskCreated"CR);
-  //  }
-  #endif
+    xWifiDataSendQ = xQueueCreate( 2, sizeof( txGamePadData ) );
+    xWifiDataReceiveQ = xQueueCreate( 2, sizeof( txGamePadData ) );
 
-  Log.Info(THIS"SYSTEM SETUP COMPLETE"CR);
-  Log.Info(THIS"SYSTEM SETUP TIME: %d"CR, millis() - ts_START);
-
-  //vTaskStartScheduler();
-  //while (1);
-
-}
-
-
-angle_val_raw_acc last_data;
-
-void SerialRxTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
-{
-  for (;;)
-  {
-    serialEventRun();
-  }
-}
-
-void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
-{
-
-  #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
-  Log.Info(THIS"Setting up wifi"CR);
-  if(-1==wifi_setup())
-  {
-    Log.Error(THIS"WIFI fault"CR);
-    while(1);
-  }
-  Log.Info(THIS"DONE WIFI"CR);
-
-  #else
-  Log.Warning(THIS"BYPASSED WIFI"CR);
-  Log.Error(THIS"WIFI is must for either type of the systems"CR);
-  #endif
-
-  #if defined(GROUND_SYSTEM)
-  txGamePadData tgd;
-  int ret = -1;
-
-  for (;;)
-  {
-    const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
-    tgd.gd.gd = joydata;
-
-    ret = wifi_loop_send_Joystick_data(&tgd);
-
-    if(0!=ret)
+    if (pdFALSE == xReturned)
     {
-      Log.Warning(THIS"Joystick data send failed"CR);
+      Log.Error(THIS"xTaskCreate failed"CR);
     }
     else
     {
-      Log.Verbose(THIS"Joystick data send attempted"CR);
-      //02 FF FE 00 02 00 00 00 0F 00 00 00 02 FF 0C 01 00 00 00 00 00 00 00 00 00 00 03
+      Log.Info(THIS"xTaskCreated"CR);
     }
-    while(1);
-    //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
+
+    //  xReturned = xTaskCreate(
+    //                SerialRxTask
+    //                ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
+    //                ,  (1 * 512) // This stack size can be checked & adjusted by reading the Stack Highwater
+    //                ,  NULL //(void*)(&_wifi)
+    //                ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+    //                ,  NULL );
+    //
+    //  if (pdFALSE == xReturned)
+    //  {
+    //    Log.Error(THIS"xTaskCreate failed"CR);
+    //  }
+    //  else
+    //  {
+    //    Log.Info(THIS"xTaskCreated"CR);
+    //  }
+    #endif
+
+    Log.Info(THIS"SYSTEM SETUP COMPLETE"CR);
+    Log.Info(THIS"SYSTEM SETUP TIME: %d"CR, millis() - ts_START);
+
+    //vTaskStartScheduler();
+    //while (1);
+
   }
 
-  //#endif // GROUND_SYSTEM MPU/Joystick
 
-  #elif defined(SKY_SYSTEM)
+  angle_val_raw_acc last_data;
 
-  angle_val_raw_acc data;
-  txGamePadData gd;
-  int ret = -1;
+  void SerialRxTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
+  {
+    for (;;)
+    {
+      serialEventRun();
+    }
+  }
 
-  for (;;)
+  void WifiDataTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
+  {
+    Log.Verbose(THIS"Suspending"CR);
+
+    vTaskSuspend( NULL );
+
+    Log.Verbose(THIS"Resumed"CR);
+
+    txGamePadData tgd;
+    int ret = -1;
+
+    for(;;)
+    {
+      #if defined(GROUND_SYSTEM)
+
+      if( xWifiDataSendQ != 0 )
+      {
+        // Receive a message on the created queue.  Block for 10 ticks if a
+        // message is not immediately available.
+        if( xQueueReceive( xWifiDataSendQ, &( tgd ), ( TickType_t ) 10 ) )
+        {
+          ret = wifi_loop_send_Joystick_data(&tgd);
+          if(0==ret)
+          {
+            // all fine
+            ret = -1; // restore next work
+          }
+          else
+          {
+            Log.Warning(THIS"Joystick data sent failed"CR);
+          }
+        }
+      }
+
+      #elif defined(SKY_SYSTEM)
+
+      if( xWifiDataReceiveQ != 0 )
+      {
+        ret = wifi_loop_recv_joystick_data(&tgd); //check
+
+        //if(0==ret)
+        //if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
+        //if( xQueueSend( xWifiDataReceiveQ, &( tgd ), ( TickType_t ) 10 ) )
+        //{
+        if(0==ret)
+        {
+          if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
+          // all fine
+          ret = -1; // restore next work
+        }
+        else
+        {
+          //Log.Warning(THIS"Joystick data rec failed"CR);
+        }
+        //}
+      }
+
+      #else
+
+      #endif
+
+      Delay(100);
+
+    }
+
+  }
+  
+  void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
 
-    data = mpu_loop(); // Must update here too
-    // ESP8266_loop_send_MPU_data(data);
-    //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
-    //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
-    //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
-
-    memset(gd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
-    ret = wifi_loop_recv_joystick_data(&gd); //check
-    Log.Verbose(THIS"Joystick data rec attempted"CR);
-
-    if(0==ret) // all good
+    #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+    Log.Info(THIS"Setting up wifi"CR);
+    if(-1==wifi_setup())
     {
-      #warning steer off
+      Log.Error(THIS"WIFI fault"CR);
       while(1);
-      //steer_loop(gd);
     }
-    else
+    Log.Info(THIS"DONE WIFI"CR);
+
+    #else
+    Log.Warning(THIS"BYPASSED WIFI"CR);
+    Log.Error(THIS"WIFI is must for either type of the systems"CR);
+    #endif
+
+    #if defined(GROUND_SYSTEM)
+    txGamePadData tgd;
+    int ret = -1;
+
+    vTaskResume( WifiDataTaskHandler );
+    Log.Verbose(THIS"Resumming"CR);
+
+    for (;;)
+    {
+      const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
+      tgd.gd.gd = joydata;
+
+      if( xWifiDataSendQ != 0 )
+      {
+        /* Send an unsigned long.  Wait for 10 ticks for space to become
+        available if necessary. */
+        if( xQueueSend( xWifiDataSendQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
+        {
+          /* Failed to post the message, even after 10 ticks. */
+        }
+        else
+        {
+
+        }
+      }
+
+      // ret = wifi_loop_send_Joystick_data(&tgd);
+      //
+      // if(0!=ret)
+      // {
+      //   Log.Warning(THIS"Joystick data send failed"CR);
+      // }
+      // else
+      // {
+      //   Log.Verbose(THIS"Joystick data send attempted"CR);
+      //   //02 FF FE 00 02 00 00 00 0F 00 00 00 02 FF 0C 01 00 00 00 00 00 00 00 00 00 00 03
+      // }
+      //while(1);
+      //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
+      Delay(100);
+    }
+
+    //#endif // GROUND_SYSTEM MPU/Joystick
+
+    #elif defined(SKY_SYSTEM)
+
+    angle_val_raw_acc data;
+    txGamePadData gd;
+    int ret = -1;
+
+    vTaskResume( WifiDataTaskHandler );
+    Log.Verbose(THIS"Resumming"CR);
+
+    for (;;)
     {
 
-      Log.Warning(THIS"Joystick data rec failed"CR);
+      data = mpu_loop(); // Must update here too
+      // ESP8266_loop_send_MPU_data(data);
+      //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
+      //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
+      //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
+      memset(gd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
+
+      if( xWifiDataReceiveQ != 0 )
+      {
+        // Receive a message on the created queue.  Block for 10 ticks if a
+        // message is not immediately available.
+        if( xQueueReceive( xWifiDataReceiveQ, &( gd ), ( TickType_t ) 10 ) )
+        {
+          // pcRxedMessage now points to the struct AMessage variable posted
+          // by vATask.
+        }
+      }
+
+      // ret = wifi_loop_recv_joystick_data(&gd); //check
+      // Log.Verbose(THIS"Joystick data rec attempted"CR);
+      //
+      // if(0==ret) // all good
+      // {
+      //   #warning steer off
+      //   while(1);
+      //   //steer_loop(gd);
+      // }
+      // else
+      // {
+      //
+      //   Log.Warning(THIS"Joystick data rec failed"CR);
+      //
+      // }
+      //
+      // Delay(10000);
+      //while(1);
+      Delay(100);
+    }
+    #else
+
+    // else
+    Delay(100);
+
+    #endif // SKY_SYSTEM MPU/Joystick
+  }
+
+  void loop() {
+    return;
+
+    // Test
+    if (Serial.available())
+    {
+      char inChar = (char)Serial.read();
+      state_machine(inChar);
     }
 
-    Delay(10000);
-    //while(1);
+    //delay(1);
   }
-  #else
-
-  // else
-
-  #endif // SKY_SYSTEM MPU/Joystick
-}
-
-void loop() {
-  return;
-
-  // Test
-  if (Serial.available())
-  {
-    char inChar = (char)Serial.read();
-    state_machine(inChar);
-  }
-
-  //delay(1);
-}

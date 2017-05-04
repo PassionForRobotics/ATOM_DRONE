@@ -305,7 +305,7 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
   }
 
   return (1 == ret ? 0 : -1);
- 
+
 }
 
 
