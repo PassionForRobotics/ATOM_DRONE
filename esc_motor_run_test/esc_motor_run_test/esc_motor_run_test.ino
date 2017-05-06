@@ -154,7 +154,7 @@ BaseType_t xReturned;
 xReturned = xTaskCreate(
   JoyStickTask
   ,  (const portCHAR *)"JoyStickTask"  // A name just for humans
-  ,  (4 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
+  ,  (5 * 256) // This stack size can be checked & adjusted by reading the Stack Highwater
   ,  NULL//(void*)(&_wifi)
   ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
   ,  NULL );
@@ -277,12 +277,12 @@ xReturned = xTaskCreate(
 
       #endif
 
-      Delay(100);
+      Delay(500);
 
     }
 
   }
-  
+
   void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
 
@@ -404,13 +404,40 @@ xReturned = xTaskCreate(
   }
 
   void loop() {
-    return;
-
+    //return;
+    int loglevel = 0;
     // Test
     if (Serial.available())
     {
       char inChar = (char)Serial.read();
-      state_machine(inChar);
+      switch(inChar)
+      {
+        case 'V':
+        {
+          loglevel = LOG_LEVEL_VERBOSE;
+        }break;
+        case 'D':
+        {
+          loglevel = LOG_LEVEL_DEBUG;
+        }break;
+
+        case 'I':
+        {
+          loglevel = LOG_LEVEL_INFOS;
+        }break;
+        case 'W':
+        {
+          loglevel = LOG_LEVEL_WARNINGS;
+        }break;
+        case 'E':
+        {
+          loglevel = LOG_LEVEL_ERRORS;
+        }break;
+        default:{}
+      }
+
+      Log.Reinit(loglevel);
+      //state_machine(inChar);
     }
 
     //delay(1);

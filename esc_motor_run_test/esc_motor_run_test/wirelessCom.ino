@@ -243,6 +243,8 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
 
   WIFICOM->write(data->uc_data, SIZE_OF_GPADDATA_STRUCT);
 
+  while (!WIFICOM->available());
+
   while (WIFICOM->available())
   {
     rec = readline(WIFICOM->read(), buffer, 32, &len);
@@ -252,6 +254,10 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
       if(1==ret)
       {
         // all fine
+        while (WIFICOM->available())
+        {
+          WIFICOM->read();
+        }
         break;
       }
     }
