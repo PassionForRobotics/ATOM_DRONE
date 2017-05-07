@@ -272,6 +272,7 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
 */
 int wifi_loop_recv_joystick_data(txGamePadData * gd)
 {
+  // If performing serial print must be inside semaphore
   int ret = -1;
   int recvlen = 0;
   int i=0;
@@ -281,32 +282,47 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
   while(recvlen)
   {
 
-     ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
-     Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
+    ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
 
-     if(1==ret)
-     {
-       WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {
 
-       // Validate
+      Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
 
-       ret &= gd->gd.stx == 0x02 &&
-       gd->gd.header == 0xFF &&
-       gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
-       gd->gd.data_type == 0x01 &&
-       gd->gd.res3 == 0x00 &&
-       gd->gd.etx == 0x03;
+      if ( ( xSerialSemaphore ) != NULL )
+      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    }
 
-       for ( i = 0; i < recvlen; i++)
-       {
-         Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
-       }
-       Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
+    if(1==ret)
+    {
+      WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
 
-       break;
-     }
+      // Validate
+      
+      ret &= gd->gd.stx == 0x02 &&
+      gd->gd.header == 0xFF &&
+      gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
+      gd->gd.data_type == 0x01 &&
+      gd->gd.res3 == 0x00 &&
+      gd->gd.etx == 0x03;
 
-     recvlen = WIFICOM->available();
+      if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      {
+
+        for ( i = 0; i < recvlen; i++)
+        {
+          Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
+        }
+        Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
+
+        if ( ( xSerialSemaphore ) != NULL )
+        xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+      }
+
+      break;
+    }
+
+    recvlen = WIFICOM->available();
 
   }
 

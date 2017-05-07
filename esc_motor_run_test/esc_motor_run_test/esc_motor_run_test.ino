@@ -14,7 +14,7 @@
 //#include <event_groups.h>
 #include <queue.h>
 //#include <FreeRTOSVariant.h>
-//#include <semphr.h>
+#include <semphr.h>
 //#include <projdefs.h>
 //#include <list.h>/
 //#include <portmacro.h>
@@ -28,7 +28,14 @@
 #include <Servo.h>
 //#include "ESP8266.h"
 
-#define LOGLEVEL LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
+// #define LOG_LEVEL_NOOUTPUT 0
+// #define LOG_LEVEL_ERRORS 1
+// #define LOG_LEVEL_WARNINGS 2
+// #define LOG_LEVEL_INFOS 3
+// #define LOG_LEVEL_DEBUG 4
+// #define LOG_LEVEL_VERBOSE 5
+
+#define LOGLEVEL LOG_LEVEL_INFOS //LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 
 float yaw = 0.0f;
@@ -60,6 +67,9 @@ void JoyStickTask( void *pvParameters);
 TaskHandle_t WifiDataTaskHandler = NULL;
 
 QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU data
+
+// Create a Semaphore binary flag for the Serial Port. To ensure only single access.
+SemaphoreHandle_t xSerialSemaphore;
 
 void WifiDataTask( void *pvParameters);
 #endif
@@ -142,6 +152,13 @@ Log.Warning(THIS"BYPASSED Servos"CR);
 
 delay(100);
 
+if ( xSerialSemaphore == NULL )          // Check to see if the Serial Semaphore has not been created.
+{
+  xSerialSemaphore = xSemaphoreCreateMutex(); // mutex semaphore for Serial Port
+  if ( ( xSerialSemaphore ) != NULL )
+  xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+}
+
 #if defined(SKY_SYSTEM)
 angle_val_raw_acc data = mpu_loop();
 yaw = data.data.z_angle;
@@ -218,14 +235,40 @@ xReturned = xTaskCreate(
 
   void WifiDataTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
-    Log.Verbose(THIS"Suspending"CR);
+
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {
+      Log.Verbose(THIS"Suspending"CR);
+
+      if ( ( xSerialSemaphore ) != NULL )
+      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    }
 
     vTaskSuspend( NULL );
 
-    Log.Verbose(THIS"Resumed"CR);
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {
+      Log.Verbose(THIS"Resumed"CR);
+
+      if ( ( xSerialSemaphore ) != NULL )
+      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    }
 
     txGamePadData tgd;
     int ret = -1;
+
+    // memset(tgd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
+    //
+    // ret = wifi_loop_send_Joystick_data(&tgd);
+    // if(0==ret)
+    // {
+    //   // all fine
+    //   ret = -1; // restore next work
+    // }
+    // else
+    // {
+    //   Log.Warning(THIS"test Joystick data sent failed"CR);
+    // }
 
     for(;;)
     {
@@ -237,7 +280,22 @@ xReturned = xTaskCreate(
         // message is not immediately available.
         if( xQueueReceive( xWifiDataSendQ, &( tgd ), ( TickType_t ) 10 ) )
         {
+          if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+          {
+            Log.Verbose(THIS"Data Sending"CR);
+
+            if ( ( xSerialSemaphore ) != NULL )
+            xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+          }
+
+          //if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+          //{
+
           ret = wifi_loop_send_Joystick_data(&tgd);
+
+          //  if ( ( xSerialSemaphore ) != NULL )
+          //  xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+          //}
           if(0==ret)
           {
             // all fine
@@ -245,7 +303,14 @@ xReturned = xTaskCreate(
           }
           else
           {
-            Log.Warning(THIS"Joystick data sent failed"CR);
+            if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+            {
+              Log.Warning(THIS"Joystick data sent failed"CR);
+
+              if ( ( xSerialSemaphore ) != NULL )
+              xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+            }
+
           }
         }
       }
@@ -254,8 +319,14 @@ xReturned = xTaskCreate(
 
       if( xWifiDataReceiveQ != 0 )
       {
+        //if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+        //{
+
         ret = wifi_loop_recv_joystick_data(&tgd); //check
 
+        //if ( ( xSerialSemaphore ) != NULL )
+        //xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+        //}
         //if(0==ret)
         //if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
         //if( xQueueSend( xWifiDataReceiveQ, &( tgd ), ( TickType_t ) 10 ) )
@@ -277,7 +348,7 @@ xReturned = xTaskCreate(
 
       #endif
 
-      Delay(500);
+      Delay(10);
 
     }
 
@@ -286,26 +357,34 @@ xReturned = xTaskCreate(
   void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
 
-    #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
-    Log.Info(THIS"Setting up wifi"CR);
-    if(-1==wifi_setup())
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
-      Log.Error(THIS"WIFI fault"CR);
-      while(1);
-    }
-    Log.Info(THIS"DONE WIFI"CR);
 
-    #else
-    Log.Warning(THIS"BYPASSED WIFI"CR);
-    Log.Error(THIS"WIFI is must for either type of the systems"CR);
-    #endif
+      #if ( defined(GROUND_SYSTEM) || defined(SKY_SYSTEM) )
+      Log.Info(THIS"Setting up wifi"CR);
+      if(-1==wifi_setup())
+      {
+        Log.Error(THIS"WIFI fault"CR);
+        while(1);
+      }
+      Log.Info(THIS"DONE WIFI"CR);
+
+      #else
+      Log.Warning(THIS"BYPASSED WIFI"CR);
+      Log.Error(THIS"WIFI is must for either type of the systems"CR);
+      #endif
+
+      if ( ( xSerialSemaphore ) != NULL )
+      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    }
 
     #if defined(GROUND_SYSTEM)
     txGamePadData tgd;
     int ret = -1;
 
+    // Not serial print is allowed further
     vTaskResume( WifiDataTaskHandler );
-    Log.Verbose(THIS"Resumming"CR);
+    //Log.Verbose(THIS"Resumming"CR);
 
     for (;;)
     {
@@ -351,7 +430,14 @@ xReturned = xTaskCreate(
     int ret = -1;
 
     vTaskResume( WifiDataTaskHandler );
-    Log.Verbose(THIS"Resumming"CR);
+
+    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    {
+      Log.Verbose(THIS"Resumming"CR);
+
+      if ( ( xSerialSemaphore ) != NULL )
+      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    }
 
     for (;;)
     {
