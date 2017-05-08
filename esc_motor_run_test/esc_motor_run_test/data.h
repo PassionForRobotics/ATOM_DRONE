@@ -6,8 +6,8 @@
 #define TOSTRING(x) STRINGIFY(x)
 
 
-#define GROUND_SYSTEM // or
-//#define SKY_SYSTEM
+//#define GROUND_SYSTEM // or
+#define SKY_SYSTEM
 
 #include <Arduino.h>
 

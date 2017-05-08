@@ -35,7 +35,7 @@
 // #define LOG_LEVEL_DEBUG 4
 // #define LOG_LEVEL_VERBOSE 5
 
-#define LOGLEVEL LOG_LEVEL_INFOS //LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
+#define LOGLEVEL LOG_LEVEL_DEBUG //LOG_LEVEL_INFOS //LOG_LEVEL_VERBOSE //LOG_LEVEL_DEBUG
 
 
 float yaw = 0.0f;
@@ -71,6 +71,8 @@ QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU
 // Create a Semaphore binary flag for the Serial Port. To ensure only single access.
 SemaphoreHandle_t xSerialSemaphore;
 
+#define TASK_LOOP_TIME (20)
+
 void WifiDataTask( void *pvParameters);
 #endif
 
@@ -85,7 +87,7 @@ void setup() {
   //  LOG_LEVEL_VERBOSE
   //  http://playground.arduino.cc/Code/Logging
 
-  Log.Init( LOGLEVEL , 230400L );
+  Log.Init( LOGLEVEL , 921600L );
   Log.Info(THIS"HELLO WORLD"CR);
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
   Log.Warning(THIS"LOGLEVEL - WARNING LEVEL - MSG CHECK"CR);
@@ -184,8 +186,8 @@ xReturned = xTaskCreate(
     ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
     ,  &WifiDataTaskHandler );
 
-    xWifiDataSendQ = xQueueCreate( 2, sizeof( txGamePadData ) );
-    xWifiDataReceiveQ = xQueueCreate( 2, sizeof( txGamePadData ) );
+    xWifiDataSendQ = xQueueCreate( 10, sizeof( txGamePadData ) );
+    xWifiDataReceiveQ = xQueueCreate( 10, sizeof( txGamePadData ) );
 
     if (pdFALSE == xReturned)
     {
@@ -339,7 +341,7 @@ xReturned = xTaskCreate(
         }
         else
         {
-          //Log.Warning(THIS"Joystick data rec failed"CR);
+          Log.Warning(THIS"Joystick data rec failed"CR);
         }
         //}
       }
@@ -348,7 +350,7 @@ xReturned = xTaskCreate(
 
       #endif
 
-      Delay(10);
+      Delay(TASK_LOOP_TIME);
 
     }
 
@@ -369,6 +371,8 @@ xReturned = xTaskCreate(
       }
       Log.Info(THIS"DONE WIFI"CR);
 
+      Log.Reinit(LOG_LEVEL_INFOS);
+
       #else
       Log.Warning(THIS"BYPASSED WIFI"CR);
       Log.Error(THIS"WIFI is must for either type of the systems"CR);
@@ -379,7 +383,7 @@ xReturned = xTaskCreate(
     }
 
     #if defined(GROUND_SYSTEM)
-    txGamePadData tgd;
+    txGamePadData tgd, dummy;
     int ret = -1;
 
     // Not serial print is allowed further
@@ -395,6 +399,26 @@ xReturned = xTaskCreate(
       {
         /* Send an unsigned long.  Wait for 10 ticks for space to become
         available if necessary. */
+        UBaseType_t whetherSpaceAvailable = uxQueueSpacesAvailable( xWifiDataSendQ );
+
+        if( (UBaseType_t)(0) == whetherSpaceAvailable)
+        {
+          //xQueueOverwrite( xQueue, &ulVarToSend );
+          if( xQueueReceive( xWifiDataSendQ, &( dummy ), ( TickType_t ) 10 ) )
+          {
+
+          }
+
+          if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+          {
+            Log.Warning(THIS"xWDSQ full %d"CR, whetherSpaceAvailable);
+          }
+
+          if ( ( xSerialSemaphore ) != NULL )
+          xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+
+        }
+
         if( xQueueSend( xWifiDataSendQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
         {
           /* Failed to post the message, even after 10 ticks. */
@@ -418,7 +442,7 @@ xReturned = xTaskCreate(
       // }
       //while(1);
       //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
-      Delay(100);
+      Delay(TASK_LOOP_TIME);
     }
 
     //#endif // GROUND_SYSTEM MPU/Joystick
@@ -479,7 +503,7 @@ xReturned = xTaskCreate(
       //
       // Delay(10000);
       //while(1);
-      Delay(100);
+      Delay(TASK_LOOP_TIME);
     }
     #else
 

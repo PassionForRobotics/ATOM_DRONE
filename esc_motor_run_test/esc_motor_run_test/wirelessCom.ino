@@ -129,7 +129,8 @@ inline int readline(int readch, char *buffer, const int tlen, int * len)
 int wifi_setup()//int _mode)
 {
   pinMode(WIFI_CMD_MODE_PIN, OUTPUT);
-  digitalWrite(WIFI_CMD_MODE_PIN, HIGH); // Switch to command mode
+  //digitalWrite(WIFI_CMD_MODE_PIN, LOW); // Switch to command mode
+  selectCommandMode(0);
 
   WIFICOM->begin(115200);
 
@@ -277,6 +278,7 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
   int recvlen = 0;
   int i=0;
 
+  while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
 
   recvlen = WIFICOM->available();
   while(recvlen)
@@ -289,6 +291,11 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
 
       Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
 
+      if(0==ret)
+      {
+        Log.Warning(THIS"ret %d (%d/%d)"CR, ret, recvlen, SIZE_OF_GPADDATA_STRUCT);
+      }
+
       if ( ( xSerialSemaphore ) != NULL )
       xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
     }
@@ -298,7 +305,7 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
       WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
 
       // Validate
-      
+
       ret &= gd->gd.stx == 0x02 &&
       gd->gd.header == 0xFF &&
       gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);

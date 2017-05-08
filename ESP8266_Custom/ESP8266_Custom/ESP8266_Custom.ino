@@ -38,6 +38,7 @@ int system_mode = -1;
 
 #define BUTTON_PIN 0
 Bounce debouncer = Bounce();
+int button_state = 0;
 
 void sendmsg(char* msg, int size)
 {
@@ -104,6 +105,7 @@ void setup() {
 
   debouncer.attach(BUTTON_PIN);
   debouncer.interval(100);
+  button_state = debouncer.read();
 
   SCmd.addCommand("AT", check);
   SCmd.addCommand("AT+RST", resetESP8266);
@@ -120,10 +122,11 @@ void setup() {
   // WiFi.onEvent(WiFiEvent);
   Serial.println("Initialized");
 
+
+
   //startWiFi();
 }
 
-int button_state = 0;
 void loop() {
   Data data;
   memset(data.uc_buffer, 0, DATA_SIZE);
@@ -140,10 +143,10 @@ void loop() {
   if (changed) // keep it low for cmd mode
   {
     //Serial.println(debouncer.read());
-    button_state = !debouncer.read();
+    button_state = debouncer.read();
   }
 
-  if (0 == button_state)
+  if (1 == button_state)
   {
     data.data.header.header1 = 0x02;
     data.data.header.header2 = 0xFF;
