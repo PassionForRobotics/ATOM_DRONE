@@ -3,7 +3,6 @@
 
 #include "data.h"
 
-<<<<<<< HEAD:esc_motor_run_test/Steer.ino
 #include <PID_v1.h>
 #include <PID_AutoTune_v0.h>
 
@@ -50,9 +49,6 @@ PID_ATune aTune_y(&pid_y.input, &pid_y.output);
 //
 
 
-
-#define THIS "Steer: "
-=======
 #if defined(GROUND_SYSTEM)
 #define THIS "GND_SYS: STEER: " TOSTRING(__LINE__) ": "
 #elif defined(SKY_SYSTEM)
@@ -60,8 +56,6 @@ PID_ATune aTune_y(&pid_y.input, &pid_y.output);
 #define THIS "SKY_SYS: STEER: " TOSTRING(__LINE__) ": ""
 #endif
 
-//#define THIS "Steer: "
->>>>>>> ISSUE_#7:esc_motor_run_test/esc_motor_run_test/Steer.ino
 
 #define MAX_THROTTLE (1500) //(1864)
 #define MIN_THROTTLE (1064)
@@ -92,7 +86,7 @@ void ESC_init()
 
 
 // Mechanical mounting offsets
-#define servo0Offset 1 //14 //0 // F 
+#define servo0Offset 1 //14 //0 // F
 #define servo1Offset 1  //3 //-10  // R
 #define servo2Offset 0  // B
 #define servo3Offset -8  // L
@@ -139,7 +133,7 @@ void servo_init()
 void steer_pid_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
 {
   // Not implemented
-  // 
+  //
 }
 
 void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
@@ -148,7 +142,6 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
   // SLIDER MAP FROM 255-0 TO 1024-1864
   // TWIST/YAW MAP FROM ? TO ?
 
-<<<<<<< HEAD:esc_motor_run_test/Steer.ino
 #define SERVO0_MIN_LIMIT ( 45 + servo0Offset)
 #define SERVO0_MAX_LIMIT ( 135 + servo0Offset)
 #define SERVO1_MIN_LIMIT ( 45 + servo1Offset)
@@ -160,23 +153,12 @@ void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
 
 #define MPU_ANGLE_X_OFFSET (90+3)
 #define MPU_ANGLE_Y_OFFSET (90-2)
-=======
-#define servo1Offset 0 // F
-#define servo2Offset -10  // R
-#define servo3Offset 7  // B
-#define servo4Offset 0  // L
->>>>>>> ISSUE_#7:esc_motor_run_test/esc_motor_run_test/Steer.ino
-
-
-#define MPU_ANGLE_X_OFFSET (90+3)
-#define MPU_ANGLE_Y_OFFSET (90-2)
-
 
   servoVal[0] = map(gd.gd.gd.x, 0, 1023, SERVO0_MIN_LIMIT , SERVO0_MAX_LIMIT);
   servoVal[1] = map(gd.gd.gd.y, 0, 1023, SERVO1_MIN_LIMIT , SERVO1_MAX_LIMIT); // it could be opposite i.e. 120-60
   servoVal[2] = map(gd.gd.gd.x, 0, 1023, SERVO2_MIN_LIMIT , SERVO2_MAX_LIMIT);
   servoVal[3] = map(gd.gd.gd.y, 0, 1023, SERVO3_MIN_LIMIT , SERVO3_MAX_LIMIT);
- 
+
   int yaw_twist = map(gd.gd.gd.twist, 0, 255, -30, 30);
 
   int thrust_compansation = map(gd.gd.gd.slider, 255, 0, 0, 10);
@@ -567,7 +549,6 @@ void state_machine(char inChar)
 
   }
 }
-<<<<<<< HEAD:esc_motor_run_test/Steer.ino
 
 
 void pid_tuning_states()
@@ -697,7 +678,3 @@ void pid_tuning_states()
   }
 
 }
-
-
-=======
->>>>>>> ISSUE_#7:esc_motor_run_test/esc_motor_run_test/Steer.ino

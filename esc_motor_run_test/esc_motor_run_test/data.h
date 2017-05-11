@@ -17,6 +17,11 @@
 //#ifndef uint32_t
 //#define uint32_t (unsigned long)
 //#endif
+typedef struct pid_val
+{
+  double kp,ki,kd;
+  double input, output, setpoint;
+};
 
 typedef struct true_angle_val_raw_acc
 {
