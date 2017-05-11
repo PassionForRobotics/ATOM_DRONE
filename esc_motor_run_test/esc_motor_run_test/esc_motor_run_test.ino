@@ -97,11 +97,11 @@ void setup() {
   //  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
   #if defined(SKY_SYSTEM)
-  Log.Info(THIS"SKY_SYSTEM"CR);
+  Log.Info(THIS"SKY_SYSTEM CODE VERSION %s"CR, VERSION);
   #endif
 
   #if defined(GROUND_SYSTEM)
-  Log.Info(THIS"GROUND_SYSTEM"CR);
+  Log.Info(THIS"GROUND_SYSTEM CODE VERSION %s"CR, VERSION);
   #endif
 
   #if defined(SKY_SYSTEM)
@@ -396,7 +396,7 @@ xReturned = xTaskCreate(
       tgd.gd.gd = joydata;
 
       // Convert to general data
-      // 
+      //
 
       if( xWifiDataSendQ != 0 )
       {

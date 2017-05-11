@@ -2,6 +2,10 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include "version.h"
+#define VERSION ( _VER_ )
+
+
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
@@ -13,6 +17,26 @@
 
 // I know to much of cross refs
 #include "usbhid.h"
+
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+
+// #undef SMARTVER_HELPER_
+// #undef RESVER
+// #if VER < 10
+// #define SMARTVER_HELPER_(x) 0000 ## x
+// #elif VER < 100
+// #define SMARTVER_HELPER_(x) 000 ## x
+// #elif VER < 1000
+// #define SMARTVER_HELPER_(x) 00 ## x
+// #elif VER < 10000
+// #define SMARTVER_HELPER_(x) 0 ## x
+// #else
+// #define SMARTVER_HELPER_(x) x
+// #endif
+// #define RESVER(x) SMARTVER_HELPER_(x)
+
 
 //#ifndef uint32_t
 //#define uint32_t (unsigned long)
@@ -99,31 +123,6 @@ typedef union txGamePadData
   unsigned char uc_data[SIZE_OF_GPADDATA_STRUCT];
 
 };
-
-//#ifndef DATA_H
-//#define DATA_H
-
-
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-
-#define VER 0
-
-#undef SMARTVER_HELPER_
-#undef RESVER
-#if VER < 10
-#define SMARTVER_HELPER_(x) 0000 ## x
-#elif VER < 100
-#define SMARTVER_HELPER_(x) 000 ## x
-#elif VER < 1000
-#define SMARTVER_HELPER_(x) 00 ## x
-#elif VER < 10000
-#define SMARTVER_HELPER_(x) 0 ## x
-#else
-#define SMARTVER_HELPER_(x) x
-#endif
-#define RESVER(x) SMARTVER_HELPER_(x)
-
 
 typedef enum type1
 {
