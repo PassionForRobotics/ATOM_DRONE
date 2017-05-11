@@ -18,6 +18,7 @@ void Logging::Init(int level, long baud){
 
 void Logging::Reinit(int level){
   _level = constrain(level,LOG_LEVEL_NOOUTPUT,LOG_LEVEL_VERBOSE);
+  this->Info("LOG level reinit %d"CR, level);
 }
 
 void Logging::Error(char* msg, ...){

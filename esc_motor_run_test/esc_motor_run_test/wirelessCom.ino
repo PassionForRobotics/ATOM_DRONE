@@ -295,6 +295,10 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
       {
         Log.Warning(THIS"ret %d (%d/%d)"CR, ret, recvlen, SIZE_OF_GPADDATA_STRUCT);
       }
+      else
+      {
+        Log.Debug(THIS"rec fine"CR);
+      }
 
       if ( ( xSerialSemaphore ) != NULL )
       xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
