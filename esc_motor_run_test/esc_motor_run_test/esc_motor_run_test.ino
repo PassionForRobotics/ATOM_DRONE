@@ -395,6 +395,9 @@ xReturned = xTaskCreate(
       const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
       tgd.gd.gd = joydata;
 
+      // Convert to general data
+      // 
+
       if( xWifiDataSendQ != 0 )
       {
         /* Send an unsigned long.  Wait for 10 ticks for space to become
@@ -480,8 +483,10 @@ xReturned = xTaskCreate(
         // message is not immediately available.
         if( xQueueReceive( xWifiDataReceiveQ, &( gd ), ( TickType_t ) 10 ) )
         {
-          // pcRxedMessage now points to the struct AMessage variable posted
-          // by vATask.
+
+            //steer_loop(gd, data); // For manual pilot
+            //
+
         }
       }
 

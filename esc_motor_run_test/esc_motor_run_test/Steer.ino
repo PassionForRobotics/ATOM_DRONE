@@ -48,8 +48,13 @@ void servo_init()
   }
 }
 
+void steer_pid_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
+{
+  // Not implemented
+  // 
+}
 
-void steer_loop(const txGamePadData gd)
+void steer_loop(const txGamePadData gd, const angle_val_raw_acc mpu)
 {
   // XX,Y MAP FROM 0-1023 TO 60-120 DEGREES
   // SLIDER MAP FROM 255-0 TO 1024-1864

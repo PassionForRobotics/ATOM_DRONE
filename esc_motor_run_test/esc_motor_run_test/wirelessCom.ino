@@ -27,6 +27,7 @@
 #define PEER_PORT (20000) //(8090)
 #else
 #endif
+
 #define WIFI_CMD_MODE_PIN (42)
 #define WIFICOM (&Serial1)
 
