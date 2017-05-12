@@ -97,11 +97,11 @@ void setup() {
   //  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
   #if defined(SKY_SYSTEM)
-  Log.Info(THIS"SKY_SYSTEM"CR);
+  Log.Info(THIS"SKY_SYSTEM VERISON %s"CR,VERSION);
   #endif
 
   #if defined(GROUND_SYSTEM)
-  Log.Info(THIS"GROUND_SYSTEM"CR);
+  Log.Info(THIS"GROUND_SYSTEM VERISON %s"CR,VERSION);
   #endif
 
   #if defined(SKY_SYSTEM)
