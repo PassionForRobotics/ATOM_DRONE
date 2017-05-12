@@ -36,6 +36,7 @@ if [ $? -eq 0 ] ;then
     echo "#define _VER_ ( \"$gitver\" )" >> $versionfile
     echo '' >> $versionfile
     echo '#endif //VERSION_H' >> $versionfile
+    cp $versionfile '/home/rahuldeo/ATOM/ATOM_drone_robot_platform/ESP8266_Custom/ESP8266_Custom'
 
 else
     echo "${RED}ERROR - Invalid commit msg format.$NORMAL: e.g. Issue #3 [Weighing] [Autogen] parameter corrected"

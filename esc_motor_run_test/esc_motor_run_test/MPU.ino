@@ -801,7 +801,6 @@ void mpu_setup()
   int error;
   uint8_t c;
 
-#warning why pin 52 is made high here
   pinMode(52, OUTPUT); // For mpu power
   digitalWrite(52, HIGH);
 

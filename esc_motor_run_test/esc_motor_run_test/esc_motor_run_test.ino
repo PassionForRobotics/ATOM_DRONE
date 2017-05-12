@@ -97,11 +97,11 @@ void setup() {
   //  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
   #if defined(SKY_SYSTEM)
-  Log.Info(THIS"SKY_SYSTEM CODE VERSION %s"CR, VERSION);
+  Log.Info(THIS"SKY_SYSTEM"CR);
   #endif
 
   #if defined(GROUND_SYSTEM)
-  Log.Info(THIS"GROUND_SYSTEM CODE VERSION %s"CR, VERSION);
+  Log.Info(THIS"GROUND_SYSTEM"CR);
   #endif
 
   #if defined(SKY_SYSTEM)
@@ -395,9 +395,6 @@ xReturned = xTaskCreate(
       const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
       tgd.gd.gd = joydata;
 
-      // Convert to general data
-      //
-
       if( xWifiDataSendQ != 0 )
       {
         /* Send an unsigned long.  Wait for 10 ticks for space to become
@@ -483,10 +480,8 @@ xReturned = xTaskCreate(
         // message is not immediately available.
         if( xQueueReceive( xWifiDataReceiveQ, &( gd ), ( TickType_t ) 10 ) )
         {
-
-            //steer_loop(gd, data); // For manual pilot
-            //
-
+          // pcRxedMessage now points to the struct AMessage variable posted
+          // by vATask.
         }
       }
 

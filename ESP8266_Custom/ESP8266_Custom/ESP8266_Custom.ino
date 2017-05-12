@@ -120,6 +120,10 @@ void setup() {
   SCmd.addDefaultHandler(unrecognized);
 
   // WiFi.onEvent(WiFiEvent);
+  Serial.println();
+  Serial.println();
+  Serial.print("VERSION: ");
+  Serial.println(VERSION);
   Serial.println("Initialized");
 
 
