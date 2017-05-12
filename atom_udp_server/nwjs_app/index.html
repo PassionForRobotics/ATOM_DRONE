@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sliders</title>
+  </head>
+  <style>
+body {background-color: powderblue;}
+h1   {color: blue;}
+p    {color: red;}
+#slide {
+    -webkit-appearance: slider-vertical;
+    width: 20px;
+    height: 100px;
+}
+</style>
+  <script>
+    function updateSlider(slideAmount) {
+        var sliderDiv = document.getElementById("sliderAmount");
+        sliderDiv.innerHTML = slideAmount;
+    }
+</script>
+  <body>
+   <h1>Sliders</h1>
+   We are using node.js <script>document.write(process.version)</script>.
+  <br/><input id="slide" type="range" min="1" max="100" step="1" value="10" onchange="updateSlider(this.value)">
+<div id="sliderAmount"></div>​
+</body>
+</html>
