@@ -1,7 +1,6 @@
 #ifndef DATA_H
 #define DATA_H
 
-
 #include "version.h"
 #define VERSION (_VER_)
 

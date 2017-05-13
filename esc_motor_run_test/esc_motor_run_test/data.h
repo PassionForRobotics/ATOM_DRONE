@@ -8,18 +8,20 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+//#include "stdint.h" // for https://nodejs.org/api/addons.html
+//typedef unsigned long uint32_t;
+//typedef unsigned int uint16_t;
+//typedef unsigned char uint8_t;
+//typedef unsigned char byte; // https://nodejs.org/api/addons.html
+
 
 //#define GROUND_SYSTEM // or
 #define SKY_SYSTEM
 
-#include <Arduino.h>
+#include "Arduino.h"
 
 // I know to much of cross refs
 #include "usbhid.h"
-
-//#ifndef uint32_t
-//#define uint32_t (unsigned long)
-//#endif
 
 typedef struct true_angle_val_raw_acc
 {

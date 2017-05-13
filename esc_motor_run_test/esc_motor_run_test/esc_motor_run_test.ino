@@ -88,6 +88,9 @@ void setup() {
   //  http://playground.arduino.cc/Code/Logging
 
   Log.Init( LOGLEVEL , 921600L );
+  Log.Info(THIS"EMPTY"CR);
+  Log.Info(THIS"EMPTY"CR);
+  Log.Info(THIS"EMPTY"CR);
   Log.Info(THIS"HELLO WORLD"CR);
   Log.Error(THIS"LOGLEVEL - ERROR LEVEL - MSG CHECK"CR);
   Log.Warning(THIS"LOGLEVEL - WARNING LEVEL - MSG CHECK"CR);
