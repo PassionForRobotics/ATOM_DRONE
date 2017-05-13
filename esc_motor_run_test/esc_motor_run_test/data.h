@@ -18,6 +18,12 @@
 #define GROUND_SYSTEM // or
 //#define SKY_SYSTEM
 
+#if (defined(GROUND_SYSTEM) && defined(SKY_SYSTEM) )
+#error BOTH SYSTEM TYPE ACTIVE, ONLY ONE IS ALLOWED PER BUILD
+#endif
+
+//#define USE_DATA_UNION
+
 #include "Arduino.h"
 
 // I know to much of cross refs
@@ -26,11 +32,11 @@
 typedef struct true_angle_val_raw_acc
 {
 
-  unsigned char stx;
-  unsigned char header;
-  unsigned char data_len;
-  unsigned char data_type;
-  unsigned char res3;
+  //unsigned char stx;
+  //unsigned char header;
+  //unsigned char data_len;
+  //unsigned char data_type;
+  //unsigned char res3;
 
   float x_angle;
   float y_angle;
@@ -39,8 +45,8 @@ typedef struct true_angle_val_raw_acc
   float y_unfiltered_acc;
   float z_unfiltered_acc;
 
-  unsigned char etx;
-};
+  //unsigned char etx;
+}true_angle_val_raw_acc;
 
 #define SIZE_OF_MDATA_STRUCT (sizeof(true_angle_val_raw_acc))
 
@@ -65,7 +71,7 @@ typedef struct GamePadEventData
   uint8_t buttons_a;
   uint8_t slider;
   uint8_t buttons_b;
-};
+}GamePadEventData;
 
 typedef struct GamePadEventData_Simple
 {
@@ -76,7 +82,7 @@ typedef struct GamePadEventData_Simple
   uint8_t buttons_a;
   uint8_t slider;
   uint8_t buttons_b;
-};
+}GamePadEventData_Simple;
 
 
 typedef struct GamePadData
@@ -88,7 +94,31 @@ typedef struct GamePadData
   unsigned char res3;
   GamePadEventData_Simple gd;
   unsigned char etx;
-};
+}GamePadData;
+
+#if defined(USE_DATA_UNION)
+
+typedef union alldata
+{
+  GamePadEventData_Simple gd;
+  true_angle_val_raw_acc mpu;
+}alldata;
+
+typedef struct GamePadORMPUData
+{
+  unsigned char stx;
+  unsigned char header;
+  unsigned char data_len;
+  unsigned char data_type;
+  unsigned char res3;
+  alldata data;
+  unsigned char etx;
+}GamePadORMPUData;
+
+
+#define SIZE_OF_GPADMDATA_STRUCT (sizeof(GamePadORMPUData)/sizeof(uint8_t))
+
+#endif // defined(USE_DATA_UNION)
 
 #define SIZE_OF_GPADDATA_STRUCT (sizeof(GamePadData)/sizeof(uint8_t))
 
@@ -98,32 +128,22 @@ typedef union txGamePadData
   GamePadData gd;
   unsigned char uc_data[SIZE_OF_GPADDATA_STRUCT];
 
-};
+}txGamePadData;
 
-//#ifndef DATA_H
-//#define DATA_H
+#if defined(USE_DATA_UNION)
+
+typedef union txGamePadORMPUData
+{
+
+  GamePadORMPUData data;
+  unsigned char uc_data[SIZE_OF_GPADMDATA_STRUCT];
+
+}txGamePadORMPUData;
+
+#endif // defined(USE_DATA_UNION)
 
 
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-
-#define VER 0
-
-#undef SMARTVER_HELPER_
-#undef RESVER
-#if VER < 10
-#define SMARTVER_HELPER_(x) 0000 ## x
-#elif VER < 100
-#define SMARTVER_HELPER_(x) 000 ## x
-#elif VER < 1000
-#define SMARTVER_HELPER_(x) 00 ## x
-#elif VER < 10000
-#define SMARTVER_HELPER_(x) 0 ## x
-#else
-#define SMARTVER_HELPER_(x) x
-#endif
-#define RESVER(x) SMARTVER_HELPER_(x)
-
+// Below datatypes are just for reference
 
 typedef enum type1
 {

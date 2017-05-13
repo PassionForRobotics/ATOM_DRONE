@@ -107,6 +107,8 @@ void setup() {
   Log.Info(THIS"GROUND_SYSTEM VERISON %s"CR,VERSION);
   #endif
 
+  Log.Info(THIS"TASK_LOOP_TIME %d"CR, TASK_LOOP_TIME);
+
   #if defined(SKY_SYSTEM)
   Log.Info(THIS"Setting up ECS"CR);
   ESC_init();
@@ -189,8 +191,17 @@ xReturned = xTaskCreate(
     ,  1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
     ,  &WifiDataTaskHandler );
 
+    #if defined(USE_DATA_UNION)
+
+    xWifiDataSendQ = xQueueCreate( 10, sizeof( txGamePadORMPUData ) );
+    xWifiDataReceiveQ = xQueueCreate( 10, sizeof( txGamePadORMPUData ) );
+
+    #else
+
     xWifiDataSendQ = xQueueCreate( 10, sizeof( txGamePadData ) );
     xWifiDataReceiveQ = xQueueCreate( 10, sizeof( txGamePadData ) );
+
+    #endif // defined(USE_DATA_UNION)
 
     if (pdFALSE == xReturned)
     {
@@ -260,7 +271,12 @@ xReturned = xTaskCreate(
       xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
     }
 
+    #if defined(USE_DATA_UNION)
+    txGamePadORMPUData tgd;
+    #else
     txGamePadData tgd;
+    #endif
+
     int ret = -1;
 
     // memset(tgd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
@@ -296,14 +312,12 @@ xReturned = xTaskCreate(
             xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
           }
 
-          //if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-          //{
+          // Send joy stick data
+          ret = wifi_loop_send_Joystick_data(&tgd); // tested, works as expected
 
-          ret = wifi_loop_send_Joystick_data(&tgd);
+          // receive MPU data
+          // ret = wifi_loop_recv_mpu_data(& ? ); //check
 
-          //  if ( ( xSerialSemaphore ) != NULL )
-          //  xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
-          //}
           if(0==ret)
           {
             // all fine
@@ -391,7 +405,13 @@ xReturned = xTaskCreate(
     }
 
     #if defined(GROUND_SYSTEM)
+
+    #if defined(USE_DATA_UNION)
+    txGamePadORMPUData tgd, dummy;
+    #else
     txGamePadData tgd, dummy;
+    #endif
+
     int ret = -1;
 
     // Not serial print is allowed further
@@ -403,7 +423,13 @@ xReturned = xTaskCreate(
       xLastWakeTime = xTaskGetTickCount();
 
       const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
+
+      #if defined(USE_DATA_UNION)
+      tgd.data.data.mpu = { .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
+      tgd.data.data.gd = joydata;
+      #else
       tgd.gd.gd = joydata;
+      #endif
 
       if( xWifiDataSendQ != 0 )
       {
@@ -459,8 +485,14 @@ xReturned = xTaskCreate(
 
     #elif defined(SKY_SYSTEM)
 
+    #if defined(USE_DATA_UNION)
+    txGamePadORMPUData gd, dummygdmpu;
+    #else
+    txGamePadData gd, dummy;
+    #endif
+
     angle_val_raw_acc data;
-    txGamePadData gd;
+
     int ret = -1;
 
     vTaskResume( WifiDataTaskHandler );
@@ -482,8 +514,11 @@ xReturned = xTaskCreate(
       //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
       //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
       //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
-
+      #if defined(USE_DATA_UNION)
+      memset(gd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
+      #else
       memset(gd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
+      #endif
 
       if( xWifiDataReceiveQ != 0 )
       {
@@ -491,8 +526,9 @@ xReturned = xTaskCreate(
         // message is not immediately available.
         if( xQueueReceive( xWifiDataReceiveQ, &( gd ), ( TickType_t ) 10 ) )
         {
-          // pcRxedMessage now points to the struct AMessage variable posted
-          // by vATask.
+
+          // Steer loop
+          // A queue can be used
         }
       }
 

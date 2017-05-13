@@ -233,13 +233,36 @@ int wifi_setup()//int _mode)
 * @param  data [txGamePadData type]
 * @return      [whether wifi module forwarded the data]
 */
-int wifi_loop_send_Joystick_data(txGamePadData * data)
+//#error EOOROROEOROROEOEO
+
+// #if (defined(USE_DATA_UNION))
+// #define DATA (txGamePadORMPUData *) // * data
+// #elif  (!defined(USE_DATA_UNION))
+// #define DATA (txGamePadData *) // data
+// #else
+// #endif
+
+int wifi_loop_send_Joystick_data( void* _data )
 {
+  // Do not use serial/Log print here
+
   int ret = -1;
   int len = -1;
   int rec = -1;
   //  uint8_t mux_id = 0;
   //
+  #if defined(USE_DATA_UNION)
+  txGamePadORMPUData * data = _data;
+  data->data.stx = 0x02;
+  data->data.header = 0xff;
+  data->data.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
+  data->data.data_type = 0x01;
+  data->data.res3 = 0x00;
+  data->data.etx = 0x03;
+
+  WIFICOM->write(data->uc_data, SIZE_OF_GPADMDATA_STRUCT);
+  #else
+  txGamePadData * data = _data;
   data->gd.stx = 0x02;
   data->gd.header = 0xff;
   data->gd.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
@@ -248,6 +271,8 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
   data->gd.etx = 0x03;
 
   WIFICOM->write(data->uc_data, SIZE_OF_GPADDATA_STRUCT);
+
+  #endif
 
   while (!WIFICOM->available());
 
@@ -276,42 +301,68 @@ int wifi_loop_send_Joystick_data(txGamePadData * data)
 * @param  gd [data to update]
 * @return    [whether data was valid]
 */
-int wifi_loop_recv_joystick_data(txGamePadData * gd)
+int wifi_loop_recv_joystick_data(void * _gd)
 {
   // If performing serial print must be inside semaphore
   int ret = -1;
   int recvlen = 0;
   int i=0;
 
+  #if defined(USE_DATA_UNION)
+  txGamePadORMPUData * gd = _gd;
+  while(SIZE_OF_GPADMDATA_STRUCT!=WIFICOM->available());
+  #else
+  txGamePadData * gd = _gd;
   while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
+  #endif
   // Above line takes care of data fragments
 
   recvlen = WIFICOM->available();
   while(recvlen)
   {
 
+    #if defined(USE_DATA_UNION)
+    ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT );
+    #else
     ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
+    #endif
 
-    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    {
-
-      Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
-
-      if(0==ret)
-      {
-        Log.Warning(THIS"ret %d (%d/%d)"CR, ret, recvlen, SIZE_OF_GPADDATA_STRUCT);
-      }
-      else
-      {
-        Log.Debug(THIS"rec fine"CR);
-      }
-
-      if ( ( xSerialSemaphore ) != NULL )
-      xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
-    }
+    // Can be uncommented to debug
+    // if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+    // {
+    //
+    //   Log.Verbose(THIS"len %d %d %d"CR, recvlen, ret, SIZE_OF_GPADDATA_STRUCT);
+    //
+    //   if(0==ret)
+    //   {
+    //     Log.Warning(THIS"ret %d (%d/%d)"CR, ret, recvlen, SIZE_OF_GPADDATA_STRUCT);
+    //   }
+    //   else
+    //   {
+    //     Log.Debug(THIS"rec fine"CR);
+    //   }
+    //
+    //   if ( ( xSerialSemaphore ) != NULL )
+    //   xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+    // }
 
     if(1==ret)
     {
+
+      #if defined(USE_DATA_UNION)
+      WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADMDATA_STRUCT ? SIZE_OF_GPADMDATA_STRUCT : recvlen);
+
+      // Validate
+
+      ret &= gd->data.stx == 0x02 &&
+      gd->data.header == 0xFF &&
+      gd->data.data_len == (SIZE_OF_GPADMDATA_STRUCT - 3);
+      gd->data.data_type == 0x01 &&
+      gd->data.res3 == 0x00 &&
+      gd->data.etx == 0x03;
+
+      #else
+
       WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
 
       // Validate
@@ -322,6 +373,9 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
       gd->gd.data_type == 0x01 &&
       gd->gd.res3 == 0x00 &&
       gd->gd.etx == 0x03;
+      #endif
+
+
 
       if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {
