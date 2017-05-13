@@ -20,6 +20,14 @@ function ascii_to_hex(str)
     return tempstr;
 }
 
+function getMillis(oldhrstart)
+{
+	var hrstart = process.hrtime(oldhrstart);
+	
+	
+	return hrstart;
+}
+
 function getDateTime() {
 
     var date = new Date();
@@ -41,7 +49,7 @@ function getDateTime() {
     var day  = date.getDate();
     day = (day < 10 ? "0" : "") + day;
 
-    return year + ":" + month + ":" + day + " " + hour + ":" + min + ":" + sec;
+    return year + ":" + month + ":" + day + " " + hour + ":" + min + ":" + sec ;//"::" + getMills(msT)[1]/1000000;
 
 }
 
@@ -52,11 +60,16 @@ server.on('listening', function () {
 });
 
 var conn_est = false;
-var complete_msg = '';
+var complete_msg = ''; 
+var msTime = process.hrtime();
+var _msTime = getMillis(msTime);;
+var dTime = 0;//getMillis(_msTime);;
+var dlTime = 0;
 server.on('message', function (message, remote) {
     //console.log(remote.address + ':' + remote.port +' - ' + message);
 	var str = message.toString();
 	debugger;
+	
 	//if(str.includes("OK"))
 	//	console.log('server :'+remote.address + ':' + remote.port +' - ' + (str.toString('hex')) +' - '+ ascii_to_hex(str) + '|'
 	//+ str);
@@ -71,11 +84,15 @@ server.on('message', function (message, remote) {
 		//conn_est = true;
 		//setInterval(printthroughput, timeinterval);
 		//setTimeout(process.exit, 20000);
-	}
-	//else
-	//{
-		console.log(getDateTime() + ' server :'+remote.address + ':' + remote.port +' - '+ ascii_to_hex(message)); //' + (str.toString('hex'))
-		//+' - '+ ascii_to_hex(message));
+	} 
+	_msTime = getMillis(msTime);//[1]/1000000
+	dTime = _msTime[0] * 1000 + _msTime[1] / 1000000;
+	
+	//ctrl + shift + U type 0394 and spacer for Δ
+	
+	console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+ ascii_to_hex(message));
+	  
+	dlTime = dTime; 
 	//}
 //send();
 	//process.exit();
