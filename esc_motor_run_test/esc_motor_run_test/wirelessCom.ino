@@ -279,6 +279,7 @@ int wifi_loop_recv_joystick_data(txGamePadData * gd)
   int i=0;
 
   while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
+  // Above line takes care of data fragments
 
   recvlen = WIFICOM->available();
   while(recvlen)
