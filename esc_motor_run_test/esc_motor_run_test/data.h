@@ -15,8 +15,8 @@
 //typedef unsigned char byte; // https://nodejs.org/api/addons.html
 
 
-//#define GROUND_SYSTEM // or
-#define SKY_SYSTEM
+#define GROUND_SYSTEM // or
+//#define SKY_SYSTEM
 
 #include "Arduino.h"
 

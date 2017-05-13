@@ -71,7 +71,7 @@ QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU
 // Create a Semaphore binary flag for the Serial Port. To ensure only single access.
 SemaphoreHandle_t xSerialSemaphore;
 
-#define TASK_LOOP_TIME (20)
+#define TASK_LOOP_TIME (50)
 
 void WifiDataTask( void *pvParameters);
 #endif
@@ -240,6 +240,7 @@ xReturned = xTaskCreate(
 
   void WifiDataTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
+    TickType_t xLastWakeTime;
 
     if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
@@ -277,6 +278,8 @@ xReturned = xTaskCreate(
 
     for(;;)
     {
+      xLastWakeTime = xTaskGetTickCount();
+
       #if defined(GROUND_SYSTEM)
 
       if( xWifiDataSendQ != 0 )
@@ -353,7 +356,7 @@ xReturned = xTaskCreate(
 
       #endif
 
-      Delay(TASK_LOOP_TIME);
+      Delay(TASK_LOOP_TIME, xLastWakeTime);
 
     }
 
@@ -361,6 +364,8 @@ xReturned = xTaskCreate(
 
   void JoyStickTask( void *pvParameters __attribute__((unused))  )  // This is a Task.
   {
+
+    TickType_t xLastWakeTime;
 
     if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
     {
@@ -395,6 +400,8 @@ xReturned = xTaskCreate(
 
     for (;;)
     {
+      xLastWakeTime = xTaskGetTickCount();
+
       const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
       tgd.gd.gd = joydata;
 
@@ -445,7 +452,7 @@ xReturned = xTaskCreate(
       // }
       //while(1);
       //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
-      Delay(TASK_LOOP_TIME);
+      Delay(TASK_LOOP_TIME, xLastWakeTime);
     }
 
     //#endif // GROUND_SYSTEM MPU/Joystick
@@ -468,6 +475,7 @@ xReturned = xTaskCreate(
 
     for (;;)
     {
+      xLastWakeTime = xTaskGetTickCount();
 
       data = mpu_loop(); // Must update here too
       // ESP8266_loop_send_MPU_data(data);
@@ -506,7 +514,7 @@ xReturned = xTaskCreate(
       //
       // Delay(10000);
       //while(1);
-      Delay(TASK_LOOP_TIME);
+      Delay(TASK_LOOP_TIME, xLastWakeTime);
     }
     #else
 

@@ -20,7 +20,7 @@
 //#define PASSWORD    "hh1057hhh"
 
 #if defined(GROUND_SYSTEM)
-#define PEER_IP_ADDRESS "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
+#define PEER_IP_ADDRESS "10.42.0.1" // "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
 #define PEER_PORT (20000) //(8090)
 #elif defined(SKY_SYSTEM)
 #define PEER_IP_ADDRESS "192.168.4.103" //"192.168.4.1" // SKY_SYSTEM address
@@ -34,6 +34,11 @@ void Delay(unsigned long ms)
 {
   TickType_t xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
+  vTaskDelayUntil( &xLastWakeTime, pdMS_TO_TICKS(ms) );
+}
+
+void Delay(unsigned long ms, TickType_t xLastWakeTime)
+{
   vTaskDelayUntil( &xLastWakeTime, pdMS_TO_TICKS(ms) );
 }
 
