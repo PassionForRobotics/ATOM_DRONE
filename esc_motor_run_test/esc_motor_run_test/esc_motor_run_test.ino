@@ -313,7 +313,8 @@ xReturned = xTaskCreate(
           }
 
           // Send joy stick data
-          ret = wifi_loop_send_Joystick_data(&tgd); // tested, works as expected
+
+          ret = wifi_loop_send_Joystick_or_mpu_data(&tgd); // tested, works as expected
 
           // receive MPU data
           // ret = wifi_loop_recv_mpu_data(& ? ); //check
@@ -425,10 +426,13 @@ xReturned = xTaskCreate(
       const GamePadEventData_Simple joydata = joystick_loop(); // work pointer wise
 
       #if defined(USE_DATA_UNION)
-      tgd.data.data.mpu = { .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
+      tgd.data.data.mpu.data = DEFAULT_MPU_DATA;//{ .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
       tgd.data.data.gd = joydata;
+      tgd.data.data_type = DATATYPE_JOY;
+      //tgd.data.
       #else
       tgd.gd.gd = joydata;
+      tgd.gd.data_type = DATATYPE_JOY;
       #endif
 
       if( xWifiDataSendQ != 0 )
@@ -447,7 +451,7 @@ xReturned = xTaskCreate(
 
           if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
           {
-            Log.Warning(THIS"xWDSQ full %d"CR, whetherSpaceAvailable);
+            Log.Warning(THIS"xWDSQ full JOY %d"CR, whetherSpaceAvailable);
           }
 
           if ( ( xSerialSemaphore ) != NULL )
@@ -475,6 +479,7 @@ xReturned = xTaskCreate(
       // {
       //   Log.Verbose(THIS"Joystick data send attempted"CR);
       //   //02 FF FE 00 02 00 00 00 0F 00 00 00 02 FF 0C 01 00 00 00 00 00 00 00 00 00 00 03
+      //   //02 ff fe 00 02 00 00 00 1e 00 00 00 02 ff 0c 01 00 fc 01 00 02 08 7f 00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03
       // }
       //while(1);
       //const angle_val_raw_acc mdata = ESP8266_loop_recv_MPU_data();
@@ -486,7 +491,7 @@ xReturned = xTaskCreate(
     #elif defined(SKY_SYSTEM)
 
     #if defined(USE_DATA_UNION)
-    txGamePadORMPUData gd, dummygdmpu;
+    txGamePadORMPUData gd, dummy;
     #else
     txGamePadData gd, dummy;
     #endif
@@ -514,6 +519,7 @@ xReturned = xTaskCreate(
       //Log.Verbose(THIS"X: %d Y: %d Z: %d Yaw: %d, button_a: %d button_b: %d hat: %d"CR
       //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
       //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
+
       #if defined(USE_DATA_UNION)
       memset(gd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
       #else
@@ -531,6 +537,50 @@ xReturned = xTaskCreate(
           // A queue can be used
         }
       }
+
+      #if defined(USE_DATA_UNION)
+
+      memset(gd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
+
+      gd.data.data.gd = DEFAULT_JOY_DATA; // { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
+      gd.data.data.mpu = data;
+      gd.data.data_type = DATATYPE_MPU;
+
+      if( xWifiDataSendQ != 0 )
+      {
+        /* Send an unsigned long.  Wait for 10 ticks for space to become
+        available if necessary. */
+        UBaseType_t whetherSpaceAvailable = uxQueueSpacesAvailable( xWifiDataSendQ );
+
+        if( (UBaseType_t)(0) == whetherSpaceAvailable)
+        {
+          //xQueueOverwrite( xQueue, &ulVarToSend );
+          if( xQueueReceive( xWifiDataSendQ, &( dummy ), ( TickType_t ) 10 ) )
+          {
+
+          }
+
+          if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+          {
+            Log.Warning(THIS"xWDSQ full MPU %d"CR, whetherSpaceAvailable);
+          }
+
+          if ( ( xSerialSemaphore ) != NULL )
+          xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+
+        }
+
+        if( xQueueSend( xWifiDataSendQ, ( void * ) &gd, ( TickType_t ) 10 ) != pdPASS )
+        {
+          /* Failed to post the message, even after 10 ticks. */
+        }
+        else
+        {
+
+        }
+      }
+      #endif // defined(USE_DATA_UNION)
+
 
       // ret = wifi_loop_recv_joystick_data(&gd); //check
       // Log.Verbose(THIS"Joystick data rec attempted"CR);

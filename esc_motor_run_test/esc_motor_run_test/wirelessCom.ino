@@ -242,31 +242,33 @@ int wifi_setup()//int _mode)
 // #else
 // #endif
 
-int wifi_loop_send_Joystick_data( void* _data )
+int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 {
   // Do not use serial/Log print here
 
   int ret = -1;
   int len = -1;
   int rec = -1;
-  //  uint8_t mux_id = 0;
-  //
+
   #if defined(USE_DATA_UNION)
+
   txGamePadORMPUData * data = _data;
   data->data.stx = 0x02;
   data->data.header = 0xff;
   data->data.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
-  data->data.data_type = 0x01;
+  //data->data.data_type = 0x01;
   data->data.res3 = 0x00;
   data->data.etx = 0x03;
 
   WIFICOM->write(data->uc_data, SIZE_OF_GPADMDATA_STRUCT);
+
   #else
+
   txGamePadData * data = _data;
   data->gd.stx = 0x02;
   data->gd.header = 0xff;
   data->gd.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
-  data->gd.data_type = 0x01;
+  //data->gd.data_type = 0x01;
   data->gd.res3 = 0x00;
   data->gd.etx = 0x03;
 
@@ -274,7 +276,7 @@ int wifi_loop_send_Joystick_data( void* _data )
 
   #endif
 
-  while (!WIFICOM->available());
+  while (!WIFICOM->available()); // Time out can be put
 
   while (WIFICOM->available())
   {
@@ -357,7 +359,7 @@ int wifi_loop_recv_joystick_data(void * _gd)
       ret &= gd->data.stx == 0x02 &&
       gd->data.header == 0xFF &&
       gd->data.data_len == (SIZE_OF_GPADMDATA_STRUCT - 3);
-      gd->data.data_type == 0x01 &&
+      gd->data.data_type == DATATYPE_JOY &&
       gd->data.res3 == 0x00 &&
       gd->data.etx == 0x03;
 
@@ -370,12 +372,10 @@ int wifi_loop_recv_joystick_data(void * _gd)
       ret &= gd->gd.stx == 0x02 &&
       gd->gd.header == 0xFF &&
       gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
-      gd->gd.data_type == 0x01 &&
+      gd->gd.data_type == DATATYPE_JOY &&
       gd->gd.res3 == 0x00 &&
       gd->gd.etx == 0x03;
       #endif
-
-
 
       if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
       {

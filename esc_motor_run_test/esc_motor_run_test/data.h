@@ -22,12 +22,24 @@
 #error BOTH SYSTEM TYPE ACTIVE, ONLY ONE IS ALLOWED PER BUILD
 #endif
 
-//#define USE_DATA_UNION
+#define USE_DATA_UNION
 
 #include "Arduino.h"
 
 // I know to much of cross refs
 #include "usbhid.h"
+
+typedef enum datatype
+{
+  DATATYPE_DEFAULT = 0xFFFF,
+  DATATYPE = DATATYPE_DEFAULT,
+  DATATYPE_NONE = 0x00,
+  DATATYPE_JOY,
+  DATATYPE_MPU,
+  DATATYPE_ERROR,
+  DATATYPE_RESET,
+  DATATYPE_MAX
+} datatype;
 
 typedef struct true_angle_val_raw_acc
 {
@@ -101,7 +113,7 @@ typedef struct GamePadData
 typedef union alldata
 {
   GamePadEventData_Simple gd;
-  true_angle_val_raw_acc mpu;
+  angle_val_raw_acc mpu;
 }alldata;
 
 typedef struct GamePadORMPUData
@@ -142,6 +154,9 @@ typedef union txGamePadORMPUData
 
 #endif // defined(USE_DATA_UNION)
 
+// Following is the manual work, on each structure update these need to be updated
+#define DEFAULT_MPU_DATA { .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
+#define DEFAULT_JOY_DATA { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
 
 // Below datatypes are just for reference
 
