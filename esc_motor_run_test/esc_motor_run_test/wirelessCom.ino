@@ -20,11 +20,11 @@
 //#define PASSWORD    "hh1057hhh"
 
 #if defined(GROUND_SYSTEM)
-#define PEER_IP_ADDRESS "10.42.0.1" // "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
-#define PEER_PORT (20000) //(8090)
+#define PEER_IP_ADDRESS "192.168.4.4" //"10.42.0.1" // "192.168.43.243" //"192.168.4.1" // SKY_SYSTEM address
+#define PEER_PORT (10000) //(8090)
 #elif defined(SKY_SYSTEM)
 #define PEER_IP_ADDRESS "192.168.4.103" //"192.168.4.1" // SKY_SYSTEM address
-#define PEER_PORT (20000) //(8090)
+#define PEER_PORT (10000) //(8090)
 #else
 #endif
 #define WIFI_CMD_MODE_PIN (42)
@@ -165,6 +165,18 @@ int wifi_setup()//int _mode)
     return -1;
   }
 
+  // AT+SRIPP IP1.IP2.IP3.IP4 PORTT
+  if (0 == wifi_set_remote_IP_PORT())
+  {
+    Log.Info(THIS"wifi remote ip port set"CR);
+  }
+  else
+  {
+    Log.Error(THIS"wifi remote ip port"CR);
+    Log.Info(THIS"Please check for delay and/or implementation"CR);
+    return -1;
+  }
+
   // AT+START 0 / 1
   //
   #if (defined(SKY_SYSTEM) )
@@ -201,18 +213,6 @@ int wifi_setup()//int _mode)
   else
   {
     Log.Error(THIS"wifi mode"CR);
-    Log.Info(THIS"Please check for delay and/or implementation"CR);
-    return -1;
-  }
-
-  // AT+SRIPP IP1.IP2.IP3.IP4 PORTT
-  if (0 == wifi_set_remote_IP_PORT())
-  {
-    Log.Info(THIS"wifi remote ip port set"CR);
-  }
-  else
-  {
-    Log.Error(THIS"wifi remote ip port"CR);
     Log.Info(THIS"Please check for delay and/or implementation"CR);
     return -1;
   }

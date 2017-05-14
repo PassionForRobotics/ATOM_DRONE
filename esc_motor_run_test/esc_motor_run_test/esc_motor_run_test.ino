@@ -71,10 +71,12 @@ QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU
 // Create a Semaphore binary flag for the Serial Port. To ensure only single access.
 SemaphoreHandle_t xSerialSemaphore;
 
-#define TASK_LOOP_TIME (50)
+#define TASK_LOOP_TIME (1000)
 
 void WifiDataTask( void *pvParameters);
 #endif
+
+void(* resetFunc) (void) = 0; // RESET AVR BASED Controllers only
 
 void setup() {
 
@@ -390,7 +392,10 @@ xReturned = xTaskCreate(
       if(-1==wifi_setup())
       {
         Log.Error(THIS"WIFI fault"CR);
-        while(1);
+        while(1)
+        {
+          loop();
+        }
       }
       Log.Info(THIS"DONE WIFI"CR);
 
@@ -535,6 +540,7 @@ xReturned = xTaskCreate(
 
           // Steer loop
           // A queue can be used
+          steer_loop(gd); // Not tested for USE_DATA_UNION macro switch
         }
       }
 
@@ -640,6 +646,12 @@ xReturned = xTaskCreate(
         {
           loglevel = LOG_LEVEL_ERRORS;
         }break;
+        case 'R': //be Careful
+        {
+          Log.Warning(THIS"SYSTEM_RESET in 1000 ms"CR);
+          Delay(1000);
+          resetFunc();
+        }
         default:{}
       }
 
