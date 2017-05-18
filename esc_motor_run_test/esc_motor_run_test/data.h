@@ -14,8 +14,8 @@
 //typedef unsigned char uint8_t;
 //typedef unsigned char byte; // https://nodejs.org/api/addons.html
 
-//#define GROUND_SYSTEM // or
-#define SKY_SYSTEM
+#define GROUND_SYSTEM // or
+//#define SKY_SYSTEM
 
 #if (defined(GROUND_SYSTEM) && defined(SKY_SYSTEM) )
 #error BOTH SYSTEM TYPE ACTIVE, ONLY ONE IS ALLOWED PER BUILD

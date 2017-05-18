@@ -496,9 +496,9 @@ xReturned = xTaskCreate(
     #elif defined(SKY_SYSTEM)
 
     #if defined(USE_DATA_UNION)
-    txGamePadORMPUData gd, dummy;
+    txGamePadORMPUData rgd, dummy;
     #else
-    txGamePadData gd, dummy;
+    txGamePadData rgd, dummy;
     #endif
 
     angle_val_raw_acc data;
@@ -525,32 +525,36 @@ xReturned = xTaskCreate(
       //            , gd.gd.gd.x, gd.gd.gd.y, gd.gd.gd.slider, gd.gd.gd.twist
       //            , gd.gd.gd.buttons_a, gd.gd.gd.buttons_b, gd.gd.gd.hat);
 
-      #if defined(USE_DATA_UNION)
-      memset(gd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
-      #else
-      memset(gd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
-      #endif
+      // #if defined(USE_DATA_UNION)
+      // memset(((txGamePadORMPUData)rgd).uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
+      // #else
+      // memset(((txGamePadData)rgd).uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
+      // #endif
 
       if( xWifiDataReceiveQ != 0 )
       {
         // Receive a message on the created queue.  Block for 10 ticks if a
         // message is not immediately available.
-        if( xQueueReceive( xWifiDataReceiveQ, &( gd ), ( TickType_t ) 10 ) )
+        if( xQueueReceive( xWifiDataReceiveQ, &( rgd ), ( TickType_t ) 10 ) )
         {
 
           // Steer loop
           // A queue can be used
-          steer_loop(gd); // Not tested for USE_DATA_UNION macro switch
+          #if defined(USE_DATA_UNION)
+          steer_loop(((txGamePadORMPUData*)&rgd)); // Not tested for USE_DATA_UNION macro switch
+          #else
+          steer_loop(((txGamePadData*)&rgd)); // Not tested for USE_DATA_UNION macro switch
+          #endif
         }
       }
 
       #if defined(USE_DATA_UNION)
 
-      memset(gd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
+      memset(rgd.uc_data, 0, SIZE_OF_GPADMDATA_STRUCT);
 
-      gd.data.data.gd = DEFAULT_JOY_DATA; // { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
-      gd.data.data.mpu = data;
-      gd.data.data_type = DATATYPE_MPU;
+      rgd.data.data.gd = DEFAULT_JOY_DATA; // { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
+      rgd.data.data.mpu = data;
+      rgd.data.data_type = DATATYPE_MPU;
 
       if( xWifiDataSendQ != 0 )
       {
@@ -576,7 +580,7 @@ xReturned = xTaskCreate(
 
         }
 
-        if( xQueueSend( xWifiDataSendQ, ( void * ) &gd, ( TickType_t ) 10 ) != pdPASS )
+        if( xQueueSend( xWifiDataSendQ, ( void * ) &rgd, ( TickType_t ) 10 ) != pdPASS )
         {
           /* Failed to post the message, even after 10 ticks. */
         }
@@ -619,8 +623,8 @@ xReturned = xTaskCreate(
   void loop() {
     //return;
     int loglevel = 0;
-    // Test
     if (Serial.available())
+    // Test
     {
       char inChar = (char)Serial.read();
       switch(inChar)

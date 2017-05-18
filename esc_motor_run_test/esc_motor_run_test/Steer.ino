@@ -49,26 +49,55 @@ void servo_init()
 }
 
 
-void steer_loop(const txGamePadData gd)
+void steer_loop(void* __data)
+// #if defined(USE_DATA_UNION)
+// void steer_loop(const txGamePadORMPUData gd)
+// #else
+// void steer_loop(const txGamePadData gd)
+// #endif
 {
+
+
+  #if defined(USE_DATA_UNION)
+  const txGamePadORMPUData *gd = __data;
+  #else
+  const txGamePadData *gd = __data;
+  #endif
   // XX,Y MAP FROM 0-1023 TO 60-120 DEGREES
   // SLIDER MAP FROM 255-0 TO 1024-1864
   // TWIST/YAW MAP FROM ? TO ?
 
-#define servo1Offset 0 // F
-#define servo2Offset -10  // R
-#define servo3Offset 7  // B
-#define servo4Offset 0  // L
+  #define servo1Offset 0 // F
+  #define servo2Offset -10  // R
+  #define servo3Offset 7  // B
+  #define servo4Offset 0  // L
 
 
-  servoVal[0] = map(gd.gd.gd.x, 0, 1023, 60 , 120);
-  servoVal[1] = map(gd.gd.gd.y, 0, 1023, 60 , 120); // it could be opposite i.e. 120-60
-  servoVal[2] = map(gd.gd.gd.x, 0, 1023, 120, 60);
-  servoVal[3] = map(gd.gd.gd.y, 0, 1023, 120, 60);
+  #if defined(USE_DATA_UNION)
 
-  int yaw_twist = map(gd.gd.gd.twist, 0, 255, -10, 10);
+  servoVal[0] = map(gd->data.data.gd.x, 0, 1023, 60 , 120);
+  servoVal[1] = map(gd->data.data.gd.y, 0, 1023, 60 , 120); // it could be opposite i.e. 120-60
+  servoVal[2] = map(gd->data.data.gd.x, 0, 1023, 120, 60);
+  servoVal[3] = map(gd->data.data.gd.y, 0, 1023, 120, 60);
 
-  int thrust_compansation = map(gd.gd.gd.slider, 255, 0, 0, 10);
+  int yaw_twist = map(gd->data.data.gd.twist, 0, 255, -10, 10);
+
+  int thrust_compansation = map(gd->data.data.gd.slider, 255, 0, 0, 10);
+
+  #else
+
+  servoVal[0] = map(gd->gd.gd.x, 0, 1023, 60 , 120);
+  servoVal[1] = map(gd->gd.gd.y, 0, 1023, 60 , 120); // it could be opposite i.e. 120-60
+  servoVal[2] = map(gd->gd.gd.x, 0, 1023, 120, 60);
+  servoVal[3] = map(gd->gd.gd.y, 0, 1023, 120, 60);
+
+  int yaw_twist = map(gd->gd.gd.twist, 0, 255, -10, 10);
+
+  int thrust_compansation = map(gd->gd.gd.slider, 255, 0, 0, 10);
+
+  #endif
+
+
 
   servoVal[0] = servoVal[0] + servo1Offset + yaw_twist; // + thrust_compansation
   servoVal[1] = servoVal[1] + servo2Offset + yaw_twist; // + thrust_compansation
@@ -77,7 +106,11 @@ void steer_loop(const txGamePadData gd)
 
   int escval = 0;
 
-  if (128 == gd.gd.gd.buttons_a)
+  #if defined(USE_DATA_UNION)
+  if (64 == gd->data.data.gd.buttons_a)
+  #else
+  if (64 == gd->gd.gd.buttons_a)
+  #endif
   {
     //state_machine('A');
     //#define MAX_THROTTLE (2000) //(1864)
@@ -87,7 +120,11 @@ void steer_loop(const txGamePadData gd)
 
   }
 
-  if (1 == gd.gd.gd.buttons_b)
+  #if defined(USE_DATA_UNION)
+  if (64 == gd->data.data.gd.buttons_b)
+  #else
+  if (64 == gd->gd.gd.buttons_b)
+  #endif
   {
     //state_machine('A');
     //#define MAX_THROTTLE (2000) //(1864)
@@ -97,7 +134,11 @@ void steer_loop(const txGamePadData gd)
 
   }
 
-  if (64 == gd.gd.gd.buttons_a)
+  #if defined(USE_DATA_UNION)
+  if (64 == gd->data.data.gd.buttons_a)
+  #else
+  if (64 == gd->gd.gd.buttons_a)
+  #endif
   {
     //state_machine('B');
     //#define MIN_THROTTLE (1064)
@@ -109,81 +150,87 @@ void steer_loop(const txGamePadData gd)
 
   if ( (true == ESC_armed) )
   {
-    escval = map(gd.gd.gd.slider, 255, 0, MIN_THROTTLE, MAX_THROTTLE);
-    ESC.writeMicroseconds(escval);
-  }
-  // check for ESC arming
-
-  servo[0].write(servoVal[0]);
-  servo[1].write(servoVal[1]);
-  servo[2].write(servoVal[2]);
-  servo[3].write(servoVal[3]);
-
-
-
-  //Action pending
-
-  //#define SERIAL Serial
-  //  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
-  //  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
-  //  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
-  //  SERIAL.print(data.x_unfiltered_acc, 2); SERIAL.print(",");
-  //  SERIAL.print(data.y_unfiltered_acc, 2); SERIAL.print(",");
-  //  SERIAL.println(data.z_unfiltered_acc, 2);
-
-  //if (last_data.z_angle != data.z_angle)
-  {
-    float requireYaw = 0.0f;
-    if ( abs(yaw - _data.data.z_angle) > 10 )
-    {
-      requireYaw = yaw - _data.data.z_angle;
-      // SERIAL.print(data.data.z_angle, 2); SERIAL.print(",");
-      // SERIAL.println(requireYaw, 2);
+    escval = map(
+      #if defined(USE_DATA_UNION)
+      gd->data.data.gd.slider
+      #else
+      gd->gd.gd.slider
+      #endif
+      , 255, 0, MIN_THROTTLE, MAX_THROTTLE);
+      ESC.writeMicroseconds(escval);
     }
+    // check for ESC arming
 
-    if (
-      (abs(_data.data.x_angle) < 30 )
-      &&
-      (abs(_data.data.y_angle) < 30 )
-    )
+    servo[0].write(servoVal[0]);
+    servo[1].write(servoVal[1]);
+    servo[2].write(servoVal[2]);
+    servo[3].write(servoVal[3]);
+
+
+
+    //Action pending
+
+    //#define SERIAL Serial
+    //  SERIAL.print(data.x_angle, 2); SERIAL.print(",");
+    //  SERIAL.print(data.y_angle, 2); SERIAL.print(",");
+    //  SERIAL.print(data.z_angle, 2); SERIAL.print(",");
+    //  SERIAL.print(data.x_unfiltered_acc, 2); SERIAL.print(",");
+    //  SERIAL.print(data.y_unfiltered_acc, 2); SERIAL.print(",");
+    //  SERIAL.println(data.z_unfiltered_acc, 2);
+
+    //if (last_data.z_angle != data.z_angle)
     {
-      //      servo[0].write(90 - data.data.x_angle);
-      //      servo[1].write(90 + data.data.y_angle);
-      //      servo[2].write(90 + data.data.x_angle);
-      //      servo[3].write(90 - data.data.y_angle);
+      float requireYaw = 0.0f;
+      if ( abs(yaw - _data.data.z_angle) > 10 )
+      {
+        requireYaw = yaw - _data.data.z_angle;
+        // SERIAL.print(data.data.z_angle, 2); SERIAL.print(",");
+        // SERIAL.println(requireYaw, 2);
+      }
+
+      if (
+        (abs(_data.data.x_angle) < 30 )
+        &&
+        (abs(_data.data.y_angle) < 30 )
+      )
+      {
+        //      servo[0].write(90 - data.data.x_angle);
+        //      servo[1].write(90 + data.data.y_angle);
+        //      servo[2].write(90 + data.data.x_angle);
+        //      servo[3].write(90 - data.data.y_angle);
+      }
+
+      last_data = _data;
     }
-
-    last_data = _data;
   }
-}
 
-void state_machine(char inChar)
-{
-
-  switch (inChar)
+  void state_machine(char inChar)
   {
-    case 'A' :
+
+    switch (inChar)
+    {
+      case 'A' :
       {
         ESC.writeMicroseconds(MAX_THROTTLE);
         Serial.println(" MAX_Throttle");
       } break;
-    case 'B' :
+      case 'B' :
       {
         ESC.writeMicroseconds(MIN_THROTTLE);
         Serial.println(" MIN_Throttle");
       } break;
-    case 'C' :
+      case 'C' :
       {
         ESC.writeMicroseconds(ZERO_THROTTLE);
         Serial.println(" Zero_Throttle");
       } break;
-    case 'D' :
+      case 'D' :
       {
         ESC.writeMicroseconds(TEST_THROTTLE);
         Serial.println(" Test_Throttle");
         throttle = TEST_THROTTLE;
       } break;
-    case '+' :
+      case '+' :
       {
         throttle += INCREMENT;
         throttle = throttle < MAX_THROTTLE ? throttle : MAX_THROTTLE;
@@ -191,7 +238,7 @@ void state_machine(char inChar)
         Serial.print(" Throttle+ = ");
         Serial.println(throttle);
       } break;
-    case '-' :
+      case '-' :
       {
         throttle -= INCREMENT;
         throttle = throttle > ZERO_THROTTLE ? throttle : ZERO_THROTTLE;
@@ -200,7 +247,7 @@ void state_machine(char inChar)
         Serial.println(throttle);
       } break;
 
-    case 'S':
+      case 'S':
       {
         Serial.println("Running sequence ... ");
         state_machine('A');
@@ -211,7 +258,7 @@ void state_machine(char inChar)
         Serial.println("Ready for throttle...");
       } break;
 
-    case 'R':
+      case 'R':
       {
         Serial.println("Auto Throttle ... ");
 
@@ -234,17 +281,17 @@ void state_machine(char inChar)
         Serial.println("Throttle disarmed...");
       } break;
 
-    case '~':
+      case '~':
       {
         Log.Info(THIS"RESETTING the system\n\r\n\r\n\r"CR);
         delay(1000);
         asm volatile ("  jmp 0");
       } break;
-    default :
+      default :
       {
         ESC.writeMicroseconds(0);
         Serial.println(" Default_Throttle");
       } break;
 
+    }
   }
-}

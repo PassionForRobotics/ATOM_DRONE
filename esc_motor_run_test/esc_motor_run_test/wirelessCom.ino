@@ -309,25 +309,92 @@ int wifi_loop_recv_joystick_data(void * _gd)
   int ret = -1;
   int recvlen = 0;
   int i=0;
+  byte c = 0;
 
   #if defined(USE_DATA_UNION)
   txGamePadORMPUData * gd = _gd;
-  while(SIZE_OF_GPADMDATA_STRUCT!=WIFICOM->available());
+  //while(SIZE_OF_GPADMDATA_STRUCT!=WIFICOM->available());
   #else
   txGamePadData * gd = _gd;
-  while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
+  //while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
   #endif
+  while(1<=WIFICOM->available())
+  {
+    // if time is more than as in practice break or return
+  }
+
+  gd->uc_data[0] = WIFICOM->read();
+  #if defined(USE_DATA_UNION)
+  if(0x02!=gd->data.stx)
+  #else
+  if(0xFF!=gd->gd.stx)
+  #endif
+  {
+    return;
+  }
+
+  gd->uc_data[1] = WIFICOM->read();
+
+  #if defined(USE_DATA_UNION)
+  if(0xFF!=gd->data.header)
+  #else
+  if(0xFF!=gd->gd.header)
+  #endif
+  {
+    return;
+  }
+  else
+  {
+
+  }
+
+  gd->uc_data[3] = WIFICOM->read();
+
+  #if defined(USE_DATA_UNION)
+
+  if( (SIZE_OF_GPADMDATA_STRUCT - 3) != gd->data.data_len )
+
+  #else
+
+  if( (SIZE_OF_GPADDATA_STRUCT - 3) != gd->gd.data_len )
+
+  #endif
+  {
+    return;
+  }
+
+  #if defined(USE_DATA_UNION)
+
+  gd->uc_data[4] = WIFICOM->read();
+  if( DATATYPE_JOY == gd->data.data_type || DATATYPE_MPU == gd->data.data_type )
+
+  #else
+
+  gd->uc_data[4] = WIFICOM->read();
+  if( DATATYPE_JOY == gd->gd.data_type || DATATYPE_MPU == gd->gd.data_type )
+  
+  #endif
+  {
+
+  }
+  else
+  {
+    return;
+  }
+
+  //recvlen = WIFICOM->available();
+
   // Above line takes care of data fragments
 
   recvlen = WIFICOM->available();
   while(recvlen)
   {
 
-    #if defined(USE_DATA_UNION)
-    ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT );
-    #else
-    ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
-    #endif
+    // #if defined(USE_DATA_UNION)
+    // ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT );
+    // #else
+    // ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
+    // #endif
 
     // Can be uncommented to debug
     // if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
@@ -352,7 +419,9 @@ int wifi_loop_recv_joystick_data(void * _gd)
     {
 
       #if defined(USE_DATA_UNION)
-      WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADMDATA_STRUCT ? SIZE_OF_GPADMDATA_STRUCT : recvlen);
+
+      WIFICOM->readBytes((&gd->uc_data[5])
+      , (recvlen) >= (SIZE_OF_GPADMDATA_STRUCT-4) ? (SIZE_OF_GPADMDATA_STRUCT-4) : recvlen);
 
       // Validate
 
@@ -365,7 +434,8 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
       #else
 
-      WIFICOM->readBytes(gd->uc_data, recvlen >= SIZE_OF_GPADDATA_STRUCT ? SIZE_OF_GPADDATA_STRUCT : recvlen);
+      WIFICOM->readBytes((&gd->uc_data[5])
+      , (recvlen) >= (SIZE_OF_GPADDATA_STRUCT-4) ? (SIZE_OF_GPADDATA_STRUCT-4) : recvlen);
 
       // Validate
 
@@ -375,6 +445,7 @@ int wifi_loop_recv_joystick_data(void * _gd)
       gd->gd.data_type == DATATYPE_JOY &&
       gd->gd.res3 == 0x00 &&
       gd->gd.etx == 0x03;
+
       #endif
 
       if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
