@@ -159,6 +159,94 @@ Log.Info(THIS"DONE Servos"CR);
 Log.Warning(THIS"BYPASSED Servos"CR);
 #endif
 
+txGamePadData _gd;
+Serial.println("SIZE_OF_JDATA_STRUCT , DATATYPE_JOY");
+_gd.uc_data[0] = 0x02;
+_gd.uc_data[1] = 0xFF;
+_gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
+_gd.uc_data[3] = DATATYPE_JOY;
+_gd.uc_data[4] = 0;
+_gd.gd.etx = 0x03;
+
+Serial.print(__LINE__); // C/2 | 16 | 15
+Serial.print(" [3]: ");
+Serial.print((int)_gd.uc_data[2]);
+Serial.print(" |len: ");
+Serial.print(_gd.gd.data_len);
+Serial.print(" |mcro: ");
+Serial.println(SIZE_OF_JDATA_STRUCT);
+
+for(int i = 0 ; i < SIZE_OF_GPADDATA_STRUCT ; i++)
+{
+
+  Serial.print("[");
+  Serial.print(i);
+  Serial.print("] : ");
+  Serial.println((int)_gd.uc_data[i]);
+
+}
+
+txGamePadORMPUData gd;
+
+Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_MPU");
+
+gd.uc_data[0] = 0x02;
+gd.uc_data[1] = 0xFF;
+gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
+gd.uc_data[3] = DATATYPE_MPU;
+gd.uc_data[4] = 0;
+gd.data.etx = 0x03;
+
+Serial.print(__LINE__); // C/2 | 16 | 15
+Serial.print(" [3]: ");
+Serial.print((int)gd.uc_data[2]);
+Serial.print(" |len: ");
+Serial.print(gd.data.data_len);
+Serial.print(" |mcro: ");
+Serial.println(SIZE_OF_MDATA_STRUCT);
+
+for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
+{
+
+  Serial.print("[");
+  Serial.print(i);
+  Serial.print("] : ");
+  Serial.println((int)gd.uc_data[i]);
+
+}
+
+///////////////////////////
+Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_JOY");
+
+gd.uc_data[0] = 0x02;
+gd.uc_data[1] = 0xFF;
+gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
+gd.uc_data[3] = DATATYPE_JOY;
+//gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
+//gd.uc_data[3] = DATATYPE_MPU;
+gd.uc_data[4] = 0;
+gd.data.etx = 0x03;
+
+Serial.print(__LINE__); // C/2 | 16 | 15
+Serial.print(" [3]: ");
+Serial.print((int)gd.uc_data[2]);
+Serial.print(" |len: ");
+Serial.print(gd.data.data_len);
+Serial.print(" |mcro: ");
+Serial.println(SIZE_OF_MDATA_STRUCT);
+
+for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
+{
+
+  Serial.print("[");
+  Serial.print(i);
+  Serial.print("] : ");
+  Serial.println((int)gd.uc_data[i]);
+
+}
+
+while(1);
+
 delay(100);
 
 if ( xSerialSemaphore == NULL )          // Check to see if the Serial Semaphore has not been created.

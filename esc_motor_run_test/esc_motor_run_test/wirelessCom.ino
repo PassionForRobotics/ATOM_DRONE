@@ -318,16 +318,19 @@ int wifi_loop_recv_joystick_data(void * _gd)
   txGamePadData * gd = _gd;
   //while(SIZE_OF_GPADDATA_STRUCT!=WIFICOM->available());
   #endif
-  while(1<=WIFICOM->available())
+  while(1>=WIFICOM->available())
   {
     // if time is more than as in practice break or return
+    Delay(1000);
+    Serial.println(__LINE__);
+
   }
 
   gd->uc_data[0] = WIFICOM->read();
   #if defined(USE_DATA_UNION)
   if(0x02!=gd->data.stx)
   #else
-  if(0xFF!=gd->gd.stx)
+  if(0x02!=gd->gd.stx)
   #endif
   {
     Serial.println(__LINE__);
@@ -350,7 +353,7 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   }
 
-  gd->uc_data[3] = WIFICOM->read();
+  gd->uc_data[2] = WIFICOM->read();
 
   #if defined(USE_DATA_UNION)
 
@@ -362,12 +365,12 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   #endif
   {
-    Serial.print(__LINE__);
-    Serial.print(" l ");
-    Serial.print(gd->uc_data[3]);
-    Serial.print(" s ");
-    Serial.println(gd->gd.data_len);
-    Serial.print(" s ");
+    Serial.print(__LINE__); // C/2 | 16 | 15
+    Serial.print(" [3]: ");
+    Serial.print((int)gd->uc_data[3]);
+    Serial.print(" |len: ");
+    //Serial.print(gd->gd.data_len);
+    Serial.print(" |mcro: ");
     Serial.println(SIZE_OF_GPADDATA_STRUCT);
 
     return ret;
@@ -375,17 +378,17 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   #if defined(USE_DATA_UNION)
 
-  gd->uc_data[4] = WIFICOM->read();
+  gd->uc_data[3] = WIFICOM->read();
   if( DATATYPE_JOY == gd->data.data_type || DATATYPE_MPU == gd->data.data_type )
 
   #else
 
-  gd->uc_data[4] = WIFICOM->read();
+  gd->uc_data[3] = WIFICOM->read();
   if( DATATYPE_JOY == gd->gd.data_type || DATATYPE_MPU == gd->gd.data_type )
 
   #endif
   {
-    ret = 1;
+    ret = 0;
   }
   else
   {

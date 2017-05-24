@@ -21,7 +21,7 @@
 #error BOTH SYSTEM TYPE ACTIVE, ONLY ONE IS ALLOWED PER BUILD
 #endif
 
-//#define USE_DATA_UNION
+#define USE_DATA_UNION
 
 #include "Arduino.h"
 
@@ -95,6 +95,7 @@ typedef struct GamePadEventData_Simple
   uint8_t buttons_b;
 }GamePadEventData_Simple;
 
+#define SIZE_OF_JDATA_STRUCT (sizeof(GamePadEventData_Simple))
 
 typedef struct GamePadData
 {
