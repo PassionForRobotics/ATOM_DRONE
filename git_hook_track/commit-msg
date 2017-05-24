@@ -22,8 +22,19 @@ NORMAL=$(tput sgr0)
 
 # Regex to validate a string contains "#" followed by 4 or 5 digits anywhere in the commit message
 regex="Issue\s#[0-9]{1,}\s(\[\w{1,}\]\s){1,}(.*)"
+regexbranch="\[\w{1,}\]\s[0-9]{1,}\-Issue\s#[0-9]{1,}\-(.*)"
+gitbranchcmd="$(git rev-parse --abbrev-ref HEAD)"
 
 file="cat $1" # The file that contains the commit message
+if [ $? -eq 0 ] ;then
+    echo "valid branch name"
+else
+    echo "${RED}ERROR - Invalid branch name format.$NORMAL: e.g. LSIS-234_Issue-34_minimalistic_info"
+    exit 1
+fi
+
+
+$gitbranchcmd | grep -E $regexbranch
 
 $file | grep -E $regex
 if [ $? -eq 0 ] ;then

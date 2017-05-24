@@ -330,7 +330,8 @@ int wifi_loop_recv_joystick_data(void * _gd)
   if(0xFF!=gd->gd.stx)
   #endif
   {
-    return;
+    Serial.println(__LINE__);
+    return ret;
   }
 
   gd->uc_data[1] = WIFICOM->read();
@@ -341,7 +342,8 @@ int wifi_loop_recv_joystick_data(void * _gd)
   if(0xFF!=gd->gd.header)
   #endif
   {
-    return;
+    Serial.println(__LINE__);
+    return ret;
   }
   else
   {
@@ -360,7 +362,15 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   #endif
   {
-    return;
+    Serial.print(__LINE__);
+    Serial.print(" l ");
+    Serial.print(gd->uc_data[3]);
+    Serial.print(" s ");
+    Serial.println(gd->gd.data_len);
+    Serial.print(" s ");
+    Serial.println(SIZE_OF_GPADDATA_STRUCT);
+
+    return ret;
   }
 
   #if defined(USE_DATA_UNION)
@@ -372,14 +382,15 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   gd->uc_data[4] = WIFICOM->read();
   if( DATATYPE_JOY == gd->gd.data_type || DATATYPE_MPU == gd->gd.data_type )
-  
+
   #endif
   {
-
+    ret = 1;
   }
   else
   {
-    return;
+    Serial.println(__LINE__);
+    return ret;
   }
 
   //recvlen = WIFICOM->available();
@@ -390,11 +401,19 @@ int wifi_loop_recv_joystick_data(void * _gd)
   while(recvlen)
   {
 
-    // #if defined(USE_DATA_UNION)
-    // ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT );
-    // #else
-    // ret = recvlen == (SIZE_OF_GPADDATA_STRUCT );
-    // #endif
+    Serial.print("reclen: ");
+    Serial.print(recvlen);
+    Serial.print(" | data macro: ");
+
+    #if defined(USE_DATA_UNION)
+    ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT-4 );
+    Serial.println(SIZE_OF_GPADMDATA_STRUCT);
+    #else
+    ret = recvlen == (SIZE_OF_GPADDATA_STRUCT-4 );
+    Serial.println(SIZE_OF_GPADDATA_STRUCT);
+    #endif
+
+
 
     // Can be uncommented to debug
     // if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
