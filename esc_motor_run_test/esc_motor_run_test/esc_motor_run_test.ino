@@ -71,7 +71,7 @@ QueueHandle_t xWifiDataSendQ = NULL, xWifiDataReceiveQ = NULL; // What about MPU
 // Create a Semaphore binary flag for the Serial Port. To ensure only single access.
 SemaphoreHandle_t xSerialSemaphore;
 
-#define TASK_LOOP_TIME (1000)
+#define TASK_LOOP_TIME (100)
 
 void WifiDataTask( void *pvParameters);
 #endif
@@ -159,93 +159,93 @@ Log.Info(THIS"DONE Servos"CR);
 Log.Warning(THIS"BYPASSED Servos"CR);
 #endif
 
-txGamePadData _gd;
-Serial.println("SIZE_OF_JDATA_STRUCT , DATATYPE_JOY");
-_gd.uc_data[0] = 0x02;
-_gd.uc_data[1] = 0xFF;
-_gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
-_gd.uc_data[3] = DATATYPE_JOY;
-_gd.uc_data[4] = 0;
-_gd.gd.etx = 0x03;
+// txGamePadData _gd;
+// Serial.println("SIZE_OF_JDATA_STRUCT , DATATYPE_JOY");
+// _gd.uc_data[0] = 0x02;
+// _gd.uc_data[1] = 0xFF;
+// _gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
+// _gd.uc_data[3] = DATATYPE_JOY;
+// _gd.uc_data[4] = 0;
+// _gd.gd.etx = 0x03;
+//
+// Serial.print(__LINE__); // C/2 | 16 | 15
+// Serial.print(" [3]: ");
+// Serial.print((int)_gd.uc_data[2]);
+// Serial.print(" |len: ");
+// Serial.print(_gd.gd.data_len);
+// Serial.print(" |mcro: ");
+// Serial.println(SIZE_OF_JDATA_STRUCT);
+//
+// for(int i = 0 ; i < SIZE_OF_GPADDATA_STRUCT ; i++)
+// {
+//
+//   Serial.print("[");
+//   Serial.print(i);
+//   Serial.print("] : ");
+//   Serial.println((int)_gd.uc_data[i]);
+//
+// }
+//
+// txGamePadORMPUData gd;
+//
+// Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_MPU");
+//
+// gd.uc_data[0] = 0x02;
+// gd.uc_data[1] = 0xFF;
+// gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
+// gd.uc_data[3] = DATATYPE_MPU;
+// gd.uc_data[4] = 0;
+// gd.data.etx = 0x03;
+//
+// Serial.print(__LINE__); // C/2 | 16 | 15
+// Serial.print(" [3]: ");
+// Serial.print((int)gd.uc_data[2]);
+// Serial.print(" |len: ");
+// Serial.print(gd.data.data_len);
+// Serial.print(" |mcro: ");
+// Serial.println(SIZE_OF_MDATA_STRUCT);
+//
+// for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
+// {
+//
+//   Serial.print("[");
+//   Serial.print(i);
+//   Serial.print("] : ");
+//   Serial.println((int)gd.uc_data[i]);
+//
+// }
+//
+// ///////////////////////////
+// Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_JOY");
+//
+// gd.uc_data[0] = 0x02;
+// gd.uc_data[1] = 0xFF;
+// gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
+// gd.uc_data[3] = DATATYPE_JOY;
+// //gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
+// //gd.uc_data[3] = DATATYPE_MPU;
+// gd.uc_data[4] = 0;
+// gd.data.etx = 0x03;
+//
+// Serial.print(__LINE__); // C/2 | 16 | 15
+// Serial.print(" [3]: ");
+// Serial.print((int)gd.uc_data[2]);
+// Serial.print(" |len: ");
+// Serial.print(gd.data.data_len);
+// Serial.print(" |mcro: ");
+// Serial.println(SIZE_OF_MDATA_STRUCT);
+//
+// for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
+// {
+//
+//   Serial.print("[");
+//   Serial.print(i);
+//   Serial.print("] : ");
+//   Serial.println((int)gd.uc_data[i]);
+//
+// }
 
-Serial.print(__LINE__); // C/2 | 16 | 15
-Serial.print(" [3]: ");
-Serial.print((int)_gd.uc_data[2]);
-Serial.print(" |len: ");
-Serial.print(_gd.gd.data_len);
-Serial.print(" |mcro: ");
-Serial.println(SIZE_OF_JDATA_STRUCT);
-
-for(int i = 0 ; i < SIZE_OF_GPADDATA_STRUCT ; i++)
-{
-
-  Serial.print("[");
-  Serial.print(i);
-  Serial.print("] : ");
-  Serial.println((int)_gd.uc_data[i]);
-
-}
-
-txGamePadORMPUData gd;
-
-Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_MPU");
-
-gd.uc_data[0] = 0x02;
-gd.uc_data[1] = 0xFF;
-gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
-gd.uc_data[3] = DATATYPE_MPU;
-gd.uc_data[4] = 0;
-gd.data.etx = 0x03;
-
-Serial.print(__LINE__); // C/2 | 16 | 15
-Serial.print(" [3]: ");
-Serial.print((int)gd.uc_data[2]);
-Serial.print(" |len: ");
-Serial.print(gd.data.data_len);
-Serial.print(" |mcro: ");
-Serial.println(SIZE_OF_MDATA_STRUCT);
-
-for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
-{
-
-  Serial.print("[");
-  Serial.print(i);
-  Serial.print("] : ");
-  Serial.println((int)gd.uc_data[i]);
-
-}
-
-///////////////////////////
-Serial.println("SIZE_OF_MDATA_STRUCT , DATATYPE_JOY");
-
-gd.uc_data[0] = 0x02;
-gd.uc_data[1] = 0xFF;
-gd.uc_data[2] = SIZE_OF_JDATA_STRUCT;
-gd.uc_data[3] = DATATYPE_JOY;
-//gd.uc_data[2] = SIZE_OF_MDATA_STRUCT;
-//gd.uc_data[3] = DATATYPE_MPU;
-gd.uc_data[4] = 0;
-gd.data.etx = 0x03;
-
-Serial.print(__LINE__); // C/2 | 16 | 15
-Serial.print(" [3]: ");
-Serial.print((int)gd.uc_data[2]);
-Serial.print(" |len: ");
-Serial.print(gd.data.data_len);
-Serial.print(" |mcro: ");
-Serial.println(SIZE_OF_MDATA_STRUCT);
-
-for(int i = 0 ; i < SIZE_OF_GPADMDATA_STRUCT ; i++)
-{
-
-  Serial.print("[");
-  Serial.print(i);
-  Serial.print("] : ");
-  Serial.println((int)gd.uc_data[i]);
-
-}
-
-while(1);
+//while(1);
 
 delay(100);
 
@@ -522,10 +522,12 @@ xReturned = xTaskCreate(
       tgd.data.data.mpu.data = DEFAULT_MPU_DATA;//{ .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
       tgd.data.data.gd = joydata;
       tgd.data.data_type = DATATYPE_JOY;
+      tgd.data.data_len = SIZE_OF_MDATA_STRUCT;
       //tgd.data.
       #else
       tgd.gd.gd = joydata;
       tgd.gd.data_type = DATATYPE_JOY;
+      tgd.gd.data_len = SIZE_OF_JDATA_STRUCT;
       #endif
 
       if( xWifiDataSendQ != 0 )
@@ -643,6 +645,7 @@ xReturned = xTaskCreate(
       rgd.data.data.gd = DEFAULT_JOY_DATA; // { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
       rgd.data.data.mpu = data;
       rgd.data.data_type = DATATYPE_MPU;
+      rgd.data.data_len = SIZE_OF_MDATA_STRUCT;
 
       if( xWifiDataSendQ != 0 )
       {

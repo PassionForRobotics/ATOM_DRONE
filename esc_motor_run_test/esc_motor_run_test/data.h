@@ -21,7 +21,7 @@
 #error BOTH SYSTEM TYPE ACTIVE, ONLY ONE IS ALLOWED PER BUILD
 #endif
 
-#define USE_DATA_UNION
+//#define USE_DATA_UNION
 
 #include "Arduino.h"
 

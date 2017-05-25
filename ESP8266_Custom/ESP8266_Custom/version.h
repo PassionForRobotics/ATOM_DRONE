@@ -1,6 +1,6 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define _VER_ ( "v0.0.0-75-g64b90c5" )
+#define _VER_ ( "v0.0.0-76-g554fecc" )
 
 #endif //VERSION_H

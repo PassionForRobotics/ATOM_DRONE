@@ -255,7 +255,7 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
   txGamePadORMPUData * data = _data;
   data->data.stx = 0x02;
   data->data.header = 0xff;
-  data->data.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
+  //data->data.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
   //data->data.data_type = 0x01;
   data->data.res3 = 0x00;
   data->data.etx = 0x03;
@@ -267,7 +267,7 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
   txGamePadData * data = _data;
   data->gd.stx = 0x02;
   data->gd.header = 0xff;
-  data->gd.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
+  //data->gd.data_len = (SIZE_OF_GPADDATA_STRUCT - 3);
   //data->gd.data_type = 0x01;
   data->gd.res3 = 0x00;
   data->gd.etx = 0x03;
@@ -305,6 +305,7 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 */
 int wifi_loop_recv_joystick_data(void * _gd)
 {
+  //#define LOW_RAM_DEBUG
   // If performing serial print must be inside semaphore
   int ret = -1;
   int recvlen = 0;
@@ -321,8 +322,8 @@ int wifi_loop_recv_joystick_data(void * _gd)
   while(1>=WIFICOM->available())
   {
     // if time is more than as in practice break or return
-    Delay(1000);
-    Serial.println(__LINE__);
+    //Delay(1000);
+    //Serial.println(__LINE__);
 
   }
 
@@ -333,10 +334,13 @@ int wifi_loop_recv_joystick_data(void * _gd)
   if(0x02!=gd->gd.stx)
   #endif
   {
+    #if defined(LOW_RAM_DEBUG)
     Serial.println(__LINE__);
+    #endif
     return ret;
   }
 
+  while(1>=WIFICOM->available());
   gd->uc_data[1] = WIFICOM->read();
 
   #if defined(USE_DATA_UNION)
@@ -345,7 +349,9 @@ int wifi_loop_recv_joystick_data(void * _gd)
   if(0xFF!=gd->gd.header)
   #endif
   {
+    #if defined(LOW_RAM_DEBUG)
     Serial.println(__LINE__);
+    #endif
     return ret;
   }
   else
@@ -353,67 +359,90 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
   }
 
+  while(1>=WIFICOM->available());
   gd->uc_data[2] = WIFICOM->read();
 
   #if defined(USE_DATA_UNION)
 
-  if( (SIZE_OF_GPADMDATA_STRUCT - 3) != gd->data.data_len )
+  if( ( (SIZE_OF_MDATA_STRUCT) != gd->data.data_len ) || ( (SIZE_OF_JDATA_STRUCT) != gd->data.data_len ) )
 
   #else
 
-  if( (SIZE_OF_GPADDATA_STRUCT - 3) != gd->gd.data_len )
+  if( (SIZE_OF_JDATA_STRUCT) != gd->gd.data_len )
 
   #endif
   {
+    #if defined(LOW_RAM_DEBUG)
     Serial.print(__LINE__); // C/2 | 16 | 15
     Serial.print(" [3]: ");
     Serial.print((int)gd->uc_data[3]);
     Serial.print(" |len: ");
-    //Serial.print(gd->gd.data_len);
+    Serial.print(gd->gd.data_len);
     Serial.print(" |mcro: ");
     Serial.println(SIZE_OF_GPADDATA_STRUCT);
+    #endif
 
     return ret;
   }
 
   #if defined(USE_DATA_UNION)
 
+  while(1>=WIFICOM->available());
   gd->uc_data[3] = WIFICOM->read();
   if( DATATYPE_JOY == gd->data.data_type || DATATYPE_MPU == gd->data.data_type )
 
   #else
 
+  while(1>=WIFICOM->available());
   gd->uc_data[3] = WIFICOM->read();
-  if( DATATYPE_JOY == gd->gd.data_type || DATATYPE_MPU == gd->gd.data_type )
+  if( DATATYPE_JOY == gd->gd.data_type )
 
   #endif
   {
-    ret = 0;
+    //ret = 0;
   }
   else
   {
+    #if defined(LOW_RAM_DEBUG)
     Serial.println(__LINE__);
+    #endif
     return ret;
   }
 
+  while(1>=WIFICOM->available());
+  gd->uc_data[4] = WIFICOM->read(); // res
   //recvlen = WIFICOM->available();
 
-  // Above line takes care of data fragments
+  // Above lines take care of data fragments
+
+  #if defined(USE_DATA_UNION)
+  while(SIZE_OF_MDATA_STRUCT>=WIFICOM->available());
+  #else
+  while(SIZE_OF_JDATA_STRUCT>=WIFICOM->available());
+  #endif
 
   recvlen = WIFICOM->available();
-  while(recvlen)
+
+  if(recvlen)
   {
 
-    Serial.print("reclen: ");
+    #if defined(LOW_RAM_DEBUG)
+    Serial.print(__LINE__);
+    Serial.print(" reclen: ");
     Serial.print(recvlen);
     Serial.print(" | data macro: ");
+    #endif
 
     #if defined(USE_DATA_UNION)
-    ret = recvlen == (SIZE_OF_GPADMDATA_STRUCT-4 );
-    Serial.println(SIZE_OF_GPADMDATA_STRUCT);
+    ret = recvlen == (SIZE_OF_MDATA_STRUCT+1); // size of .etx
+    #if defined(LOW_RAM_DEBUG)
+    Serial.println(SIZE_OF_MDATA_STRUCT);
+    #endif // #if defined(LOW_RAM_DEBUG)
     #else
-    ret = recvlen == (SIZE_OF_GPADDATA_STRUCT-4 );
-    Serial.println(SIZE_OF_GPADDATA_STRUCT);
+    ret = recvlen == (SIZE_OF_JDATA_STRUCT+1); // size of .etx
+    #if defined(LOW_RAM_DEBUG)
+    Serial.println(SIZE_OF_JDATA_STRUCT);
+    #endif // #if defined(LOW_RAM_DEBUG)
     #endif
 
 
@@ -443,27 +472,35 @@ int wifi_loop_recv_joystick_data(void * _gd)
       #if defined(USE_DATA_UNION)
 
       WIFICOM->readBytes((&gd->uc_data[5])
-      , (recvlen) >= (SIZE_OF_GPADMDATA_STRUCT-4) ? (SIZE_OF_GPADMDATA_STRUCT-4) : recvlen);
+      , (recvlen)
+      >= (SIZE_OF_MDATA_STRUCT)
+      ? (SIZE_OF_MDATA_STRUCT) : recvlen);
+
+      gd->data.etx = WIFICOM->read();
 
       // Validate
 
       ret &= gd->data.stx == 0x02 &&
       gd->data.header == 0xFF &&
-      gd->data.data_len == (SIZE_OF_GPADMDATA_STRUCT - 3);
-      gd->data.data_type == DATATYPE_JOY &&
+      gd->data.data_len == SIZE_OF_MDATA_STRUCT &&
+      (gd->data.data_type == DATATYPE_MPU || gd->data.data_type == DATATYPE_JOY) &&
       gd->data.res3 == 0x00 &&
       gd->data.etx == 0x03;
 
       #else
 
       WIFICOM->readBytes((&gd->uc_data[5])
-      , (recvlen) >= (SIZE_OF_GPADDATA_STRUCT-4) ? (SIZE_OF_GPADDATA_STRUCT-4) : recvlen);
+      , (recvlen)
+      >= (SIZE_OF_JDATA_STRUCT)
+      ? (SIZE_OF_JDATA_STRUCT) : recvlen);
+
+      gd->gd.etx = WIFICOM->read();
 
       // Validate
 
       ret &= gd->gd.stx == 0x02 &&
       gd->gd.header == 0xFF &&
-      gd->gd.data_len == (SIZE_OF_GPADDATA_STRUCT - 3);
+      gd->gd.data_len == SIZE_OF_JDATA_STRUCT && //(SIZE_OF_GPADDATA_STRUCT - SIZE_OF_JDATA_STRUCT);
       gd->gd.data_type == DATATYPE_JOY &&
       gd->gd.res3 == 0x00 &&
       gd->gd.etx == 0x03;
@@ -483,7 +520,22 @@ int wifi_loop_recv_joystick_data(void * _gd)
         xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
       }
 
-      break;
+      //break;
+    }
+    else
+    {
+      #if defined(LOW_RAM_DEBUG)
+      Serial.println(__LINE__);
+      #endif
+      while(WIFICOM->available())
+      {
+        WIFICOM->read();
+        // if time is more than as in practice break or return
+        //Delay(1000);
+        //Serial.println(__LINE__);
+
+      }
+      return (1 == ret ? 0 : -1);
     }
 
     recvlen = WIFICOM->available();
