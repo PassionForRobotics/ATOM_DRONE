@@ -1,0 +1,97 @@
+INF: 100068(100): SKY_SYS: MAIN: 93: EMPTY
+INF: 100868(100): SKY_SYS: MAIN: 94: EMPTY
+INF: 101664(101): SKY_SYS: MAIN: 95: EMPTY: INF: 102464(102): SKY_SYS: MAIN: 96: HELLO WORLD
+ERR: 103312(103): SKY_SYS: MAIN: 97: LOGLEVEL - ERROR LEVEL - MSG CHECK
+WRN: 104400(104): SKY_SYS: MAIN: 98: LOGLEVEL - WARNING LEVEL - MSG CHECK
+DBG: 105504(105): SKY_SYS: MAIN: 99: LOGLEVEL - DEBUG LEVEL - MSG CHECK
+INF: 106584(106): SKY_SYS: MAIN: 105: SKY_SYSTEM VERISON v0.0.0-74-g20d398a
+INF: 107708(107): SKY_SYS: MAIN: 112: TASK_LOOP_TIME 1000
+INF: 108808(108): SKY_SYS: MAIN: 115: Setting up ECS
+INF: 109728(109): SKY_SYS: MAIN: 117: DONE ECS
+WRN: 110556(110): SKY_SYS: MAIN: 127: BYPASSED Joystick
+
+INF: 111480(111): SKY_SYS: MAIN: 147: Setting up MPU
+INF: 1133720(1133): SKY_SYS: MAIN: 149: DONE MPU
+INF: 1134652(1134): SKY_SYS: MAIN: 155: Setting up Servos
+INF: 1135932(1135): SKY_SYS: MAIN: 157: DONE Servos
+SIZE_OF_JDATA_STRUCT , DATATYPE_JOY
+171 [3]: 9 |len: 9 |mcro: 9
+[0] : 2
+[1] : 255
+[2] : 9
+[3] : 1
+[4] : 0
+[5] : 0
+[6] : 93
+[7] : 0
+[8] : 0
+[9] : 0
+[10] : 1
+[11] : 0
+[12] : 255
+[13] : 0
+[14] : 3
+SIZE_OF_MDATA_STRUCT , DATATYPE_MPU
+200 [3]: 24 |len: 24 |mcro: 24
+[0] : 2
+[1] : 255
+[2] : 24
+[3] : 2
+[4] : 0
+[5] : 68
+[6] : 0
+[7] : 253
+[8] : 211
+[9] : 254
+[10] : 107
+[11] : 1
+[12] : 42
+[13] : 0
+[14] : 2
+[15] : 2
+[16] : 0
+[17] : 0
+[18] : 93
+[19] : 0
+[20] : 0
+[21] : 253
+[22] : 238
+[23] : 254
+[24] : 116
+[25] : 1
+[26] : 56
+[27] : 0
+[28] : 52
+[29] : 3
+SIZE_OF_MDATA_STRUCT , DATATYPE_JOY
+230 [3]: 9 |len: 9 |mcro: 24
+[0] : 2
+[1] : 255
+[2] : 9
+[3] : 1
+[4] : 0
+[5] : 68
+[6] : 0
+[7] : 253
+[8] : 211
+[9] : 254
+[10] : 107
+[11] : 1
+[12] : 42
+[13] : 0
+[14] : 2
+[15] : 2
+[16] : 0
+[17] : 0
+[18] : 93
+[19] : 0
+[20] : 0
+[21] : 253
+[22] : 238
+[23] : 254
+[24] : 116
+[25] : 1
+[26] : 56
+[27] : 0
+[28] : 52
+[29] : 3
