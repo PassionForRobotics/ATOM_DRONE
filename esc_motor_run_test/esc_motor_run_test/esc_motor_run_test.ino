@@ -448,6 +448,7 @@ xReturned = xTaskCreate(
         {
           if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
           // all fine
+          {}
           ret = -1; // restore next work
         }
         else
