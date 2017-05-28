@@ -245,10 +245,20 @@ int wifi_setup()//int _mode)
 int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 {
   // Do not use serial/Log print here
+  //#define DEEP_DEBUG_WIFI_SEND
 
   int ret = -1;
   int len = -1;
   int rec = -1;
+  char *saveptr;
+  char *sntstr, *numstr;
+  int cnt = -1;
+  TickType_t lastTick = 0;
+
+  // while (WIFICOM->available())
+  // {
+  //   WIFICOM->read();
+  // }
 
   #if defined(USE_DATA_UNION)
 
@@ -276,7 +286,33 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 
   #endif
 
-  while (!WIFICOM->available()); // Time out can be put
+  WIFICOM->flush();
+
+  lastTick = xTaskGetTickCount( );
+  while (9>=WIFICOM->available()) // Time out can be put +sent 2\r\n
+  {
+    if( ( xTaskGetTickCount( ) - lastTick ) > 5)
+    {
+      lastTick = xTaskGetTickCount( ) - lastTick; // lastTick 's work is done here
+
+      #if defined(DEEP_DEBUG_WIFI_SEND)
+      Serial.print(__LINE__);
+      Serial.print(" ");
+      Serial.println(lastTick);
+      #endif
+
+      break;
+    }
+  }
+
+  #if defined(DEEP_DEBUG_WIFI_SEND)
+  Serial.print(__LINE__);
+  Serial.print(" ");
+  Serial.print(micros());
+  Serial.print(" ");
+  Serial.print((char)WIFICOM->peek());
+  Serial.print(" ");
+  #endif
 
   while (WIFICOM->available())
   {
@@ -286,15 +322,142 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
       ret = ( NULL != strstr(buffer, "+sent") );
       if(1==ret)
       {
+
+
+        sntstr = strtok_r(buffer, " ", &saveptr);
+        numstr = strtok_r(NULL, " ", &saveptr);
+        cnt = atoi(numstr);
+
+        if(SIZE_OF_GPADDATA_STRUCT==cnt)
+        {
+          ret = 1;
+
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.println(__LINE__);
+          #endif
+        }
+        else
+        {
+          ret = -1;
+
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.print(" ");
+          Serial.print(__LINE__);
+          Serial.print(" ");
+          Serial.print(micros());
+          Serial.print(" ");
+          Serial.print(buffer);
+          Serial.print(" ");
+          Serial.print(numstr);
+          Serial.print(" ");
+          #endif
+        }
+
+        if(SIZE_OF_GPADDATA_STRUCT>cnt)
+        {
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.println(__LINE__);
+          #endif
+
+          lastTick = xTaskGetTickCount( );
+          while (9>=WIFICOM->available())
+          {
+            if( ( xTaskGetTickCount( ) - lastTick ) > 5)
+            {
+              lastTick = xTaskGetTickCount( ) - lastTick; // lastTick 's work is done here
+              #if defined(DEEP_DEBUG_WIFI_SEND)
+              Serial.print(__LINE__);
+              Serial.print(" ");
+              Serial.println(lastTick);
+              #endif
+
+              break;
+            }
+          }
+
+
+        }
+        else
+        {
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.println(__LINE__);
+          #endif
+        }
+
         // all fine
         while (WIFICOM->available())
         {
-          WIFICOM->read();
+          rec = readline(WIFICOM->read(), buffer, 32, &len);
+          if(1==rec)
+          {
+            ret = ( NULL != strstr(buffer, "+sent") );
+            if(1==ret)
+            {
+              sntstr = strtok_r(buffer, " ", &saveptr);
+              numstr = strtok_r(NULL, " ", &saveptr);
+              cnt += atoi(numstr);
+
+              if(SIZE_OF_GPADDATA_STRUCT==cnt)
+              {
+                ret = 1;
+
+                #if defined(DEEP_DEBUG_WIFI_SEND)
+                Serial.println(__LINE__);
+                #endif
+              }
+              else if(SIZE_OF_GPADDATA_STRUCT<cnt)
+              {
+                // error
+                ret = -1; // already handled but keeping it here
+              }
+              else
+              {
+                ret = -1;
+
+                #if defined(DEEP_DEBUG_WIFI_SEND)
+                Serial.print(" ");
+                Serial.print(__LINE__);
+                Serial.print(" ");
+                Serial.print(micros());
+                Serial.print(" ");
+                Serial.print(buffer);
+                Serial.print(" ");
+                Serial.print(numstr);
+                Serial.print(" ");
+                Serial.print(cnt);
+                Serial.print(" ");
+                #endif
+
+              }
+            }
+          }
+          //Delay(1);
+        }
+
+
+        if( (WIFICOM->available()))
+        {
+          // warn
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.println(__LINE__);
+          #endif
+        }
+
+        while (WIFICOM->available())
+        {
+          #if defined(DEEP_DEBUG_WIFI_SEND)
+          Serial.print(__LINE__);
+          Serial.print(" ");
+          Serial.print(micros());
+          Serial.print(" ");
+          Serial.println((char)WIFICOM->read());
+          #endif
         }
         break;
       }
     }
   }
+  //Serial.println(" ");
   return (1 == ret ? 0 : -1);
 }
 
@@ -440,7 +603,7 @@ int wifi_loop_recv_joystick_data(void * _gd)
       //Serial.println(__LINE__);
 
     }
-    
+
     return ret;
   }
 
