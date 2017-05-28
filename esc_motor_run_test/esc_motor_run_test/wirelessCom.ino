@@ -466,11 +466,11 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 * @param  gd [data to update]
 * @return    [whether data was valid]
 */
-int wifi_loop_recv_joystick_data(void * _gd)
+int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
 {
   // If performing serial print must be inside semaphore
   #define DEEP_DEBUG_WIFI_RECV
-  
+
   int ret = -1;
   int recvlen = 0;
   int i=0;
@@ -677,9 +677,11 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
       gd->data.etx = WIFICOM->read();
 
+      *remlen = WIFICOM->available()%SIZE_OF_GPADMDATA_STRUCT;
+
       // Validate
 
-      ret &= gd->data.stx == 0x02 &&
+      ret = gd->data.stx == 0x02 &&
       gd->data.header == 0xFF &&
       gd->data.data_len == SIZE_OF_MDATA_STRUCT &&
       (gd->data.data_type == DATATYPE_MPU || gd->data.data_type == DATATYPE_JOY) &&
@@ -695,9 +697,11 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
       gd->gd.etx = WIFICOM->read();
 
+      *remlen = WIFICOM->available()%SIZE_OF_GPADDATA_STRUCT;
+
       // Validate
 
-      ret &= gd->gd.stx == 0x02 &&
+      ret = gd->gd.stx == 0x02 &&
       gd->gd.header == 0xFF &&
       gd->gd.data_len == SIZE_OF_JDATA_STRUCT && //(SIZE_OF_GPADDATA_STRUCT - SIZE_OF_JDATA_STRUCT);
       gd->gd.data_type == DATATYPE_JOY &&
@@ -707,7 +711,7 @@ int wifi_loop_recv_joystick_data(void * _gd)
       #endif
 
       #if defined(DEEP_DEBUG_WIFI_RECV)
-      if(1!=ret)
+      //if(1!=ret)
       {
         Serial.print(" DATA: ");
         #if defined(USE_DATA_UNION)
@@ -727,75 +731,21 @@ int wifi_loop_recv_joystick_data(void * _gd)
 
       #endif
 
-      if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-      {
-
-        for ( i = 0; i < recvlen; i++)
-        {
-          Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
-        }
-        Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
-
-        if ( ( xSerialSemaphore ) != NULL )
-        xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
-      }
+      // if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
+      // {
+      //
+      //   for ( i = 0; i < recvlen; i++)
+      //   {
+      //     Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
+      //   }
+      //   Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
+      //
+      //   if ( ( xSerialSemaphore ) != NULL )
+      //   xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
+      // }
 
       //break;
     }
-    // else if (recvlen >= (SIZE_OF_MDATA_STRUCT+1))
-    // {
-    //   #if defined(USE_DATA_UNION)
-    //
-    //   WIFICOM->readBytes((&gd->uc_data[5])
-    //   , (recvlen)
-    //   >= (SIZE_OF_MDATA_STRUCT)
-    //   ? (SIZE_OF_MDATA_STRUCT) : recvlen);
-    //
-    //   gd->data.etx = WIFICOM->read();
-    //
-    //   // Validate
-    //
-    //   ret &= gd->data.stx == 0x02 &&
-    //   gd->data.header == 0xFF &&
-    //   gd->data.data_len == SIZE_OF_MDATA_STRUCT &&
-    //   (gd->data.data_type == DATATYPE_MPU || gd->data.data_type == DATATYPE_JOY) &&
-    //   gd->data.res3 == 0x00 &&
-    //   gd->data.etx == 0x03;
-    //
-    //   #else
-    //
-    //   WIFICOM->readBytes((&gd->uc_data[5])
-    //   , (recvlen)
-    //   >= (SIZE_OF_JDATA_STRUCT)
-    //   ? (SIZE_OF_JDATA_STRUCT) : recvlen);
-    //
-    //   gd->gd.etx = WIFICOM->read();
-    //
-    //   // Validate
-    //
-    //   ret &= gd->gd.stx == 0x02 &&
-    //   gd->gd.header == 0xFF &&
-    //   gd->gd.data_len == SIZE_OF_JDATA_STRUCT && //(SIZE_OF_GPADDATA_STRUCT - SIZE_OF_JDATA_STRUCT);
-    //   gd->gd.data_type == DATATYPE_JOY &&
-    //   gd->gd.res3 == 0x00 &&
-    //   gd->gd.etx == 0x03;
-    //
-    //   #endif
-    //
-    //   if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    //   {
-    //
-    //     for ( i = 0; i < recvlen; i++)
-    //     {
-    //       Log.Verbose(THIS"[%d] %X"CR, i, gd->uc_data[i]);
-    //     }
-    //     Log.Verbose(THIS"(ASCII: %s)]"CR, gd->uc_data);
-    //
-    //     if ( ( xSerialSemaphore ) != NULL )
-    //     xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
-    //   }
-    //
-    // }
     else
     {
       #if defined(DEEP_DEBUG_WIFI_RECV)
@@ -809,10 +759,10 @@ int wifi_loop_recv_joystick_data(void * _gd)
         //Serial.println(__LINE__);
 
       }
-      return (1 == ret ? 0 : -1);
+      //return (1 == ret ? 0 : -1);
     }
 
-    recvlen = WIFICOM->available();
+    //recvlen = WIFICOM->available();
 
   }
 

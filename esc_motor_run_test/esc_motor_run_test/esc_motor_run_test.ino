@@ -368,6 +368,7 @@ xReturned = xTaskCreate(
     #endif
 
     int ret = -1;
+    int rempackets = -1;
 
     // memset(tgd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT);
     //
@@ -432,37 +433,34 @@ xReturned = xTaskCreate(
 
       if( xWifiDataReceiveQ != 0 )
       {
-        //if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-        //{
 
-        ret = wifi_loop_recv_joystick_data(&tgd); //check
-
-        //if ( ( xSerialSemaphore ) != NULL )
-        //xSemaphoreGive( ( xSerialSemaphore ) );  // make the Serial Port available
-        //}
-        //if(0==ret)
-        //if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
-        //if( xQueueSend( xWifiDataReceiveQ, &( tgd ), ( TickType_t ) 10 ) )
-        //{
-        if(0==ret)
+        do
         {
-          if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
+          ret = wifi_loop_recv_joystick_data(&tgd, &rempackets); //check
+
+        } while(rempackets);
+
+        if(0==ret) // Danger it will only keep latest data
+        {
           // all fine
-          {}
+          if( xQueueSend( xWifiDataReceiveQ, ( void * ) &tgd, ( TickType_t ) 10 ) != pdPASS )
+          {
+
+          }
           ret = -1; // restore next work
         }
         else
         {
           Log.Warning(THIS"Joystick data rec failed"CR);
         }
-        //}
+
       }
 
       #else
 
       #endif
 
-      Delay(TASK_LOOP_TIME, xLastWakeTime);
+      Delay(TASK_LOOP_TIME/2, xLastWakeTime);
 
     }
 
