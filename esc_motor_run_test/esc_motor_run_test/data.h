@@ -14,6 +14,7 @@
 //typedef unsigned char uint8_t;
 //typedef unsigned char byte; // https://nodejs.org/api/addons.html
 
+
 //#define GROUND_SYSTEM // or
 #define SKY_SYSTEM
 
@@ -48,7 +49,7 @@ typedef struct true_angle_val_raw_acc
   //unsigned char data_len;
   //unsigned char data_type;
   //unsigned char res3;
-
+  uint32_t timestamp;
   float x_angle;
   float y_angle;
   float z_angle;
@@ -86,6 +87,7 @@ typedef struct GamePadEventData
 
 typedef struct GamePadEventData_Simple
 {
+  uint32_t timestamp;
   uint16_t x;
   uint16_t y;
   uint8_t hat;
@@ -104,7 +106,9 @@ typedef struct GamePadData
   unsigned char data_len;
   unsigned char data_type;
   unsigned char res3;
+  unsigned char res4;
   GamePadEventData_Simple gd;
+  uint32_t dummy[3];
   unsigned char etx;
 }GamePadData;
 

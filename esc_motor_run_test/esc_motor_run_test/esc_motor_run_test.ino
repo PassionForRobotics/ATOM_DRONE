@@ -99,6 +99,13 @@ void setup() {
   Log.Debug(THIS"LOGLEVEL - DEBUG LEVEL - MSG CHECK"CR);
   Log.Verbose(THIS"LOGLEVEL - VERBOSE LEVEL - MSG CHECK"CR);
 
+  Log.Info(THIS"SIZE_OF_MDATA_STRUCT %d"CR,SIZE_OF_MDATA_STRUCT);
+  Log.Info(THIS"SIZE_OF_JDATA_STRUCT %d"CR,SIZE_OF_JDATA_STRUCT);
+  #if defined(USE_DATA_UNION)
+  Log.Info(THIS"SIZE_OF_GPADMDATA_STRUCT %d"CR,SIZE_OF_GPADMDATA_STRUCT);
+  #else
+  Log.Info(THIS"SIZE_OF_GPADDATA_STRUCT %d"CR,SIZE_OF_GPADDATA_STRUCT);
+  #endif
   //  #error Open Telegram and check scifi note for wifi lib Checked not compiling will take it when free.
 
   #if defined(SKY_SYSTEM)
@@ -283,13 +290,13 @@ xReturned = xTaskCreate(
 
     #if defined(USE_DATA_UNION)
 
-    xWifiDataSendQ = xQueueCreate( 10, sizeof( txGamePadORMPUData ) );
-    xWifiDataReceiveQ = xQueueCreate( 10, sizeof( txGamePadORMPUData ) );
+    xWifiDataSendQ = xQueueCreate( 5, sizeof( txGamePadORMPUData ) );
+    xWifiDataReceiveQ = xQueueCreate( 5, sizeof( txGamePadORMPUData ) );
 
     #else
 
-    xWifiDataSendQ = xQueueCreate( 10, sizeof( txGamePadData ) );
-    xWifiDataReceiveQ = xQueueCreate( 10, sizeof( txGamePadData ) );
+    xWifiDataSendQ = xQueueCreate( 2, sizeof( txGamePadData ) );
+    xWifiDataReceiveQ = xQueueCreate( 2, sizeof( txGamePadData ) );
 
     #endif // defined(USE_DATA_UNION)
 
@@ -429,6 +436,8 @@ xReturned = xTaskCreate(
         }
       }
 
+      Delay(TASK_LOOP_TIME, xLastWakeTime);
+
       #elif defined(SKY_SYSTEM)
 
       if( xWifiDataReceiveQ != 0 )
@@ -456,11 +465,12 @@ xReturned = xTaskCreate(
 
       }
 
-      #else
+      Delay(TASK_LOOP_TIME/10, xLastWakeTime); // Making the received faster
 
+      #else
+      Delay(TASK_LOOP_TIME, xLastWakeTime);
       #endif
 
-      Delay(TASK_LOOP_TIME/2, xLastWakeTime);
 
     }
 
@@ -520,11 +530,13 @@ xReturned = xTaskCreate(
       #if defined(USE_DATA_UNION)
       tgd.data.data.mpu.data = DEFAULT_MPU_DATA;//{ .x_angle = 0.0, .y_angle = 0.0, .z_angle = 0.0, .x_unfiltered_acc=0.0, .y_unfiltered_acc=0.0, .z_unfiltered_acc=0.0  };
       tgd.data.data.gd = joydata;
+      tgd.data.data.gd.timestamp = millis();
       tgd.data.data_type = DATATYPE_JOY;
       tgd.data.data_len = SIZE_OF_MDATA_STRUCT;
       //tgd.data.
       #else
       tgd.gd.gd = joydata;
+      tgd.gd.gd.timestamp = millis();
       tgd.gd.data_type = DATATYPE_JOY;
       tgd.gd.data_len = SIZE_OF_JDATA_STRUCT;
       #endif
@@ -643,6 +655,7 @@ xReturned = xTaskCreate(
 
       rgd.data.data.gd = DEFAULT_JOY_DATA; // { .x=0, .y=0, .hat=0, .twist=0, .buttons_a=0, .slider=0, .buttons_b=0 };
       rgd.data.data.mpu = data;
+      rgd.data.data.mpu.timestamp = millis();
       rgd.data.data_type = DATATYPE_MPU;
       rgd.data.data_len = SIZE_OF_MDATA_STRUCT;
 

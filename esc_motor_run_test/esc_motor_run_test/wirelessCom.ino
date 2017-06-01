@@ -557,7 +557,11 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     Serial.print(" [3]: ");
     Serial.print((int)gd->uc_data[3]);
     Serial.print(" |len: ");
+    #if defined(USE_DATA_UNION)
+    Serial.print(gd->data.data_len);
+    #else
     Serial.print(gd->gd.data_len);
+    #endif
     Serial.print(" |mcro: ");
     Serial.println(SIZE_OF_GPADDATA_STRUCT);
     #endif
