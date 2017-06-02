@@ -106,8 +106,8 @@ typedef struct GamePadData
   unsigned char data_len;
   unsigned char data_type;
   unsigned char res3;
-  unsigned char res4;
   GamePadEventData_Simple gd;
+  unsigned char res4;
   uint32_t dummy[3];
   unsigned char etx;
 }GamePadData;
