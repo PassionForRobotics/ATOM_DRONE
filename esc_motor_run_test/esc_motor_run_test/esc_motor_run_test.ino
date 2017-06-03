@@ -445,6 +445,7 @@ xReturned = xTaskCreate(
 
         do
         {
+          memset(tgd.uc_data, 0, SIZE_OF_GPADDATA_STRUCT );
           ret = wifi_loop_recv_joystick_data(&tgd, &rempackets); //check
 
         } while(rempackets);
@@ -465,7 +466,7 @@ xReturned = xTaskCreate(
 
       }
 
-      Delay(TASK_LOOP_TIME/10, xLastWakeTime); // Making the received faster
+      Delay(TASK_LOOP_TIME/100, xLastWakeTime); // Making the received faster
 
       #else
       Delay(TASK_LOOP_TIME, xLastWakeTime);

@@ -469,7 +469,7 @@ int wifi_loop_send_Joystick_or_mpu_data( void* _data )
 int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
 {
   // If performing serial print must be inside semaphore
-  #define DEEP_DEBUG_WIFI_RECV
+  //#define DEEP_DEBUG_WIFI_RECV
 
   static boolean timestampCapd = false;
   static int32_t timediff = 0;
@@ -478,6 +478,8 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
   int recvlen = 0;
   int i=0;
   byte c = 0;
+
+  *remlen = 0;
 
   #if defined(USE_DATA_UNION)
   txGamePadORMPUData * gd = _gd;
@@ -507,13 +509,17 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     while(WIFICOM->available())
     {
       c = WIFICOM->read();
+      #if defined(DEEP_DEBUG_WIFI_RECV)
       Serial.print(c, HEX);Serial.print(" ");
+      #endif
       // if time is more than as in practice break or return
       //Delay(1000);
       //Serial.println(__LINE__);
 
     }
+    #if defined(DEEP_DEBUG_WIFI_RECV)
     Serial.println();
+    #endif
     return (1 == ret ? 0 : -1);
   }
 
@@ -532,13 +538,17 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     while(WIFICOM->available())
     {
       c = WIFICOM->read();
+      #if defined(DEEP_DEBUG_WIFI_RECV)
       Serial.print(c, HEX);Serial.print(" ");
+      #endif
       // if time is more than as in practice break or return
       //Delay(1000);
       //Serial.println(__LINE__);
 
     }
+    #if defined(DEEP_DEBUG_WIFI_RECV)
     Serial.println();
+    #endif
     return (1 == ret ? 0 : -1);
   }
   else
@@ -576,13 +586,17 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     while(WIFICOM->available())
     {
       c = WIFICOM->read();
+      #if defined(DEEP_DEBUG_WIFI_RECV)
       Serial.print(c, HEX);Serial.print(" ");
+      #endif
       // if time is more than as in practice break or return
       //Delay(1000);
       //Serial.println(__LINE__);
 
     }
+    #if defined(DEEP_DEBUG_WIFI_RECV)
     Serial.println();
+    #endif
 
     return (1 == ret ? 0 : -1);
   }
@@ -608,17 +622,20 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     #if defined(DEEP_DEBUG_WIFI_RECV)
     Serial.println(__LINE__);
     #endif
-
     while(WIFICOM->available())
     {
       c = WIFICOM->read();
+      #if defined(DEEP_DEBUG_WIFI_RECV)
       Serial.print(c, HEX);Serial.print(" ");
+      #endif
       // if time is more than as in practice break or return
       //Delay(1000);
       //Serial.println(__LINE__);
 
     }
+    #if defined(DEEP_DEBUG_WIFI_RECV)
     Serial.println();
+    #endif
 
     return (1 == ret ? 0 : -1);
   }
