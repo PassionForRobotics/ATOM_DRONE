@@ -471,6 +471,9 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
   // If performing serial print must be inside semaphore
   #define DEEP_DEBUG_WIFI_RECV
 
+  static boolean timestampCapd = false;
+  static int32_t timediff = 0;
+
   int ret = -1;
   int recvlen = 0;
   int i=0;
@@ -647,12 +650,14 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     #if defined(USE_DATA_UNION)
     //ret = recvlen == (SIZE_OF_MDATA_STRUCT+1); // size of .etx
     #if defined(DEEP_DEBUG_WIFI_RECV)
-    Serial.println(SIZE_OF_MDATA_STRUCT);
+    Serial.print(SIZE_OF_MDATA_STRUCT);
+    Serial.print(" | ");
     #endif // #if defined(LOW_RAM_DEBUG)
     #else
     //ret = recvlen == (SIZE_OF_JDATA_STRUCT+1); // size of .etx
     #if defined(DEEP_DEBUG_WIFI_RECV)
-    Serial.println(SIZE_OF_JDATA_STRUCT);
+    Serial.print(SIZE_OF_JDATA_STRUCT);
+    Serial.print(" | ");
     #endif // #if defined(LOW_RAM_DEBUG)
     #endif
 
@@ -680,7 +685,13 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
       #if defined(DEEP_DEBUG_WIFI_RECV)
       //if(1!=ret)
       {
-        Serial.print(gd->gd.gd.timestamp);
+        if(false==timestampCapd)
+        {
+          timediff = (gd->gd.gd.timestamp-millis());
+          timestampCapd = true;
+        }
+
+        Serial.print((int32_t)(gd->gd.gd.timestamp-millis()-timediff));
         Serial.print(" DATA: ");
         #if defined(USE_DATA_UNION)
         for(i=0 ; i<SIZE_OF_GPADMDATA_STRUCT ; i++)
@@ -691,7 +702,7 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
           Serial.print(gd->uc_data[i], HEX);
           Serial.print(" ");
         }
-        Serial.println();
+        Serial.print(" | ");
       }
       Serial.print(__LINE__);
       Serial.print (" ");
@@ -702,7 +713,8 @@ int wifi_loop_recv_joystick_data(void * _gd, int *remlen)
     else
     {
       #if defined(DEEP_DEBUG_WIFI_RECV)
-      Serial.println(__LINE__);
+      Serial.print(__LINE__);
+      Serial.print(" ");
       #endif
       while(WIFICOM->available())
       {
