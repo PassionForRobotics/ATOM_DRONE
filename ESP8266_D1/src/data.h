@@ -21,4 +21,19 @@ typedef struct sMPURATA_t
 
 #define SIZE_OF_MPU_DATA (sizeof(sMPURATA_t))
 
+typedef struct sMOTIONSETPOINTS_t
+{
+  uint32_t timestamp;
+  uint16_t x;
+  uint16_t y;
+  uint8_t hat;
+  uint8_t twist;
+  uint8_t buttons_a;
+  uint8_t slider;
+  uint8_t buttons_b;
+
+}sMOTIONSETPOINTS_t;
+
+#define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
+
 #endif // DATA_H

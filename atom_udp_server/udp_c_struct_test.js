@@ -27,40 +27,65 @@ var sMPURATA_t = new _.Schema({
 });
 
 
+// typedef struct sMOTIONSETPOINTS_t
+// {
+//   uint32_t timestamp;
+//   uint16_t x;
+//   uint16_t y;
+//   uint8_t hat;
+//   uint8_t twist;
+//   uint8_t buttons_a;
+//   uint8_t slider;
+//   uint8_t buttons_b;
+//
+// }sMOTIONSETPOINTS_t;
+
+var sMOTIONSETPOINTS_t = new _.Schema({
+  timestamp: _.type.uint32,
+  x: _.type.uint16,
+  y: _.type.uint16,
+  hat: _.type.uint8,
+  twist: _.type.uint8,
+  buttons_a: _.type.uint8,
+  slider: _.type.uint8,
+  buttons_b: _.type.uint8
+});
+
 // register to cache
 _.register('mpudata', sMPURATA_t);
+_.register('motionsetpoints', sMOTIONSETPOINTS_t);
 
 
 function getMillis(oldhrstart)
 {
-	var hrstart = process.hrtime(oldhrstart);
+  var hrstart = process.hrtime(oldhrstart);
 
 
-	return hrstart;
+  return hrstart;
 }
 
 function getDateTime() {
 
-    var date = new Date();
+  var date = new Date();
 
-    var hour = date.getHours();
-    hour = (hour < 10 ? "0" : "") + hour;
+  var hour = date.getHours();
+  hour = (hour < 10 ? "0" : "") + hour;
 
-    var min  = date.getMinutes();
-    min = (min < 10 ? "0" : "") + min;
+  var min  = date.getMinutes();
+  min = (min < 10 ? "0" : "") + min;
 
-    var sec  = date.getSeconds();
-    sec = (sec < 10 ? "0" : "") + sec;
+  var sec  = date.getSeconds();
+  sec = (sec < 10 ? "0" : "") + sec;
 
-    var year = date.getFullYear();
+  var year = date.getFullYear();
 
-    var month = date.getMonth() + 1;
-    month = (month < 10 ? "0" : "") + month;
+  var month = date.getMonth() + 1;
+  month = (month < 10 ? "0" : "") + month;
 
-    var day  = date.getDate();
-    day = (day < 10 ? "0" : "") + day;
+  var day  = date.getDate();
+  day = (day < 10 ? "0" : "") + day;
 
-    return year + ":" + month + ":" + day + " " + hour + ":" + min + ":" + sec ;//"::" + getMills(msT)[1]/1000000;
+  return year + ":" + month + ":" + day + " " + hour + ":" + min + ":" + sec ;//"::" + getMills(msT)[1]/1000000;
 
 }
 
@@ -80,7 +105,7 @@ server.on('listening', function () {
 });
 
 var msTime = process.hrtime();
-var _msTime = getMillis(msTime);;
+var _msTime = getMillis(msTime);
 var dTime = 0;//getMillis(_msTime);;
 var dlTime = 0;
 var lastTimeStamp = 0;
@@ -88,17 +113,20 @@ var lastTimeStamp = 0;
 server.on('message', function (message, remote) {
 
   _msTime = getMillis(msTime);//[1]/1000000
-	dTime = _msTime[0] * 1000 + _msTime[1] / 1000000;
+  dTime = _msTime[0] * 1000 + _msTime[1] / 1000000;
 
 
-  var obj = _.unpackSync('mpudata', message);
+  var mpudata = _.unpackSync('mpudata', message);
 
   console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - ');
-  console.log(obj.timestamp-lastTimeStamp);
+  console.log(mpudata.timestamp-lastTimeStamp);
+  var Temp = mpudata.Tmp<<16>>16; //uint to int
+  Temp = (((Temp)/340.00)+36.53)
+  console.log(Math.round(Temp*100)/100+"°C");
 
-	dlTime = dTime;
-  console.log(obj);
-  lastTimeStamp = obj.timestamp;
+  dlTime = dTime;
+  console.log(mpudata);
+  lastTimeStamp = mpudata.timestamp;
   send();
 
 });
@@ -106,9 +134,37 @@ server.on('message', function (message, remote) {
 
 const MESSAGE = new Buffer('02fffe00020000000f00000002ff0c010000000000000000000003', 'hex');
 
+// var motionsetpoints = _.packSync('motionsetpoints', {
+//   timestamp: dTime,
+//   x: 0,
+//   y: 0,
+//   hat: 0,
+//   twist: 0,
+//   buttons_a: 0,
+//   slider: 0,
+//   buttons_b: 0,
+// });
+
+// buffer to object
+//var motionsetpoints = _.unpackSync('motionsetpoints', buf);
+
+var mspts_msTime = process.hrtime();
+var _mspts_msTime = getMillis(mspts_msTime);;
 function send()
 {
-  server.send(MESSAGE, 0, MESSAGE.length, REMOTE_PORT, REMOTE_IP, function(err, bytes)
+  var _mspts_msTime = getMillis(mspts_msTime);//[1]/1000000
+  mspts_dTime = _mspts_msTime[0] * 1000 + _mspts_msTime[1] / 1000000;
+  var motionsetpoints = _.packSync('motionsetpoints', {
+    timestamp: mspts_dTime,
+    x: 0,
+    y: 0,
+    hat: 0,
+    twist: 0,
+    buttons_a: 0,
+    slider: 0,
+    buttons_b: 0,
+  });
+  server.send(motionsetpoints, 0, motionsetpoints.length, REMOTE_PORT, REMOTE_IP, function(err, bytes)
   {
     if (err) throw err;
   });

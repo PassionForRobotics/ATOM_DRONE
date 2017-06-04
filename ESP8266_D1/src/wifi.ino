@@ -1,6 +1,8 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include "data.h"
+
 
 WiFiUDP Udp;
 
@@ -32,11 +34,25 @@ void wifi_loop(sMPURATA_t *mpudata)
     // receive incoming UDP packets
     Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
     int len = Udp.read(incomingPacket, 255);
+    sMOTIONSETPOINTS_t msetpts;
+    memcpy(&msetpts, incomingPacket, SIZE_OF_MSETPOINTS_DATA);
+
     if (len > 0)
     {
       incomingPacket[len] = 0;
     }
-    Serial.printf("UDP packet contents: %s\n", incomingPacket);
+
+    Serial.printf("UDP packet contents: %s  ", incomingPacket);
+    Serial.printf
+    ("UDP packet ts:%d x:%d y:%d h:%d tw:%d ba:%d sl:%d bb:%d  "
+    ,msetpts.timestamp
+    ,msetpts.x
+    ,msetpts.y
+    ,msetpts.hat
+    ,msetpts.twist
+    ,msetpts.buttons_a
+    ,msetpts.slider
+    ,msetpts.buttons_b);
 
     Serial.printf("from: %s", Udp.remoteIP().toString().c_str());
     Serial.printf(" : %d\n", Udp.remotePort());
