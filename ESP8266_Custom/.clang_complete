@@ -2,8 +2,8 @@
 -I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip/include
 -I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/cores/esp8266
 -I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/variants/generic
--I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src
 -I/home/rahuldeo/ATOM/ATOM_drone_robot_platform/ESP8266_Custom/lib/Bounce2
+-I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src
 -I/home/rahuldeo/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src
 -I/home/rahuldeo/ATOM/ATOM_drone_robot_platform/ESP8266_Custom/ESP8266_Custom
 -I/home/rahuldeo/ATOM/ATOM_drone_robot_platform/ESP8266_Custom/lib/Bounce2

@@ -458,6 +458,7 @@ xReturned = xTaskCreate(
 
           }
           ret = -1; // restore next work
+          Log.Debug(THIS"Joystick data rec pass %d"CR, rempackets);
         }
         else
         {
@@ -466,7 +467,8 @@ xReturned = xTaskCreate(
 
       }
 
-      Delay(TASK_LOOP_TIME/100, xLastWakeTime); // Making the received faster
+      Delay(TASK_LOOP_TIME, xLastWakeTime); // Making the received faster
+      //Delay_tick(1, xLastWakeTime);
 
       #else
       Delay(TASK_LOOP_TIME, xLastWakeTime);
