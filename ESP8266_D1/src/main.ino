@@ -13,6 +13,8 @@ extern "C" {
 //#define ENABLE_STEER
 #define ENABLE_MPU
 
+#define LOOP_TIME (100) // ms
+
 void setup()
 {
   delay(1000);
@@ -56,7 +58,7 @@ uint32_t lastTime =0;
 void loop()
 {
 
-  if(system_get_time()-lastTime >=250000)
+  if(system_get_time()-lastTime >=(LOOP_TIME*1000))
   {
     lastTime = system_get_time();
     // ENABLE_MPU

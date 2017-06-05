@@ -104,6 +104,7 @@ server.on('listening', function () {
   console.log('UDP Server listening on ' + address.address + ":" + address.port);
 });
 
+
 var msTime = process.hrtime();
 var _msTime = getMillis(msTime);
 var dTime = 0;//getMillis(_msTime);;
@@ -117,17 +118,20 @@ server.on('message', function (message, remote) {
 
 
   var mpudata = _.unpackSync('mpudata', message);
-
-  console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - ');
-  console.log(mpudata.timestamp-lastTimeStamp);
   var Temp = mpudata.Tmp<<16>>16; //uint to int
-  Temp = (((Temp)/340.00)+36.53)
-  console.log(Math.round(Temp*100)/100+"°C");
+  Temp = (((Temp)/340.00)+36.53);
 
+  if(1 == DOPRINT)
+  {
+    console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+(mpudata.timestamp-lastTimeStamp) + " " + Math.round(Temp*100)/100+"°C");
+
+    console.log(mpudata);  send();
+  }
+
+  DOPRINT = 0;
   dlTime = dTime;
-  console.log(mpudata);
   lastTimeStamp = mpudata.timestamp;
-  send();
+
 
 });
 
@@ -148,10 +152,23 @@ const MESSAGE = new Buffer('02fffe00020000000f00000002ff0c0100000000000000000000
 // buffer to object
 //var motionsetpoints = _.unpackSync('motionsetpoints', buf);
 
+var DOPRINT = 0;
+var myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);; // whether UDP packet dropped
+
+function udpDroppedTimedOut()
+{
+  console.log("UDP PACKET DROPPED.");
+  DOPRINT = 1;
+  send();
+
+}
+
 var mspts_msTime = process.hrtime();
 var _mspts_msTime = getMillis(mspts_msTime);;
 function send()
 {
+  clearTimeout(myWatchDog);
+
   var _mspts_msTime = getMillis(mspts_msTime);//[1]/1000000
   mspts_dTime = _mspts_msTime[0] * 1000 + _mspts_msTime[1] / 1000000;
   var motionsetpoints = _.packSync('motionsetpoints', {
@@ -168,7 +185,11 @@ function send()
   {
     if (err) throw err;
   });
+
+  myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);
 }
+
+
 
 //setInterval(send, 20);
 
@@ -176,3 +197,6 @@ function send()
 server.bind(MY_FIXED_PORT);
 
 send();
+
+var io = require('socket.io')(80);
+var cfg = require('./config.json');
