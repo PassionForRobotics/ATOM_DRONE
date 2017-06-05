@@ -94,7 +94,7 @@ var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 
 var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.1.2'; //'192.168.43.25';
+var REMOTE_IP = '192.168.1.5'; //'192.168.43.25';
 
 var MY_FIXED_PORT = 20000;
 
@@ -111,6 +111,8 @@ var dTime = 0;//getMillis(_msTime);;
 var dlTime = 0;
 var lastTimeStamp = 0;
 
+var Tmp = 0;
+
 server.on('message', function (message, remote) {
 
   _msTime = getMillis(msTime);//[1]/1000000
@@ -120,6 +122,7 @@ server.on('message', function (message, remote) {
   var mpudata = _.unpackSync('mpudata', message);
   var Temp = mpudata.Tmp<<16>>16; //uint to int
   Temp = (((Temp)/340.00)+36.53);
+  Tmp = Temp;
 
   if(1 == DOPRINT)
   {
@@ -198,5 +201,23 @@ server.bind(MY_FIXED_PORT);
 
 send();
 
-var io = require('socket.io')(80);
-var cfg = require('./config.json');
+var objwebserver= require("./webserver.js");
+
+objwebserver.start();
+
+function update()
+{
+  var time = new Date();
+  objwebserver.update(time);
+  objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
+
+}
+setInterval(update, 250);
+
+
+    // var time = new Date();
+    // var jobid=10;
+    // objTest.jobScedule(time,jobid)
+    //
+    // console.log(time);
+    // console.log(jobid);
