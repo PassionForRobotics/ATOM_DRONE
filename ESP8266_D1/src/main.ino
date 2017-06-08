@@ -13,12 +13,12 @@ extern "C" {
 //#define ENABLE_STEER
 #define ENABLE_MPU
 
-#define LOOP_TIME (100) // ms
 
 void setup()
 {
-  delay(1000);
+  delay(3000);
   Serial.begin(115200);
+  Serial.printf("size of data %d\n", SIZE_OF_MPU_DATA);
 
   #if defined(ENABLE_STEER)
   steer_setup();
@@ -53,30 +53,40 @@ void setup()
   #endif // ENABLE_STEER
 }
 
-uint32_t lastTime =0;
+uint32_t lastLoopTime =0 , lastPrintTime = 0;
 
 void loop()
 {
 
-  if(system_get_time()-lastTime >=(LOOP_TIME*1000))
+  if(system_get_time()-lastLoopTime >=(LOOP_TIME*1000))
   {
-    lastTime = system_get_time();
+    lastLoopTime = system_get_time();
     // ENABLE_MPU
     //
 
     #if defined(ENABLE_MPU)
 
-    sMPURATA_t mpudata;
-    mpu_loop(&mpudata);
-    mpudata.timestamp = system_get_time()/1000;
+    sMPUDATA_t mpudata, rawmpudata;
 
-    Serial.print("AcX = "); Serial.print(mpudata.AcX);
-    Serial.print(" | AcY = "); Serial.print(mpudata.AcY);
-    Serial.print(" | AcZ = "); Serial.print(mpudata.AcZ);
-    Serial.print(" | Tmp = "); Serial.print(mpudata.Tmp/340.00+36.53); //equation for temperature in degrees C from datasheet
-    Serial.print(" | GyX = "); Serial.print(mpudata.GyX);
-    Serial.print(" | GyY = "); Serial.print(mpudata.GyY);
-    Serial.print(" | GyZ = "); Serial.println(mpudata.GyZ);
+    mpu_loop(&rawmpudata);
+    mpudata = rawmpudata;
+    //Serial.print("RAW | "); printMPU(&mpudata);
+    float dt = mpu_calc(&mpudata);
+
+    if(system_get_time()-lastPrintTime >=(1000*1000))
+    {
+      lastPrintTime = system_get_time();
+      //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
+      Serial.print("PRO | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&mpudata);
+    }
+
+    // Serial.print("AcX = "); Serial.print(mpudata.AcX);
+    // Serial.print(" | AcY = "); Serial.print(mpudata.AcY);
+    // Serial.print(" | AcZ = "); Serial.print(mpudata.AcZ);
+    // Serial.print(" | Tmp = "); Serial.print(mpudata.Tmp/340.00+36.53); //equation for temperature in degrees C from datasheet
+    // Serial.print(" | GyX = "); Serial.print(mpudata.GyX);
+    // Serial.print(" | GyY = "); Serial.print(mpudata.GyY);
+    // Serial.print(" | GyZ = "); Serial.println(mpudata.GyZ);
 
     #endif // ENABLE_MPU
 

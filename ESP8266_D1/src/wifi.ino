@@ -1,7 +1,8 @@
-
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include "data.h"
+#include "config.h"
 
 
 WiFiUDP Udp;
@@ -26,13 +27,13 @@ void wifi_setup()
 
 }
 
-void wifi_loop(sMPURATA_t *mpudata)
+void wifi_loop(sMPUDATA_t *mpudata)
 {
   int packetSize = Udp.parsePacket();
   if (packetSize)
   {
     // receive incoming UDP packets
-    Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
+    //Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
     int len = Udp.read(incomingPacket, 255);
     sMOTIONSETPOINTS_t msetpts;
     memcpy(&msetpts, incomingPacket, SIZE_OF_MSETPOINTS_DATA);
@@ -42,20 +43,20 @@ void wifi_loop(sMPURATA_t *mpudata)
       incomingPacket[len] = 0;
     }
 
-    Serial.printf("UDP packet contents: %s  ", incomingPacket);
-    Serial.printf
-    ("UDP packet ts:%d x:%d y:%d h:%d tw:%d ba:%d sl:%d bb:%d  "
-    ,msetpts.timestamp
-    ,msetpts.x
-    ,msetpts.y
-    ,msetpts.hat
-    ,msetpts.twist
-    ,msetpts.buttons_a
-    ,msetpts.slider
-    ,msetpts.buttons_b);
-
-    Serial.printf("from: %s", Udp.remoteIP().toString().c_str());
-    Serial.printf(" : %d\n", Udp.remotePort());
+    // Serial.printf("UDP packet contents: %s  ", incomingPacket);
+    // Serial.printf
+    // ("UDP packet ts:%d x:%d y:%d h:%d tw:%d ba:%d sl:%d bb:%d  "
+    // ,msetpts.timestamp
+    // ,msetpts.x
+    // ,msetpts.y
+    // ,msetpts.hat
+    // ,msetpts.twist
+    // ,msetpts.buttons_a
+    // ,msetpts.slider
+    // ,msetpts.buttons_b);
+    //
+    // Serial.printf("from: %s", Udp.remoteIP().toString().c_str());
+    // Serial.printf(" : %d\n", Udp.remotePort());
 
     // send back a reply, to the IP address and port we got the packet from
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());

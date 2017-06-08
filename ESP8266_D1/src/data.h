@@ -5,7 +5,21 @@
 #include "Arduino.h"
 
 
-typedef struct sMPURATA_t
+#define LOOP_TIME (126) // ms 126.58228ms
+
+struct sMPUDATA_f_t
+{
+
+  //unsigned char stx;
+  //unsigned char header;
+  //unsigned char data_len;
+  //unsigned char data_type;
+  //unsigned char res3;
+  uint32_t timestamp;
+  float AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+};
+
+struct sMPUDATA_t
 {
 
   //unsigned char stx;
@@ -16,10 +30,79 @@ typedef struct sMPURATA_t
   uint32_t timestamp;
   int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
-  //unsigned char etx;
-}sMPURATA_t;
+  sMPUDATA_t operator+=(sMPUDATA_t d)
+  {
+    timestamp += (uint32_t)d.timestamp;
+    AcX += (int16_t)d.AcX;
+    AcY += (int16_t)d.AcY;
+    AcZ += (int16_t)d.AcZ;
+    GyX += (int16_t)d.GyX;
+    GyY += (int16_t)d.GyY;
+    GyZ += (int16_t)d.GyZ;
+    return *this;
+  }
 
-#define SIZE_OF_MPU_DATA (sizeof(sMPURATA_t))
+  sMPUDATA_t operator-=(sMPUDATA_t d)
+  {
+    timestamp -= (uint32_t)d.timestamp;
+    AcX -= (int16_t)d.AcX;
+    AcY -= (int16_t)d.AcY;
+    AcZ -= (int16_t)d.AcZ;
+    GyX -= (int16_t)d.GyX;
+    GyY -= (int16_t)d.GyY;
+    GyZ -= (int16_t)d.GyZ;
+    return *this;
+  }
+
+  // Not tested
+  // sMPUDATA_t operator+( sMPUDATA_t &rhs)
+  // {
+  //   sMPUDATA_t lhs = *this;
+  //   lhs.timestamp += (uint32_t)rhs.timestamp;
+  //   lhs.AcX += (int16_t)rhs.AcX;
+  //   lhs.AcY += (int16_t)rhs.AcY;
+  //   lhs.AcZ += (int16_t)rhs.AcZ;
+  //   lhs.GyX += (int16_t)rhs.GyX;
+  //   lhs.GyY += (int16_t)rhs.GyY;
+  //   lhs.GyZ += (int16_t)rhs.GyZ;
+  //
+  //   return lhs;
+  //   //  return a.team_name < b.team_name;
+  // }
+  //
+  // sMPUDATA_t operator-(sMPUDATA_t &rhs)
+  // {
+  //   sMPUDATA_t lhs = *this;
+  //   lhs.timestamp -= (uint32_t)rhs.timestamp;
+  //   lhs.AcX -= (int16_t)rhs.AcX;
+  //   lhs.AcY -= (int16_t)rhs.AcY;
+  //   lhs.AcZ -= (int16_t)rhs.AcZ;
+  //   lhs.GyX -= (int16_t)rhs.GyX;
+  //   lhs.GyY -= (int16_t)rhs.GyY;
+  //   lhs.GyZ -= (int16_t)rhs.GyZ;
+  //
+  //   return lhs;
+  //   //  return a.team_name < b.team_name;
+  // }
+
+  sMPUDATA_t operator/(int d)
+  {
+    sMPUDATA_t lhs = *this;
+    lhs.timestamp /= d;
+    lhs.AcX /= d;
+    lhs.AcY /= d;
+    lhs.AcZ /= d;
+    lhs.GyX /= d;
+    lhs.GyY /= d;
+    lhs.GyZ /= d;
+
+    return lhs;
+  }
+
+  //unsigned char etx;
+};
+
+#define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
 
 typedef struct sMOTIONSETPOINTS_t
 {

@@ -26,6 +26,22 @@ var sMPURATA_t = new _.Schema({
   GyZ: _.type.uint16
 });
 
+function typecastmpudata(_mpudata)
+{
+  _mpudata.AcX = _mpudata.AcX<<16>>16;
+  _mpudata.AcY = _mpudata.AcY<<16>>16;
+  _mpudata.AcZ = _mpudata.AcZ<<16>>16;
+
+  _mpudata.Tmp = _mpudata.Tmp<<16>>16;
+
+  _mpudata.GyX = _mpudata.GyX<<16>>16;
+  _mpudata.GyY = _mpudata.GyY<<16>>16;
+  _mpudata.GyZ = _mpudata.GyZ<<16>>16;
+
+  return _mpudata;
+
+}
+
 
 // typedef struct sMOTIONSETPOINTS_t
 // {
@@ -54,6 +70,7 @@ var sMOTIONSETPOINTS_t = new _.Schema({
 // register to cache
 _.register('mpudata', sMPURATA_t);
 _.register('motionsetpoints', sMOTIONSETPOINTS_t);
+
 
 
 function getMillis(oldhrstart)
@@ -94,7 +111,7 @@ var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 
 var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.1.5'; //'192.168.43.25';
+var REMOTE_IP = '192.168.1.2'; //'192.168.43.25';
 
 var MY_FIXED_PORT = 20000;
 
@@ -120,18 +137,21 @@ server.on('message', function (message, remote) {
 
 
   var mpudata = _.unpackSync('mpudata', message);
-  var Temp = mpudata.Tmp<<16>>16; //uint to int
+  mpudata = typecastmpudata(mpudata);
+  var Temp = mpudata.Tmp;//<<16>>16; //uint to int
   Temp = (((Temp)/340.00)+36.53);
   Tmp = Temp;
 
   if(1 == DOPRINT)
   {
-    console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+(mpudata.timestamp-lastTimeStamp) + " " + Math.round(Temp*100)/100+"°C");
+    console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+(mpudata.timestamp-lastTimeStamp) + " | " + Math.round(Temp*100)/100+"°C"
+    + " | GyX: " + mpudata.GyX + " | GyY: " + mpudata.GyY + " | GyZ: " + mpudata.GyZ );
 
-    console.log(mpudata);  send();
+    //console.log(mpudata);
+    send();
   }
 
-  DOPRINT = 0;
+  //DOPRINT = 0;
   dlTime = dTime;
   lastTimeStamp = mpudata.timestamp;
 
@@ -201,18 +221,18 @@ server.bind(MY_FIXED_PORT);
 
 send();
 
-var objwebserver= require("./webserver.js");
-
-objwebserver.start();
-
-function update()
-{
-  var time = new Date();
-  objwebserver.update(time);
-  objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
-
-}
-setInterval(update, 250);
+ //var objwebserver= require("./webserver.js");
+//
+ //objwebserver.start();
+//
+// function update()
+// {
+//   var time = new Date();
+//   objwebserver.update(time);
+//   objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
+//
+// }
+// setInterval(update, 250);
 
 
     // var time = new Date();
