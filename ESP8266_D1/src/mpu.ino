@@ -151,22 +151,22 @@ float mpu_calc(sMPUDATA_t *_mpudata)
   // 0.75sec => 0.96-> 0.8 deg/sec gyro drift;
   // 1.2sec => very baseMPUData//
 
-  float tau = 0.62; // second
+  float tau = 0.9; // second
 
-  float alpha = 0.98 ;//tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
+  float alpha = tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
   lastmpudata.AcX = alpha * gyro_angle_x + (1.0 - alpha) * accel_angle_x;
   lastmpudata.AcY = alpha * gyro_angle_y + (1.0 - alpha) * accel_angle_y;
   lastmpudata.AcZ = gyro_angle_z;  //Accelerometer doesn't give z-angle
 
   // Update the saved data with the latest values
   lastmpudata.timestamp = _mpudata->timestamp;
-  _mpudata->AcX = lastmpudata.AcX;
-  _mpudata->AcY = lastmpudata.AcY;
-  _mpudata->AcZ = lastmpudata.AcZ;
-  _mpudata->Tmp = lastmpudata.Tmp;
-  _mpudata->GyX = lastmpudata.GyX;
-  _mpudata->GyY = lastmpudata.GyY;
-  _mpudata->GyZ = lastmpudata.GyZ;
+  _mpudata->AcX = lastmpudata.AcX; // filtered angles X
+  _mpudata->AcY = lastmpudata.AcY; // filtered angles X
+  _mpudata->AcZ = lastmpudata.AcZ; // filtered angles X
+  _mpudata->Tmp = lastmpudata.Tmp; // Tmp
+  _mpudata->GyX = lastmpudata.GyX; // unfiltered angles X
+  _mpudata->GyY = lastmpudata.GyY; // unfiltered angles Y
+  _mpudata->GyZ = lastmpudata.GyZ; // unfiltered angles Z
 
   return dt;
   //set_last_read_angle_data(t_now, angle_x, angle_y, angle_z, unfiltered_gyro_angle_x, unfiltered_gyro_angle_y, unfiltered_gyro_angle_z);

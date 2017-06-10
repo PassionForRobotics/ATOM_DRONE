@@ -75,9 +75,11 @@ void loop()
 
     if(system_get_time()-lastPrintTime >=(1000*1000))
     {
+      //Serial.print("RAW | "); printMPU(&rawmpudata);
+
       lastPrintTime = system_get_time();
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
-      Serial.print("PRO | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&mpudata);
+      Serial.print("PRO | "); Serial.printf(" png %d | ", ping_loop()) ; Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&mpudata);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);

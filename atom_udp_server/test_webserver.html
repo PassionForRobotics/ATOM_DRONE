@@ -1,59 +1,95 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Socket.io Test</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-  </head>
-  <body>
-    <script>
-      var socket = io.connect();
+<head>
+  <title>Socket.io Test</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+  <!-- <script type="text/javascript" src="./smoothie.js"></script> -->
+  <!-- WhitestormJS library -->
+  <script src="whitestorm.js"></script>
+</head>
+<body>
 
-      socket.on('date', function(data){
-        $('#date').text("Date: "+data.date);
-        //$('#Tmp').text(data.Tmp);
-      });
-      socket.on('Tmp', function(data){
-        $('#Tmp').text("Temperature: "+data.Tmp);
-      });
-      socket.on('dt', function(data){
-        $('#dt').text("dt: "+data.dt);
-      });
-      socket.on('AcX', function(data){
-        $('#AcX').text("| AcX: "+data.AcX);
-      });
-      socket.on('AcY', function(data){
-        $('#AcY').text("| AcY: "+data.AcY);
-      });
-      socket.on('AcZ', function(data){
-        $('#AcZ').text("| AcZ: "+data.AcZ);
-      });
-      socket.on('GyX', function(data){
-        $('#GyX').text("| GyX: "+data.GyX);
-      });
-      socket.on('GyY', function(data){
-        $('#GyY').text("| GyY: "+data.GyY);
-      });
-      socket.on('GyZ', function(data){
-        $('#GyZ').text("| GyZ: "+data.GyZ);
-      });
+  <script>
+  import * as WHS from 'whs'
+  const app = new WHS.App([
+    new WHS.ElementModule(), // attach to DOM
+    new WHS.SceneModule(), // creates THREE.Scene instance
+    new WHS.CameraModule(), // creates PerspectiveCamera instance
+    new WHS.RenderingModule() // creates WebGLRenderer instance
+  ]);
 
-      $(document).ready(function(){
-        $('#text').keypress(function(e){
-          socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
-        });
-      });
-    </script>
-    <div id="date"></div>
-    <h1><div id="Tmp"></div></h1>
-    <div id="dt" style="display: inline"></div>
-    <div id="AcX" style="display: inline"></div>
-    <div id="AcY" style="display: inline"></div>
-    <div id="AcY" style="display: inline"></div>
-    <div id="AcZ" style="display: inline"></div>
-    <div id="GyX" style="display: inline"></div>
-    <div id="GyY" style="display: inline"></div>
-    <div id="GyZ" style="display: inline"></div></br>
-    <textarea id="text"></textarea>
-  </body>
+  app.start(); // run animation
+  </script>
+  <!-- <canvas id="mycanvas" width="400" height="100"></canvas>
+
+  <script type="text/javascript">
+  var smoothie = new SmoothieChart();
+  smoothie.streamTo(document.getElementById("mycanvas"), 500);
+  // Data
+  var line1 = new TimeSeries();
+  var line2 = new TimeSeries();
+
+  // Add a random value to each line every second
+  setInterval(function() {
+  line1.append(new Date().getTime(), Math.random());
+  line2.append(new Date().getTime(), Math.random());
+}, 100);
+
+// Add to SmoothieChart
+smoothie.addTimeSeries(line1);
+smoothie.addTimeSeries(line2);
+</script> -->
+
+<script>
+var socket = io.connect();
+
+socket.on('date', function(data){
+  $('#date').text("Date: "+data.date);
+  //$('#Tmp').text(data.Tmp);
+});
+socket.on('Tmp', function(data){
+  $('#Tmp').text("Temperature: "+data.Tmp);
+});
+socket.on('dt', function(data){
+  $('#dt').text("dt: "+data.dt);
+});
+socket.on('AcX', function(data){
+  $('#AcX').text("| AcX: "+data.AcX);
+});
+socket.on('AcY', function(data){
+  $('#AcY').text("| AcY: "+data.AcY);
+});
+socket.on('AcZ', function(data){
+  $('#AcZ').text("| AcZ: "+data.AcZ);
+});
+socket.on('GyX', function(data){
+  $('#GyX').text("| GyX: "+data.GyX);
+});
+socket.on('GyY', function(data){
+  $('#GyY').text("| GyY: "+data.GyY);
+});
+socket.on('GyZ', function(data){
+  $('#GyZ').text("| GyZ: "+data.GyZ);
+});
+
+$(document).ready(function(){
+  $('#text').keypress(function(e){
+    socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
+  });
+});
+</script>
+
+<div id="date"></div>
+<h1><div id="Tmp"></div></h1>
+<div id="dt" style="display: inline"></div>
+<div id="AcX" style="display: inline"></div>
+<div id="AcY" style="display: inline"></div>
+<div id="AcY" style="display: inline"></div>
+<div id="AcZ" style="display: inline"></div>
+<div id="GyX" style="display: inline"></div>
+<div id="GyY" style="display: inline"></div>
+<div id="GyZ" style="display: inline"></div></br>
+<textarea id="text"></textarea>
+</body>
 </html>

@@ -130,7 +130,7 @@ var dlTime = 0;
 var lastTimeStamp = 0;
 var mpudata = _.unpackSync('mpudata', "message");
 var dt = 0;
-
+var rdt = 0;
 var Tmp = 0;
 
 server.on('message', function (message, remote) {
@@ -145,11 +145,11 @@ server.on('message', function (message, remote) {
   Temp = (((Temp)/340.00)+36.53);
   Tmp = Temp;
   dt = mpudata.timestamp-lastTimeStamp;
-
+  rdt = (Math.round((dTime-dlTime)*1000)/1000);
   if(1 == DOPRINT)
   {
-    console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+(mpudata.timestamp-lastTimeStamp) + " | " + Math.round(Temp*100)/100+"°C"
-    + " | GyX: " + mpudata.GyX + " | GyY: " + mpudata.GyY + " | GyZ: " + mpudata.GyZ );
+    // console.log(getDateTime() +"::Δ" + (Math.round((dTime-dlTime)*1000)/1000)+' - '+(mpudata.timestamp-lastTimeStamp) + " | " + Math.round(Temp*100)/100+"°C"
+    // + " | AcX: " + mpudata.AcX + "° | AcY: " + mpudata.AcY + "° | AcZ: ~" + mpudata.AcZ  + "°");
 
     //console.log(mpudata);
     send();
@@ -225,25 +225,39 @@ server.bind(MY_FIXED_PORT);
 
 send();
 
- var objwebserver= require("./webserver.js");
+function printit()
+{
+  if(1 == DOPRINT)
+  {
+    console.log(getDateTime() +"::Δ" + rdt +' - '+ dt + " | "
+    + Math.round(Tmp*100)/100+"°C"
+    + " | AcX: " + mpudata.AcX
+    + "° | AcY: " + mpudata.AcY
+    + "° | AcZ: ~" + mpudata.AcZ  + "°");
+  }
+}
+
+setInterval(printit, 100);
+
+var objwebserver= require("./webserver.js");
 //
- objwebserver.start();
+objwebserver.start();
 //
- function update()
- {
-   var time = new Date();
-   objwebserver.update(time);
-   objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
-   var data = [dt ,mpudata.AcX, mpudata.AcY, mpudata.AcZ, mpudata.GyX, mpudata.GyY, mpudata.GyZ];
-   objwebserver.updateAcGy(data);
+function update()
+{
+  var time = new Date();
+  objwebserver.update(time);
+  objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
+  var data = [dt ,mpudata.AcX, mpudata.AcY, mpudata.AcZ, mpudata.GyX, mpudata.GyY, mpudata.GyZ];
+  objwebserver.updateAcGy(data);
 
- }
- setInterval(update, 125);
+}
+setInterval(update, 125);
 
 
-    // var time = new Date();
-    // var jobid=10;
-    // objTest.jobScedule(time,jobid)
-    //
-    // console.log(time);
-    // console.log(jobid);
+// var time = new Date();
+// var jobid=10;
+// objTest.jobScedule(time,jobid)
+//
+// console.log(time);
+// console.log(jobid);
