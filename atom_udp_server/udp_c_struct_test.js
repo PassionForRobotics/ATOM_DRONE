@@ -1,5 +1,11 @@
 var _ = require('c-struct');
 
+var REMOTE_PORT = 10000;
+var REMOTE_IP = '192.168.1.6'; //'192.168.43.25';
+
+var MY_FIXED_PORT = 20000;
+
+
 
 // typedef struct sMPURATA_t
 // {
@@ -110,11 +116,6 @@ function getDateTime() {
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 
-var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.1.2'; //'192.168.43.25';
-
-var MY_FIXED_PORT = 20000;
-
 
 server.on('listening', function () {
   var address = server.address();
@@ -127,6 +128,8 @@ var _msTime = getMillis(msTime);
 var dTime = 0;//getMillis(_msTime);;
 var dlTime = 0;
 var lastTimeStamp = 0;
+var mpudata = _.unpackSync('mpudata', "message");
+var dt = 0;
 
 var Tmp = 0;
 
@@ -136,11 +139,12 @@ server.on('message', function (message, remote) {
   dTime = _msTime[0] * 1000 + _msTime[1] / 1000000;
 
 
-  var mpudata = _.unpackSync('mpudata', message);
+  mpudata = _.unpackSync('mpudata', message);
   mpudata = typecastmpudata(mpudata);
   var Temp = mpudata.Tmp;//<<16>>16; //uint to int
   Temp = (((Temp)/340.00)+36.53);
   Tmp = Temp;
+  dt = mpudata.timestamp-lastTimeStamp;
 
   if(1 == DOPRINT)
   {
@@ -221,18 +225,20 @@ server.bind(MY_FIXED_PORT);
 
 send();
 
- //var objwebserver= require("./webserver.js");
+ var objwebserver= require("./webserver.js");
 //
- //objwebserver.start();
+ objwebserver.start();
 //
-// function update()
-// {
-//   var time = new Date();
-//   objwebserver.update(time);
-//   objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
-//
-// }
-// setInterval(update, 250);
+ function update()
+ {
+   var time = new Date();
+   objwebserver.update(time);
+   objwebserver.updateTmp(Math.round(Tmp*100)/100+"°C");
+   var data = [dt ,mpudata.AcX, mpudata.AcY, mpudata.AcZ, mpudata.GyX, mpudata.GyY, mpudata.GyZ];
+   objwebserver.updateAcGy(data);
+
+ }
+ setInterval(update, 125);
 
 
     // var time = new Date();

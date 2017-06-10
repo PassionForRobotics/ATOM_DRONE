@@ -5,7 +5,7 @@
 #include "Arduino.h"
 
 
-#define LOOP_TIME (126) // ms 126.58228ms
+#define LOOP_TIME (10) // ms 126.58228ms
 
 struct sMPUDATA_f_t
 {

@@ -6,15 +6,38 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
   </head>
   <body>
-    <script>    
+    <script>
       var socket = io.connect();
-      
+
       socket.on('date', function(data){
-        $('#date').text(data.date);
+        $('#date').text("Date: "+data.date);
+        //$('#Tmp').text(data.Tmp);
       });
       socket.on('Tmp', function(data){
-        $('#Tmp').text(data.Tmp);
+        $('#Tmp').text("Temperature: "+data.Tmp);
       });
+      socket.on('dt', function(data){
+        $('#dt').text("dt: "+data.dt);
+      });
+      socket.on('AcX', function(data){
+        $('#AcX').text("| AcX: "+data.AcX);
+      });
+      socket.on('AcY', function(data){
+        $('#AcY').text("| AcY: "+data.AcY);
+      });
+      socket.on('AcZ', function(data){
+        $('#AcZ').text("| AcZ: "+data.AcZ);
+      });
+      socket.on('GyX', function(data){
+        $('#GyX').text("| GyX: "+data.GyX);
+      });
+      socket.on('GyY', function(data){
+        $('#GyY').text("| GyY: "+data.GyY);
+      });
+      socket.on('GyZ', function(data){
+        $('#GyZ').text("| GyZ: "+data.GyZ);
+      });
+
       $(document).ready(function(){
         $('#text').keypress(function(e){
           socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
@@ -23,6 +46,14 @@
     </script>
     <div id="date"></div>
     <h1><div id="Tmp"></div></h1>
+    <div id="dt" style="display: inline"></div>
+    <div id="AcX" style="display: inline"></div>
+    <div id="AcY" style="display: inline"></div>
+    <div id="AcY" style="display: inline"></div>
+    <div id="AcZ" style="display: inline"></div>
+    <div id="GyX" style="display: inline"></div>
+    <div id="GyY" style="display: inline"></div>
+    <div id="GyZ" style="display: inline"></div></br>
     <textarea id="text"></textarea>
   </body>
 </html>

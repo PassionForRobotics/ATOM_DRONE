@@ -47,6 +47,8 @@ void mpu_setup()
     }
   }
 
+  Serial.printf("Offsets | "); printMPU(&baseMPUData);
+
 
 }
 
@@ -151,7 +153,7 @@ float mpu_calc(sMPUDATA_t *_mpudata)
 
   float tau = 0.62; // second
 
-  float alpha = tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
+  float alpha = 0.98 ;//tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
   lastmpudata.AcX = alpha * gyro_angle_x + (1.0 - alpha) * accel_angle_x;
   lastmpudata.AcY = alpha * gyro_angle_y + (1.0 - alpha) * accel_angle_y;
   lastmpudata.AcZ = gyro_angle_z;  //Accelerometer doesn't give z-angle
