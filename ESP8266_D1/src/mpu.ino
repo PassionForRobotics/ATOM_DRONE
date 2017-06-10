@@ -151,7 +151,7 @@ float mpu_calc(sMPUDATA_t *_mpudata)
   // 0.75sec => 0.96-> 0.8 deg/sec gyro drift;
   // 1.2sec => very baseMPUData//
 
-  float tau = 0.9; // second
+  float tau = 0.99; // second
 
   float alpha = tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
   lastmpudata.AcX = alpha * gyro_angle_x + (1.0 - alpha) * accel_angle_x;

@@ -4,92 +4,147 @@
   <title>Socket.io Test</title>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-  <!-- <script type="text/javascript" src="./smoothie.js"></script> -->
-  <!-- WhitestormJS library -->
-  <script src="whitestorm.js"></script>
 </head>
 <body>
 
+  <table style="width:100%">
+  <tr>
+    <td><canvas id="CanvasX"></canvas></td>
+    <td><canvas id="CanvasY"></canvas></td>
+  </tr>
+</table>
+  <!-- <span style="display: inline">
+    <canvas id="CanvasX"></canvas>
+  </span>
+  <span style="display: inline">
+    <canvas id="CanvasY"></canvas>
+  </span> -->
+
+
   <script>
-  import * as WHS from 'whs'
-  const app = new WHS.App([
-    new WHS.ElementModule(), // attach to DOM
-    new WHS.SceneModule(), // creates THREE.Scene instance
-    new WHS.CameraModule(), // creates PerspectiveCamera instance
-    new WHS.RenderingModule() // creates WebGLRenderer instance
-  ]);
+  var socket = io.connect();
 
-  app.start(); // run animation
-  </script>
-  <!-- <canvas id="mycanvas" width="400" height="100"></canvas>
+  var angleX = 0, angleY = 0;
 
-  <script type="text/javascript">
-  var smoothie = new SmoothieChart();
-  smoothie.streamTo(document.getElementById("mycanvas"), 500);
-  // Data
-  var line1 = new TimeSeries();
-  var line2 = new TimeSeries();
 
-  // Add a random value to each line every second
-  setInterval(function() {
-  line1.append(new Date().getTime(), Math.random());
-  line2.append(new Date().getTime(), Math.random());
-}, 100);
+  function rotateX() {
 
-// Add to SmoothieChart
-smoothie.addTimeSeries(line1);
-smoothie.addTimeSeries(line2);
-</script> -->
+    var canvas = document.getElementById('CanvasX');
 
-<script>
-var socket = io.connect();
+    canvas.width  = 500;
+    canvas.height = 250;
+    canvas.style.width  = '500px';
+    canvas.style.height = '250px';
 
-socket.on('date', function(data){
-  $('#date').text("Date: "+data.date);
-  //$('#Tmp').text(data.Tmp);
-});
-socket.on('Tmp', function(data){
-  $('#Tmp').text("Temperature: "+data.Tmp);
-});
-socket.on('dt', function(data){
-  $('#dt').text("dt: "+data.dt);
-});
-socket.on('AcX', function(data){
-  $('#AcX').text("| AcX: "+data.AcX);
-});
-socket.on('AcY', function(data){
-  $('#AcY').text("| AcY: "+data.AcY);
-});
-socket.on('AcZ', function(data){
-  $('#AcZ').text("| AcZ: "+data.AcZ);
-});
-socket.on('GyX', function(data){
-  $('#GyX').text("| GyX: "+data.GyX);
-});
-socket.on('GyY', function(data){
-  $('#GyY').text("| GyY: "+data.GyY);
-});
-socket.on('GyZ', function(data){
-  $('#GyZ').text("| GyZ: "+data.GyZ);
-});
+    var context = canvas.getContext('2d');
+    // Clear the canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-$(document).ready(function(){
-  $('#text').keypress(function(e){
-    socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
+    // Move registration point to the center of the canvas
+    context.translate(canvas.width/2, canvas.height/2);
+
+    // Rotate 1 degree
+    context.rotate(angleX*Math.PI / 180);
+    //angle = 0;
+    // Move registration point back to the top left corner of canvas
+    context.translate(-canvas.width/2, - canvas.height/2);
+
+    context.fillStyle = "red";
+    context.fillRect(canvas.width/4,  canvas.height/4, canvas.width/2,  canvas.height/4);
+    context.fillStyle = "blue";
+    context.fillRect(canvas.width/4,  canvas.height/2, canvas.width/2,  canvas.height/4);
+
+  }
+
+  function rotateY() {
+
+    var canvas = document.getElementById('CanvasY');
+
+    canvas.width  = 500;
+    canvas.height = 250;
+    canvas.style.width  = '500px';
+    canvas.style.height = '250px';
+
+    var context = canvas.getContext('2d');
+    // Clear the canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Move registration point to the center of the canvas
+    context.translate(canvas.width/2, canvas.height/2);
+
+    // Rotate 1 degree
+    context.rotate(angleY*Math.PI / 180);
+    //angle = 0;
+    // Move registration point back to the top left corner of canvas
+    context.translate(-canvas.width/2, - canvas.height/2);
+
+    context.fillStyle = "red";
+    context.fillRect(canvas.width/4,  canvas.height/4, canvas.width/2,  canvas.height/4);
+    context.fillStyle = "blue";
+    context.fillRect(canvas.width/4,  canvas.height/2, canvas.width/2,  canvas.height/4);
+
+  }
+
+
+  socket.on('date', function(data){
+    $('#date').text("Date: "+data.date);
+    //$('#Tmp').text(data.Tmp);
   });
-});
-</script>
+  socket.on('Tmp', function(data){
+    $('#Tmp').text("Temperature: "+data.Tmp);
+  });
+  socket.on('dt', function(data){
+    $('#dt').text("dt: "+data.dt);
+  });
+  socket.on('AcX', function(data){
+    $('#AcX').text("| AcX: "+data.AcX);
+    angleX = data.AcX;
+    //angle = angle - lastAngle;
+    //if(lastAngle!=angle)
+    {
+      rotateX();
+    //  lastAngle = angle;
+    }
+  });
+  socket.on('AcY', function(data){
+    $('#AcY').text("| AcY: "+data.AcY);
+    angleY = data.AcY;
+    rotateY();
+  });
+  socket.on('AcZ', function(data){
+    $('#AcZ').text("| AcZ: "+data.AcZ);
+  });
+  socket.on('GyX', function(data){
+    $('#GyX').text("| GyX: "+data.GyX);
+  });
+  socket.on('GyY', function(data){
+    $('#GyY').text("| GyY: "+data.GyY);
+  });
+  socket.on('GyZ', function(data){
+    $('#GyZ').text("| GyZ: "+data.GyZ);
+  });
 
-<div id="date"></div>
-<h1><div id="Tmp"></div></h1>
-<div id="dt" style="display: inline"></div>
-<div id="AcX" style="display: inline"></div>
-<div id="AcY" style="display: inline"></div>
-<div id="AcY" style="display: inline"></div>
-<div id="AcZ" style="display: inline"></div>
-<div id="GyX" style="display: inline"></div>
-<div id="GyY" style="display: inline"></div>
-<div id="GyZ" style="display: inline"></div></br>
-<textarea id="text"></textarea>
+  $(document).ready(function(){
+    $('#text').keypress(function(e){
+      socket.emit('client_data', {'letter': String.fromCharCode(e.charCode)});
+    });
+  });
+
+
+  </script>
+
+  <div id="date"></div>
+  <h1><div id="Tmp"></div></h1>
+  <div id="dt" style="display: inline"></div>
+  <div id="AcX" style="display: inline"></div>
+  <div id="AcY" style="display: inline"></div>
+  <div id="AcY" style="display: inline"></div>
+  <div id="AcZ" style="display: inline"></div>
+  <div id="GyX" style="display: inline"></div>
+  <div id="GyY" style="display: inline"></div>
+  <div id="GyZ" style="display: inline"></div></br>
+
+  <textarea id="text"></textarea>
+
 </body>
 </html>
