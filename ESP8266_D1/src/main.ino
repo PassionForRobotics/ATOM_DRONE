@@ -1,5 +1,7 @@
 #include "Arduino.h"
 
+#include <Math3D.h>
+
 #ifdef ESP8266
 extern "C" {
   #include "user_interface.h"
@@ -58,7 +60,7 @@ uint32_t lastLoopTime =0 , lastPrintTime = 0;
 void loop()
 {
 
-  if(system_get_time()-lastLoopTime >=(LOOP_TIME*1000))
+  if(system_get_time()-lastLoopTime >=(LOOP_TIME))
   {
     lastLoopTime = system_get_time();
     // ENABLE_MPU
@@ -66,20 +68,30 @@ void loop()
 
     #if defined(ENABLE_MPU)
 
+
     sMPUDATA_t mpudata, rawmpudata;
 
+    #if !defined(QUATERNION_BASED_CALC)
     mpu_loop(&rawmpudata);
     mpudata = rawmpudata;
+    // #else
+    // sMPUDATA_f_t mpudata;
+     #endif // QUATERNION_BASED_CALC
     //Serial.print("RAW | "); printMPU(&mpudata);
-    float dt = mpu_calc(&mpudata);
+    Vec3 YPR = mpu_calc(&mpudata);
 
     if(system_get_time()-lastPrintTime >=(1000*1000))
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
       lastPrintTime = system_get_time();
+
+      //Serial.print("  Yaw:");   Serial.print(_DEGREES(-YPR.x), 2);
+  		//Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
+  		//Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
-      Serial.print("PRO | "); Serial.printf(" png %d | ", ping_loop()) ; Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&mpudata);
+      int dt = LOOP_TIME;
+      Serial.print("PRO | "); Serial.printf("png %d cms | ", ping_loop()) ; Serial.printf("dt %d uS| ", (int)(dt)); printMPU(&mpudata);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);

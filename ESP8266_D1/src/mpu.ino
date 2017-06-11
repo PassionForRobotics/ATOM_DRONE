@@ -8,12 +8,33 @@ extern "C" {
 }
 #endif
 
+#if defined(QUATERNION_BASED_CALC)
+#include <MPU6050.h>
+#include <Math3D.h>
+
+MPU6050 MPU(400, 0, 3, 3); // update rate, filtering, gyro, accel
+
+Quat AttitudeEstimateQuat;
+
+Vec3 correction_Body, correction_World;
+Vec3 Accel_Body, Accel_World;
+Vec3 GyroVec;
+
+const Vec3 VERTICAL = Vector(0.0f, 0.0f, 1.0f);  // vertical vector in the World frame
+
+#endif // QUATERNION_BASED_CALC
+
 const int MPU_addr=0x68; // I2C address of the MPU-6050
 static sMPUDATA_t baseMPUData;
 
 void mpu_setup()
 {
+
+
+  #if !defined(QUATERNION_BASED_CALC)
+
   Wire.begin();
+  //Wire.setClock(400000UL);// set speed to 400k
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x6B); // PWR_MGMT_1 registerESP.wdtFeed()
   Wire.write(0); // set to zero (wakes up the MPU-6050)
@@ -49,6 +70,17 @@ void mpu_setup()
 
   Serial.printf("Offsets | "); printMPU(&baseMPUData);
 
+  #elif defined(QUATERNION_BASED_CALC)
+
+  Wire.begin();
+  Wire.setClock(400000UL);// set speed to 400k
+
+  MPU.initialize();
+  Serial.println(MPU.samplePeriod);
+  MPU.accelZero();  // generate and store accel bias offsets
+  MPU.gyroZero();	  // generate and store gyro bias offsets
+
+  #endif //QUATERNION_BASED_CALC
 
 }
 
@@ -99,9 +131,61 @@ void printMPU(sMPUDATA_t *mpudata)
 // }
 
 boolean firstDt = true;
-float mpu_calc(sMPUDATA_t *_mpudata)
+Vec3 mpu_calc(sMPUDATA_t *_mpudata)
 {
   static sMPUDATA_f_t lastmpudata;
+  float dt = 0;
+
+  if(true==firstDt)
+  {
+    dt = LOOP_TIME/1000.0/1000.0; // second
+    firstDt = false;
+  }
+  else
+  {
+    dt = (system_get_time()/1000 - lastmpudata.timestamp) / 1000.0; // second
+  }
+
+  #if defined(QUATERNION_BASED_CALC)
+  MPU.retrieve();	   // get data from the sensor
+  MPU.timestamp = system_get_time()/1000;
+
+  GyroVec  = Vector(MPU.gX, MPU.gY, MPU.gZ);	// move gyro data to vector structure
+  Accel_Body = Vector(MPU.aX, MPU.aY, MPU.aZ);	// move accel data to vector structure
+
+  Accel_World = Rotate(AttitudeEstimateQuat, Accel_Body); // rotate accel from body frame to world frame
+
+  correction_World = CrossProd(Accel_World, VERTICAL); // cross product to determine error
+
+  Vec3 correction_Body = Rotate(correction_World, AttitudeEstimateQuat); // rotate correction vector to body frame
+
+  GyroVec = Sum(GyroVec, correction_Body);  // add correction vector to gyro data
+
+  Quat incrementalRotation = Quaternion(GyroVec, MPU.samplePeriod);  // create incremental rotation quat
+
+  AttitudeEstimateQuat = Mul(incrementalRotation, AttitudeEstimateQuat);  // quaternion integration (rotation composting through multiplication)
+
+  Vec3 YPR = YawPitchRoll(AttitudeEstimateQuat);
+
+  _mpudata->timestamp = MPU.timestamp;
+  _mpudata->AcX = _DEGREES(-YPR.y) ; // not z
+  _mpudata->AcY = _DEGREES(-YPR.z) ;
+  _mpudata->AcZ = _DEGREES(-YPR.x) ;
+  _mpudata->Tmp = MPU.tempRaw;//.temp_C();
+  _mpudata->GyX = _DEGREES(GyroVec.x) ;
+  _mpudata->GyY = _DEGREES(GyroVec.y) ;
+  _mpudata->GyZ = _DEGREES(GyroVec.z);
+
+  lastmpudata.timestamp = _mpudata->timestamp;
+
+  return YPR;
+  //lastmpudata = *_mpudata;
+
+		// Serial.print("  Yaw:");   Serial.print(_DEGREES(-YPR.x), 2);
+		// Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
+		// Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
+
+  #elif !defined(QUATERNION_BASED_CALC)
   // Convert gyro values to degrees/sec
   float FS_SEL = 131;
 
@@ -117,23 +201,19 @@ float mpu_calc(sMPUDATA_t *_mpudata)
 
   // Get angle values from accelerometer
   float RADIANS_TO_DEGREES = 180 / 3.14159;
-  //  float accel_vector_length = sqrt(pow(accel_x,2) + pow(accel_y,2) + pow(accel_z,2));
-  float accel_angle_y = atan(-1 * accel_x / sqrt(pow(accel_y, 2) + pow(accel_z, 2))) * RADIANS_TO_DEGREES;
-  float accel_angle_x = atan(accel_y / sqrt(pow(accel_x, 2) + pow(accel_z, 2))) * RADIANS_TO_DEGREES;
-  //float accel_angle_z = 0;
+
+  float accel_vector_length = sqrt(pow(accel_x,2) + pow(accel_y,2) + pow(accel_z,2));
+  float accel_angle_y = atan(-1 * accel_x / accel_vector_length) * RADIANS_TO_DEGREES;
+  float accel_angle_x = atan(accel_y / accel_vector_length) * RADIANS_TO_DEGREES;
+  float accel_angle_z = atan(accel_z / accel_vector_length) * RADIANS_TO_DEGREES;
+
+  //float accel_angle_y = atan2((-1 * accel_x)*RADIANS_TO_DEGREES, (sqrt(pow(accel_y, 2) + pow(accel_z, 2))*RADIANS_TO_DEGREES));
+  //float accel_angle_x = atan2(accel_y*RADIANS_TO_DEGREES , sqrt(pow(accel_x, 2) + pow(accel_z, 2))) * RADIANS_TO_DEGREES;
 
   // Compute the (filtered) gyro angles
-  float dt = 0;
 
-  if(true==firstDt)
-  {
-    dt = LOOP_TIME/1000.0; // second
-    firstDt = false;
-  }
-  else
-  {
-    dt = (_mpudata->timestamp - lastmpudata.timestamp) / 1000.0; // second
-  }
+
+
 
   float gyro_angle_x = gyro_x * dt + lastmpudata.AcX; // filtered
   float gyro_angle_y = gyro_y * dt + lastmpudata.AcY;
@@ -151,12 +231,12 @@ float mpu_calc(sMPUDATA_t *_mpudata)
   // 0.75sec => 0.96-> 0.8 deg/sec gyro drift;
   // 1.2sec => very baseMPUData//
 
-  float tau = 0.99; // second
+  float tau = 0.9; // second
 
   float alpha = tau/(tau+(dt));//0.923 ;//0.96-> 0.8 deg/sec gyro drift;
   lastmpudata.AcX = alpha * gyro_angle_x + (1.0 - alpha) * accel_angle_x;
   lastmpudata.AcY = alpha * gyro_angle_y + (1.0 - alpha) * accel_angle_y;
-  lastmpudata.AcZ = gyro_angle_z;  //Accelerometer doesn't give z-angle
+  lastmpudata.AcZ = alpha * gyro_angle_z + (1.0 - alpha) * accel_angle_z; //gyro_angle_z;  //Accelerometer doesn't give z-angle
 
   // Update the saved data with the latest values
   lastmpudata.timestamp = _mpudata->timestamp;
@@ -169,6 +249,10 @@ float mpu_calc(sMPUDATA_t *_mpudata)
   _mpudata->GyZ = lastmpudata.GyZ; // unfiltered angles Z
 
   return dt;
+
+  #endif // QUATERNION_BASED_CALC
+
+
   //set_last_read_angle_data(t_now, angle_x, angle_y, angle_z, unfiltered_gyro_angle_x, unfiltered_gyro_angle_y, unfiltered_gyro_angle_z);
 
 

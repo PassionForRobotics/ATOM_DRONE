@@ -8,3 +8,6 @@ Complete costings : https://docs.google.com/spreadsheets/d/1sE--DxiY-gX5Wt8CTUHx
 ![Throttle-Vs-Thrust graph](https://raw.githubusercontent.com/rahuldeo2047/ATOM_drone_robot_platform/master/Throttle-Vs-Thrust_%233.png)
 
 ![Ckt block diagram](https://raw.githubusercontent.com/rahuldeo2047/ATOM_drone_robot_platform/master/ckt_block_diagram.png)
+
+
+MPU data credit : https://github.com/daPhoosa

@@ -5,7 +5,11 @@
 #include "Arduino.h"
 
 
-#define LOOP_TIME (10) // ms 126.58228ms
+#define LOOP_TIME (400) // 400 uS// ms 126.58228ms
+#define QUATERNION_BASED_CALC // euler or quat based
+
+#define _DEGREES(x) (57.29578 * x)
+
 
 struct sMPUDATA_f_t
 {
