@@ -27,7 +27,7 @@ void wifi_setup()
 
 }
 
-void wifi_loop(sMPUDATA_t *mpudata)
+void wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 {
   int packetSize = Udp.parsePacket();
   if (packetSize)
@@ -35,8 +35,8 @@ void wifi_loop(sMPUDATA_t *mpudata)
     // receive incoming UDP packets
     //Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
     int len = Udp.read(incomingPacket, 255);
-    sMOTIONSETPOINTS_t msetpts;
-    memcpy(&msetpts, incomingPacket, SIZE_OF_MSETPOINTS_DATA);
+    //sMOTIONSETPOINTS_t msetpts;
+    memcpy(msetpts, incomingPacket, SIZE_OF_MSETPOINTS_DATA);
 
     if (len > 0)
     {

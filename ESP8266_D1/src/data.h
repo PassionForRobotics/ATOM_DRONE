@@ -6,6 +6,7 @@
 
 
 #define LOOP_TIME (400) // 400 uS// ms 126.58228ms
+#define STEER_LOOP_TIME (10000) // 10ms (1000) // 1 ms
 #define QUATERNION_BASED_CALC // euler or quat based
 
 #define _DEGREES(x) (57.29578 * x)
@@ -115,9 +116,9 @@ typedef struct sMOTIONSETPOINTS_t
   uint16_t y;
   uint8_t hat;
   uint8_t twist;
-  uint8_t buttons_a;
+  //uint8_t buttons_a;
   uint8_t slider;
-  uint8_t buttons_b;
+  uint16_t buttons;
 
 }sMOTIONSETPOINTS_t;
 

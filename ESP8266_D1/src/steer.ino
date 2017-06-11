@@ -1,6 +1,6 @@
 
 #include <Servo.h>
-
+#include "data.h"
 
 Servo servo[4];  // create servo object to control a servo
 int pins[4] = {D8, D9, D10, D11}; // D9 is LED
@@ -24,17 +24,27 @@ void steer_setup()
 }
 
 byte angle = 35;
-void steer_loop()
+uint32_t lastSteerLoopTime = 0;
+
+void steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 {
   byte a = random(90-45, 90+45);
-  for(i=0;i<4;i++)
-  {
-    Serial.printf("rnd %d\n", angle);
-    servo[i].write(angle++);//random(90-45, 90+45));
-  }
-  ESC.write(angle);
 
-  if(angle>=135)
-  angle = 0;
+  byte x = map(msetpts->x, 0, 512, -45, 45);
+
+  if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
+  {
+    lastSteerLoopTime = system_get_time();
+
+    //for(i=0;i<4;i++)
+    {
+      //Serial.printf("rnd %d\n", angle);
+      servo[0].write(x);//random(90-45, 90+45));
+    }
+    //ESC.write(angle);
+  }
+
+  //if(angle>=135)
+  //angle = 0;
 
 }

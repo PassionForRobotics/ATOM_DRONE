@@ -6,14 +6,16 @@ var _ = require('c-struct');
 
 
 var sMOTIONSETPOINTS_t = new _.Schema({
-  //timestamp: _.type.uint32,
-  x: _.type.uint8,
-  y: _.type.uint8,
+  timestamp: _.type.uint32,
+  x: _.type.uint16,
+  y: _.type.uint16,
   hat: _.type.uint8,
   twist: _.type.uint8,
-  buttons_a: _.type.uint8,
+  //buttons_a: _.type.uint8,
   slider: _.type.uint8,
-  buttons_b: _.type.uint8
+  //buttons_b: _.type.uint8,
+  buttons: _.type.uint16
+  
 });
 
 //let {struct, union, sizeOf} = 
@@ -92,6 +94,7 @@ _.register('motionsetpoints', sMOTIONSETPOINTS_t);
 var device = new hid.HID(1133, 49685);
 // console.log(device);
 
+var motionsetpoints;
 var joybuf = 0;
 var joycontrols=0;
 device.on('data', function (buf) {
@@ -100,31 +103,45 @@ device.on('data', function (buf) {
     return parseInt(c, 16);
   });
   
-  joybuf = buf;
+  //joybuf = buf;
 
   var controls = {
-    roll: ((ch[1] & 0x03) << 8) + ch[0],
-    pitch: ((ch[2] & 0x0f) << 6) + ((ch[1] & 0xfc) >> 2),
-    yaw: ch[3],
-    view: (ch[2] & 0xf0) >> 4,
-    throttle: -ch[5] + 255,
-    buttons: [
-      (ch[4] & 0x01) >> 0,
-      (ch[4] & 0x02) >> 1,
-      (ch[4] & 0x04) >> 2,
-      (ch[4] & 0x08) >> 3,
-      (ch[4] & 0x10) >> 4,
-      (ch[4] & 0x20) >> 5,
-      (ch[4] & 0x40) >> 6,
-      (ch[4] & 0x80) >> 7,
-      (ch[6] & 0x01) >> 0,
-      (ch[6] & 0x02) >> 1,
-      (ch[6] & 0x04) >> 2,
-      (ch[6] & 0x08) >> 3
-    ]
+    x: ((ch[1] & 0x03) << 8) + ch[0],
+    y: ((ch[2] & 0x0f) << 6) + ((ch[1] & 0xfc) >> 2),
+    hat: (ch[2] & 0xf0) >> 4,
+    twist: ch[3],
+    slider: -ch[5] + 255,
+    buttons : ((ch[4] & 0xff) << 8) +(ch[6] & 0x0f)
+    /*button_a: (ch[4] & 0xff),//ch[4]<<8 
+      ((ch[4] & 0x01) >> 0)+
+      ((ch[4] & 0x02) >> 1)+
+      ((ch[4] & 0x04) >> 2)+
+      ((ch[4] & 0x08) >> 3)+
+      ((ch[4] & 0x10) >> 4)+
+      ((ch[4] & 0x20) >> 5)+
+      ((ch[4] & 0x40) >> 6)+
+      ((ch[4] & 0x80) >> 7),
+    button_b: //ch[6]  
+      ((ch[6] & 0x01) >> 0)+
+      ((ch[6] & 0x02) >> 1)+
+      ((ch[6] & 0x04) >> 2)+
+      ((ch[6] & 0x08) >> 3)*/
+    
   };
-
+  
   joycontrols = controls;
+  
+  motionsetpoints = _.packSync('motionsetpoints', {
+	  timestamp: 0,
+	  x: joycontrols.x,
+	  y: joycontrols.y,
+	  hat: joycontrols.hat,
+	  twist: joycontrols.twist,
+	  //buttons_a: joycontrols.buttons_a,
+	  slider: joycontrols.slider,
+	  //buttons_b: joycontrols.buttons_b,
+	  buttons: joycontrols.buttons
+	});
   // var bits = BitArray.fromBuffer(buf).toJSON().join('').match(/.{1,8}/g).join(' ');
   // console.log(bits, JSON.stringify(controls));
   //console.log(JSON.stringify(controls));
@@ -132,11 +149,25 @@ device.on('data', function (buf) {
 
 function print()
 {
-	var joydata = _.unpackSync('motionsetpoints', joybuf);
+
+        motionsetpoints = _.packSync('motionsetpoints', {
+	  timestamp: 0,
+	  x: joycontrols.x,
+	  y: joycontrols.y,
+	  hat: joycontrols.hat,
+	  twist: joycontrols.twist,
+	  //buttons_a: joycontrols.buttons_a,
+	  slider: joycontrols.slider,
+	  //buttons_b: joycontrols.buttons_b,
+	  buttons: joycontrols.buttons
+	});
+	var joydata = _.unpackSync('motionsetpoints', motionsetpoints);
 	//var joydata = union(typedef_sMOTIONSETPOINTS_t, joybuf.buffer);
 	console.log(joydata);
-	console.log(joybuf);
-	console.log(JSON.stringify(joycontrols));
+	console.log(joycontrols.buttons);
+	//console.log(joydata.x);
+	//console.log(joybuf.x);
+	//console.log(JSON.stringify(joycontrols));
 }
 
 setInterval(print, 250);

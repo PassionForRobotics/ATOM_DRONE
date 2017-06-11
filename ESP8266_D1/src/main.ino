@@ -12,7 +12,7 @@ extern "C" {
 #include "config.h"
 
 #define ENABLE_WIFI
-//#define ENABLE_STEER
+#define ENABLE_STEER
 #define ENABLE_MPU
 
 
@@ -57,6 +57,8 @@ void setup()
 
 uint32_t lastLoopTime =0 , lastPrintTime = 0;
 
+sMOTIONSETPOINTS_t msetpts;
+
 void loop()
 {
 
@@ -91,7 +93,11 @@ void loop()
   		//Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
       int dt = LOOP_TIME;
-      Serial.print("PRO | "); Serial.printf("png %d cms | ", ping_loop()) ; Serial.printf("dt %d uS| ", (int)(dt)); printMPU(&mpudata);
+      Serial.print("PRO | "); Serial.printf("png %d cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
+      //Serial.print(msetpts.x);Serial.print(" ");Serial.print(msetpts.y);print(" | ");
+      //Serial.print(mpudata.AcX);Serial.print(" ");Serial.print(mpudata.AcY);Serial.print(" ");Serial.print(mpudata.AcZ);
+      Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
+      //printMPU(&mpudata);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);
@@ -109,14 +115,14 @@ void loop()
 
     #if defined(ENABLE_WIFI)
 
-    wifi_loop(&mpudata);
+    wifi_loop(&mpudata, &msetpts);
 
     #endif // ENABLE_WIFI
 
 
     #if defined(ENABLE_STEER)
 
-    steer_loop();
+    steer_loop(&mpudata, &msetpts);
 
     #endif  // ENABLE_STEER
 

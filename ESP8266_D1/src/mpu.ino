@@ -12,7 +12,7 @@ extern "C" {
 #include <MPU6050.h>
 #include <Math3D.h>
 
-MPU6050 MPU(400, 0, 3, 3); // update rate, filtering, gyro, accel
+MPU6050 MPU(400, 6, 3, 3); // update rate, filtering, gyro, accel
 
 Quat AttitudeEstimateQuat;
 

@@ -46,8 +46,82 @@ function typecastmpudata(_mpudata)
 
   return _mpudata;
 
-}
+ }
 
+ var hid = require('node-hid');
+ // var BitArray = require('node-bitarray');
+ // console.log(hid.devices());
+
+ var sMOTIONSETPOINTS_t = new _.Schema({
+  timestamp: _.type.uint32,
+  x: _.type.uint16,
+  y: _.type.uint16,
+  hat: _.type.uint8,
+  twist: _.type.uint8,
+  //buttons_a: _.type.uint8,
+  slider: _.type.uint8,
+  //buttons_b: _.type.uint8,
+  buttons: _.type.uint16
+});
+
+_.register('motionsetpoints', sMOTIONSETPOINTS_t);
+
+var device = new hid.HID(1133, 49685);
+
+var joycontrols = {
+ x: 0,
+ y: 0,
+ hat: 0,
+ twist: 0,
+ slider: 0,
+ buttons : 0
+};
+
+var motionsetpoints = _.packSync('motionsetpoints', {
+  timestamp: 0,
+  x: joycontrols.x,
+  y: joycontrols.y,
+  hat: joycontrols.hat,
+  twist: joycontrols.twist,
+  //buttons_a: joycontrols.buttons_a,
+  slider: joycontrols.slider,
+  //buttons_b: joycontrols.buttons_b,
+  buttons: joycontrols.buttons
+});
+
+
+device.on('data', function (buf) {
+
+  var ch = buf.toString('hex').match(/.{1,2}/g).map(function (c) {
+    return parseInt(c, 16);
+  });
+
+  joycontrols = {
+   x: ((ch[1] & 0x03) << 8) + ch[0],
+   y: ((ch[2] & 0x0f) << 6) + ((ch[1] & 0xfc) >> 2),
+   hat: (ch[2] & 0xf0) >> 4,
+   twist: ch[3],
+   slider: -ch[5] + 255,
+   buttons : ((ch[4] & 0xff) << 8) +(ch[6] & 0x0f)
+ };
+
+//joycontrols = controls;
+
+ motionsetpoints = _.packSync('motionsetpoints', {
+   timestamp: 0,
+   x: joycontrols.x,
+   y: joycontrols.y,
+   hat: joycontrols.hat,
+   twist: joycontrols.twist,
+   //buttons_a: joycontrols.buttons_a,
+   slider: joycontrols.slider,
+   //buttons_b: joycontrols.buttons_b,
+   buttons: joycontrols.buttons
+ });
+  // var bits = BitArray.fromBuffer(buf).toJSON().join('').match(/.{1,8}/g).join(' ');
+  // console.log(bits, JSON.stringify(controls));
+  //console.log(JSON.stringify(controls));
+});
 
 // typedef struct sMOTIONSETPOINTS_t
 // {
@@ -62,21 +136,9 @@ function typecastmpudata(_mpudata)
 //
 // }sMOTIONSETPOINTS_t;
 
-var sMOTIONSETPOINTS_t = new _.Schema({
-  timestamp: _.type.uint32,
-  x: _.type.uint16,
-  y: _.type.uint16,
-  hat: _.type.uint8,
-  twist: _.type.uint8,
-  buttons_a: _.type.uint8,
-  slider: _.type.uint8,
-  buttons_b: _.type.uint8
-});
 
 // register to cache
 _.register('mpudata', sMPURATA_t);
-_.register('motionsetpoints', sMOTIONSETPOINTS_t);
-
 
 
 function getMillis(oldhrstart)
@@ -165,20 +227,6 @@ server.on('message', function (message, remote) {
 
 const MESSAGE = new Buffer('02fffe00020000000f00000002ff0c010000000000000000000003', 'hex');
 
-// var motionsetpoints = _.packSync('motionsetpoints', {
-//   timestamp: dTime,
-//   x: 0,
-//   y: 0,
-//   hat: 0,
-//   twist: 0,
-//   buttons_a: 0,
-//   slider: 0,
-//   buttons_b: 0,
-// });
-
-// buffer to object
-//var motionsetpoints = _.unpackSync('motionsetpoints', buf);
-
 var DOPRINT = 0;
 var myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);; // whether UDP packet dropped
 
@@ -192,22 +240,29 @@ function udpDroppedTimedOut()
 
 var mspts_msTime = process.hrtime();
 var _mspts_msTime = getMillis(mspts_msTime);;
+//var motionsetpoints;
+
 function send()
 {
   clearTimeout(myWatchDog);
 
   var _mspts_msTime = getMillis(mspts_msTime);//[1]/1000000
   mspts_dTime = _mspts_msTime[0] * 1000 + _mspts_msTime[1] / 1000000;
-  var motionsetpoints = _.packSync('motionsetpoints', {
-    timestamp: mspts_dTime,
-    x: 0,
-    y: 0,
-    hat: 0,
-    twist: 0,
-    buttons_a: 0,
-    slider: 0,
-    buttons_b: 0,
+
+  motionsetpoints = _.packSync('motionsetpoints', {
+    timestamp: dTime,
+    x: joycontrols.x,
+    y: joycontrols.y,
+    hat: joycontrols.hat,
+    twist: joycontrols.twist,
+    //buttons_a: joycontrols.buttons_a,
+    slider: joycontrols.slider,
+    //buttons_b: joycontrols.buttons_b
+    buttons: joycontrols.buttons
   });
+
+  //var joydata = _.unpackSync('motionsetpoints', motionsetpoints);
+
   server.send(motionsetpoints, 0, motionsetpoints.length, REMOTE_PORT, REMOTE_IP, function(err, bytes)
   {
     if (err) throw err;
@@ -229,11 +284,15 @@ function printit()
 {
   if(1 == DOPRINT)
   {
+    var joydata = _.unpackSync('motionsetpoints', motionsetpoints);
     console.log(getDateTime() +"::Δ" + rdt +' - '+ dt + " | "
     + Math.round(Tmp*100)/100+"°C"
     + " | AcX: " + mpudata.AcX
     + "° | AcY: " + mpudata.AcY
-    + "° | AcZ: ~" + mpudata.AcZ  + "°");
+    + "° | AcZ: ~" + mpudata.AcZ  + "°"
+    + " | x " + joydata.x
+    + " | y " + joydata.y
+  );
   }
 }
 
