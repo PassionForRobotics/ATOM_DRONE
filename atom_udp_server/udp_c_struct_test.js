@@ -292,6 +292,8 @@ function printit()
     + "° | AcZ: ~" + mpudata.AcZ  + "°"
     + " | x " + joydata.x
     + " | y " + joydata.y
+    + " | z " + joydata.slider
+    + " | yaw " + joydata.twist
   );
   }
 }

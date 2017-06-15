@@ -15,7 +15,6 @@ var sMOTIONSETPOINTS_t = new _.Schema({
   slider: _.type.uint8,
   //buttons_b: _.type.uint8,
   buttons: _.type.uint16
-  
 });
 
 //let {struct, union, sizeOf} = 
@@ -112,21 +111,6 @@ device.on('data', function (buf) {
     twist: ch[3],
     slider: -ch[5] + 255,
     buttons : ((ch[4] & 0xff) << 8) +(ch[6] & 0x0f)
-    /*button_a: (ch[4] & 0xff),//ch[4]<<8 
-      ((ch[4] & 0x01) >> 0)+
-      ((ch[4] & 0x02) >> 1)+
-      ((ch[4] & 0x04) >> 2)+
-      ((ch[4] & 0x08) >> 3)+
-      ((ch[4] & 0x10) >> 4)+
-      ((ch[4] & 0x20) >> 5)+
-      ((ch[4] & 0x40) >> 6)+
-      ((ch[4] & 0x80) >> 7),
-    button_b: //ch[6]  
-      ((ch[6] & 0x01) >> 0)+
-      ((ch[6] & 0x02) >> 1)+
-      ((ch[6] & 0x04) >> 2)+
-      ((ch[6] & 0x08) >> 3)*/
-    
   };
   
   joycontrols = controls;
