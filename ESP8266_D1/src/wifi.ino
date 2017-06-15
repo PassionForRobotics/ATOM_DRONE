@@ -27,8 +27,9 @@ void wifi_setup()
 
 }
 
-void wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
+boolean wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 {
+  boolean packet_received = false;
   int packetSize = Udp.parsePacket();
   if (packetSize)
   {
@@ -41,6 +42,7 @@ void wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
     if (len > 0)
     {
       incomingPacket[len] = 0;
+      packet_received = true;
     }
 
     // Serial.printf("UDP packet contents: %s  ", incomingPacket);

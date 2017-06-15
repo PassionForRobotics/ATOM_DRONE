@@ -6,13 +6,16 @@ Servo servo[4];  // create servo object to control a servo
 int pins[4] = {D8, D9, D10, D11}; // D9 is LED
 int i = 0;
 
+// Servo mechanical offsets
+#define SERVO0_OFFSET (7)
+#define SERVO1_OFFSET (4)
+#define SERVO2_OFFSET (6)
+#define SERVO3_OFFSET (-5)
 
-  #define SERVO0_OFFSET (7)
-  #define SERVO1_OFFSET (4)
-  #define SERVO2_OFFSET (6)
-  #define SERVO3_OFFSET (-5)
+// twist limits
+#define SERVO_TWIST_ANGLE_LIMIT (20)
 
-  byte servo_offsets[4] = {SERVO0_OFFSET, SERVO1_OFFSET, SERVO2_OFFSET, SERVO3_OFFSET};
+byte servo_offsets[4] = {SERVO0_OFFSET, SERVO1_OFFSET, SERVO2_OFFSET, SERVO3_OFFSET};
 
 Servo ESC; // D1 pin D12
 
@@ -49,6 +52,16 @@ void steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 
   byte y1 = map(msetpts->y, 1023, 0, -45+90+servo_offsets[3], 45+90+servo_offsets[3]);
 
+  byte tw = map(msetpts->twist, 0, 255, -SERVO_TWIST_ANGLE_LIMIT, SERVO_TWIST_ANGLE_LIMIT);
+
+  x += tw;
+  x1 += tw;
+  y += tw;
+  y1 += tw;
+
+
+
+
   //y += 90;
 
   if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
@@ -59,7 +72,7 @@ void steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
     // PID
     //
     // ///
-    
+
 
     //for(i=0;i<4;i++)
     {

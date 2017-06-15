@@ -22,10 +22,6 @@ void setup()
   Serial.begin(115200);
   Serial.printf("size of data %d\n", SIZE_OF_MPU_DATA);
 
-  #if defined(ENABLE_STEER)
-  steer_setup();
-  #endif
-
   // ENABLE_MPU
   //
 
@@ -62,6 +58,8 @@ sMOTIONSETPOINTS_t msetpts;
 void loop()
 {
 
+  boolean data_received = false;
+
   if(system_get_time()-lastLoopTime >=(LOOP_TIME))
   {
     lastLoopTime = system_get_time();
@@ -78,7 +76,7 @@ void loop()
     mpudata = rawmpudata;
     // #else
     // sMPUDATA_f_t mpudata;
-     #endif // QUATERNION_BASED_CALC
+    #endif // QUATERNION_BASED_CALC
     //Serial.print("RAW | "); printMPU(&mpudata);
     Vec3 YPR = mpu_calc(&mpudata);
 
@@ -89,8 +87,8 @@ void loop()
       lastPrintTime = system_get_time();
 
       //Serial.print("  Yaw:");   Serial.print(_DEGREES(-YPR.x), 2);
-  		//Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
-  		//Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
+      //Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
+      //Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
       int dt = LOOP_TIME;
       Serial.print("PRO | "); Serial.printf("png %d cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
@@ -115,15 +113,17 @@ void loop()
 
     #if defined(ENABLE_WIFI)
 
-    wifi_loop(&mpudata, &msetpts);
+    data_received = wifi_loop(&mpudata, &msetpts);
 
     #endif // ENABLE_WIFI
 
 
     #if defined(ENABLE_STEER)
 
-    steer_loop(&mpudata, &msetpts);
-
+    if(true == data_received)
+    {
+      steer_loop(&mpudata, &msetpts);
+    }
     #endif  // ENABLE_STEER
 
 
