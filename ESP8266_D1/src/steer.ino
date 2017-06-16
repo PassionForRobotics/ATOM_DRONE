@@ -7,13 +7,13 @@ int pins[4] = {D8, D9, D10, D11}; // D9 is LED
 int i = 0;
 
 // Servo mechanical offsets
-#define SERVO0_OFFSET (7)
-#define SERVO1_OFFSET (4)
-#define SERVO2_OFFSET (6)
-#define SERVO3_OFFSET (-5)
+const byte SERVO0_OFFSET = (7);
+const byte SERVO1_OFFSET = (4);
+const byte SERVO2_OFFSET = (6);
+const byte SERVO3_OFFSET = (-5);
 
 // twist limits
-#define SERVO_TWIST_ANGLE_LIMIT (20)
+const byte SERVO_TWIST_ANGLE_LIMIT = (20);
 
 byte servo_offsets[4] = {SERVO0_OFFSET, SERVO1_OFFSET, SERVO2_OFFSET, SERVO3_OFFSET};
 
@@ -42,7 +42,7 @@ void steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 {
 
 
-  byte a = random(90-45, 90+45);
+  //byte a = random(90-45, 90+45);
 
   byte x = map(msetpts->x, 0, 1023, -45+90+servo_offsets[0], 45+90+servo_offsets[0]);
   //x += 90;

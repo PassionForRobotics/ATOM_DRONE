@@ -65,5 +65,6 @@ boolean wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
     Udp.write((byte*)(mpudata), SIZE_OF_MPU_DATA);
     Udp.endPacket();
   }
+  return packet_received;
 
 }

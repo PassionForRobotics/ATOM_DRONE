@@ -1,0 +1,32 @@
+language: python
+python:
+    - "2.7"
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+
+# Generated using: find examples -type f -name "*.ino" | rev | cut -d/ -f2- | rev | sed 's/^/    - PLATFORMIO_CI_SRC=/' > tmp.yml
+env:
+    - PLATFORMIO_CI_SRC=ESP8266_D1
+
+install:
+    - pip install -U platformio
+    - export PLATFORMIO_BUILD_FLAGS="$PLATFORMIO_BUILD_FLAGS -DDEBUG_USB_HOST -Wall -Werror"
+
+    #
+    # Libraries from PlatformIO Library Registry:
+    #
+    # http://platformio.org/lib/show/62/MIDI
+    # http://platformio.org/lib/show/416/TinyGPS
+    # http://platformio.org/lib/show/417/SPI4Teensy3
+    #- platformio lib install 62 416 417
+
+script:
+    #- platformio ci --project-conf=platoformio.ini
+    - platformio run -d ESP8266_D1
+    #- platformio ci --lib="." --board=d1
+    #- platformio ci --lib="." --board=esp12e --board=nodemcu --project-option="build_flags=-Wno-unused-function" # Workaround https://github.com/esp8266/Arduino/pull/2881
+

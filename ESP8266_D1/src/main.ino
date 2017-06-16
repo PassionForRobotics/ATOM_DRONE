@@ -1,4 +1,7 @@
 #include "Arduino.h"
+#include "MPU6050.h"
+#include "NewPingESP8266.h"
+#include "Servo.h"
 
 #include <Math3D.h>
 
@@ -69,7 +72,7 @@ void loop()
     #if defined(ENABLE_MPU)
 
 
-    sMPUDATA_t mpudata, rawmpudata;
+    sMPUDATA_t mpudata;//, rawmpudata;
 
     #if !defined(QUATERNION_BASED_CALC)
     mpu_loop(&rawmpudata);
@@ -79,7 +82,7 @@ void loop()
     #endif // QUATERNION_BASED_CALC
     //Serial.print("RAW | "); printMPU(&mpudata);
     Vec3 YPR = mpu_calc(&mpudata);
-
+    YPR = YPR;
     if(system_get_time()-lastPrintTime >=(1000*1000))
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
@@ -91,7 +94,7 @@ void loop()
       //Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
       int dt = LOOP_TIME;
-      Serial.print("PRO | "); Serial.printf("png %d cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
+      Serial.print("PRO | "); Serial.printf("png %lu cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
       //Serial.print(msetpts.x);Serial.print(" ");Serial.print(msetpts.y);print(" | ");
       //Serial.print(mpudata.AcX);Serial.print(" ");Serial.print(mpudata.AcY);Serial.print(" ");Serial.print(mpudata.AcZ);
       Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);

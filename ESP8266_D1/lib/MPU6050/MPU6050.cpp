@@ -39,6 +39,7 @@
 
 */
 
+#include <Arduino.h>
 #include <Wire.h>
 #include "MPU6050.h"
 
@@ -58,7 +59,7 @@ extern "C" {
 #define ACCEL_BASE	2048.0f		// LSB per g   @ +/- 16g
 #define GYRO_BASE		16.375f		// LSB per dps @ +/- 2000 deg/s
 
-#define DEG_TO_RAD	(3.141592654f / 180.0f)
+//#define DEG_TO_RAD	(3.141592654f / 180.0f)
 
 
 
