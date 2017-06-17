@@ -12,7 +12,7 @@ extern "C" {
 #include <MPU6050.h>
 #include <Math3D.h>
 
-MPU6050 MPU(400, 6, 3, 3); // update rate, filtering, gyro, accel
+MPU6050 MPU(400, 6, 3, 0); // update rate, filtering, gyro, accel
 
 Quat AttitudeEstimateQuat;
 
@@ -255,5 +255,23 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
 
   //set_last_read_angle_data(t_now, angle_x, angle_y, angle_z, unfiltered_gyro_angle_x, unfiltered_gyro_angle_y, unfiltered_gyro_angle_z);
 
+
+}
+
+void mpu_filter(sMPUDATA_t *_mpudata, int *iSmoothdata, int *iHigh)
+{
+
+  float current_value = _mpudata->AcX;
+  static float exponential_average=current_value;
+  static float last_pass = 0;
+  float EMA_ALPHA = 0.995 ; // 0 to 1
+
+  exponential_average=(EMA_ALPHA*exponential_average + (1 - EMA_ALPHA)*current_value);
+  last_pass = exponential_average - current_value;
+
+  *iHigh = last_pass;
+  //*iSmoothdata  = step (current_value) ;
+
+  *iSmoothdata = ((int)(exponential_average*10))/10;
 
 }

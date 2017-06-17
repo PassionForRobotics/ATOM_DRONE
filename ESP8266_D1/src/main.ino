@@ -83,7 +83,10 @@ void loop()
     //Serial.print("RAW | "); printMPU(&mpudata);
     Vec3 YPR = mpu_calc(&mpudata);
     YPR = YPR;
-    if(system_get_time()-lastPrintTime >=(1000*1000))
+    int sdata = 0;
+    int shigh = 0;
+    mpu_filter(&mpudata, &sdata, &shigh);
+    if(system_get_time()-lastPrintTime >=(100*1000))
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
@@ -93,12 +96,13 @@ void loop()
       //Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
       //Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
-      int dt = LOOP_TIME;
-      Serial.print("PRO | "); Serial.printf("png %lu cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
+      //int dt = LOOP_TIME;
+      //Serial.print("PRO | "); Serial.printf("png %lu cms | ", ping_loop()) ; Serial.printf("dt %d uS ", (int)(dt));
       //Serial.print(msetpts.x);Serial.print(" ");Serial.print(msetpts.y);print(" | ");
       //Serial.print(mpudata.AcX);Serial.print(" ");Serial.print(mpudata.AcY);Serial.print(" ");Serial.print(mpudata.AcZ);
-      Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
+      //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
       //printMPU(&mpudata);
+      Serial.printf("%d,%d,%d,%d\n",mpudata.AcX, sdata, shigh, sdata + shigh);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);
