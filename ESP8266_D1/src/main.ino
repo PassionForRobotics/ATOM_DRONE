@@ -71,11 +71,11 @@ void loop()
 
     #if defined(ENABLE_MPU)
 
-
-    sMPUDATA_t mpudata;//, rawmpudata;
+    sMPUDATA_t mpudata ;
     sSmoothData_t sdata;
 
     #if !defined(QUATERNION_BASED_CALC)
+    sMPUDATA_t rawmpudata;
     mpu_loop(&rawmpudata);
     mpudata = rawmpudata;
     // #else

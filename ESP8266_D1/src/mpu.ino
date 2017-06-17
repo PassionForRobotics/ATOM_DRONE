@@ -260,9 +260,9 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
 
 void mpu_filter(sMPUDATA_t *_mpudata, sSmoothData_t *data) //int *iSmoothdata, int *iHigh)
 {
-  static float exponential_average[3] = {_mpudata->AcX, _mpudata->AcY, _mpudata->AcZ};
+  static float exponential_average[3] = {(float)_mpudata->AcX, (float)_mpudata->AcY, (float)_mpudata->AcZ};
   const float alpha[3] = {0.995, 0.995, 0.995};
-  float current_value[3] = {_mpudata->AcX, _mpudata->AcY, _mpudata->AcZ};
+  float current_value[3] = {(float)_mpudata->AcX, (float)_mpudata->AcY, (float)_mpudata->AcZ};
 
   //static float exponential_average=current_value;
   //static float last_pass = 0;
