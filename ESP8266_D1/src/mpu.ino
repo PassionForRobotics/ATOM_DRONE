@@ -258,20 +258,27 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
 
 }
 
-void mpu_filter(sMPUDATA_t *_mpudata, int *iSmoothdata, int *iHigh)
+void mpu_filter(sMPUDATA_t *_mpudata, sSmoothData_t *data) //int *iSmoothdata, int *iHigh)
 {
+  static float exponential_average[3] = {_mpudata->AcX, _mpudata->AcY, _mpudata->AcZ};
+  const float alpha[3] = {0.995, 0.995, 0.995};
+  float current_value[3] = {_mpudata->AcX, _mpudata->AcY, _mpudata->AcZ};
 
-  float current_value = _mpudata->AcX;
-  static float exponential_average=current_value;
-  static float last_pass = 0;
-  float EMA_ALPHA = 0.995 ; // 0 to 1
+  //static float exponential_average=current_value;
+  //static float last_pass = 0;
+  //float EMA_ALPHA = 0.995 ; // 0 to 1
 
-  exponential_average=(EMA_ALPHA*exponential_average + (1 - EMA_ALPHA)*current_value);
-  last_pass = exponential_average - current_value;
+  exponential_average[0]=(alpha[0]*exponential_average[0] + (1 - alpha[0])*current_value[0]);
+  exponential_average[1]=(alpha[1]*exponential_average[1] + (1 - alpha[1])*current_value[1]);
+  exponential_average[2]=(alpha[2]*exponential_average[2] + (1 - alpha[2])*current_value[2]);
 
-  *iHigh = last_pass;
+  //last_pass = exponential_average - current_value;
+
+  //*iHigh = last_pass;
   //*iSmoothdata  = step (current_value) ;
 
-  *iSmoothdata = ((int)(exponential_average*10))/10;
+  data->X = ((int32_t)(exponential_average[0]*10))/10;
+  data->Y = ((int32_t)(exponential_average[1]*10))/10;
+  data->Z = ((int32_t)(exponential_average[2]*10))/10;
 
 }

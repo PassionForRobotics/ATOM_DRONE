@@ -12,6 +12,11 @@
 #define _DEGREES(x) (57.29578 * x)
 
 
+struct sSmoothData_t
+{
+  int32_t X, Y, Z;
+};
+
 struct sMPUDATA_f_t
 {
 
