@@ -2,9 +2,9 @@
 
 Build status:
 
-* ESP8266 D1 R1/2 : [![build status](https://api.travis-ci.org/PassionForRobotics/ATOM_DRONE.svg?branch=master)](https://travis-ci.org/
-* PassionForRobotics/ATOM_DRONE/builds)
-Test codes : Underdev
+* ESP8266 D1 R1/2 : 
+[![build status](https://api.travis-ci.org/PassionForRobotics/ATOM_DRONE.svg?branch=master)](https://travis-ci.org/PassionForRobotics/ATOM_DRONE/builds)
+* Test codes : Underdev
 
 Currently basic circuit test and apparent thrust test is being performed.
 
