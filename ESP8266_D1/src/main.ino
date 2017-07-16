@@ -23,6 +23,7 @@ void setup()
 {
   delay(3000);
   Serial.begin(115200);
+  Serial.printf("Build at %s %s\n",__DATE__, __TIME__);
   Serial.printf("size of data %d\n", SIZE_OF_MPU_DATA);
 
   // ENABLE_MPU
@@ -40,6 +41,7 @@ void setup()
   #if defined(ENABLE_WIFI)
 
   wifi_setup();
+  setup_OTA();
 
   #endif //ENABLE_WIFI
 
@@ -62,6 +64,8 @@ void loop()
 {
 
   boolean data_received = false;
+  if(true == loop_OTA())
+    return; // skip all activity // or try how this works with this
 
   if(system_get_time()-lastLoopTime >=(LOOP_TIME))
   {

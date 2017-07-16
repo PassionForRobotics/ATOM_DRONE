@@ -1,10 +1,8 @@
-
-
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define WIFISSID "SSSSIIIIDDDD"// Put your WiFi SSID here
-#define PASSWORD "PWPWPWPWPWPW" // Put your Wifi Password here
+#define WIFISSID "HHH7351HHH"// Put your WiFi SSID here
+#define PASSWORD "hh1537hhh" // Put your Wifi Password here
 
 
-#endif // DATA_H
+#endif // CONFIG_H
