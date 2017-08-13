@@ -90,6 +90,13 @@ void loop()
     YPR = YPR;
 
     mpu_filter(&mpudata, &sdata);
+
+    #if defined(ENABLE_WIFI)
+
+    data_received = wifi_loop(&mpudata, &msetpts);
+
+    #endif // ENABLE_WIFI
+
     if(system_get_time()-lastPrintTime >=(100*1000))
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
@@ -101,7 +108,7 @@ void loop()
       //Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
       //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
       //int dt = LOOP_TIME;
-      Serial.print("PRO | "); Serial.printf("png %lu cms | ", ping_loop()) ; //Serial.printf("dt %d uS ", (int)(dt));
+      Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
       //Serial.print(msetpts.x);Serial.print(" ");Serial.print(msetpts.y);print(" | ");
       //Serial.print(mpudata.AcX);Serial.print(" ");Serial.print(mpudata.AcY);Serial.print(" ");Serial.print(mpudata.AcZ);
       Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
@@ -121,13 +128,6 @@ void loop()
 
     // ENABLE_WIFI
     //
-
-    #if defined(ENABLE_WIFI)
-
-    data_received = wifi_loop(&mpudata, &msetpts);
-
-    #endif // ENABLE_WIFI
-
 
     #if defined(ENABLE_STEER)
 

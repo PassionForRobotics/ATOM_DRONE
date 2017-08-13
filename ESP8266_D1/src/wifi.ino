@@ -45,17 +45,17 @@ boolean wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
       packet_received = true;
     }
 
-    // Serial.printf("UDP packet contents: %s  ", incomingPacket);
+    // Serial.printf("UDP packet contents: %s ", incomingPacket);
     // Serial.printf
-    // ("UDP packet ts:%d x:%d y:%d h:%d tw:%d ba:%d sl:%d bb:%d  "
-    // ,msetpts.timestamp
-    // ,msetpts.x
-    // ,msetpts.y
-    // ,msetpts.hat
-    // ,msetpts.twist
-    // ,msetpts.buttons_a
-    // ,msetpts.slider
-    // ,msetpts.buttons_b);
+    // ("UDP packet ts:%d x:%d y:%d h:%d tw:%d sl:%d b:%d"
+    // ,msetpts->timestamp
+    // ,msetpts->x
+    // ,msetpts->y
+    // ,msetpts->hat
+    // ,msetpts->twist
+    // //,msetpts.buttons_a
+    // ,msetpts->slider
+    // ,msetpts->buttons);
     //
     // Serial.printf("from: %s", Udp.remoteIP().toString().c_str());
     // Serial.printf(" : %d\n", Udp.remotePort());

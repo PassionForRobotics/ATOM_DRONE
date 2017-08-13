@@ -3,7 +3,7 @@
 #include "data.h"
 
 Servo servo[4];  // create servo object to control a servo
-int pins[4] = {D8, D9, D10, D11}; // D9 is LED
+int pins[4] = {D5, D6, D7, D8}; // D9 is LED
 int i = 0;
 
 // Servo mechanical offsets
@@ -11,6 +11,10 @@ const byte SERVO0_OFFSET = (7);
 const byte SERVO1_OFFSET = (4);
 const byte SERVO2_OFFSET = (6);
 const byte SERVO3_OFFSET = (-5);
+
+#define MAX_THROTTLE (2000) //(1864)
+#define MIN_THROTTLE (1064)
+#define ZERO_THROTTLE (0)
 
 // twist limits
 const byte SERVO_TWIST_ANGLE_LIMIT = (20);
@@ -23,9 +27,9 @@ Servo ESC; // D1 pin D12
 
 void steer_setup()
 {
-  randomSeed(analogRead(D0));
+  randomSeed(analogRead(A0));
 
-  ESC.attach(D12);
+  ESC.attach(D0);
   ESC.write(90);
 
   for(i=0;i<4;i++)
@@ -87,6 +91,49 @@ void steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
     }
     //ESC.write(angle);
   }
+
+
+  int escval = 0;
+  static bool ESC_armed = false;
+  if(2 == msetpts->hat)
+  {
+    escval = MIN_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = true;
+    //Serial.printf("%d\n", msetpts->hat);
+  }
+
+  if(4 == msetpts->hat&& false == ESC_armed)
+  {
+    escval = MAX_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+    //Serial.printf("%d\n", msetpts->hat);
+  }
+
+  if(6 == msetpts->hat)
+  {
+    escval = ZERO_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+    //Serial.printf("%d\n", msetpts->hat);
+  }
+
+  if ( (true == ESC_armed) )
+  {
+    escval = map(msetpts->slider
+    , 0, 255
+    , MIN_THROTTLE, MAX_THROTTLE);
+
+    if(0==escval)
+    {
+      ESC_armed = false;
+    }
+
+      ESC.writeMicroseconds(escval);
+  }
+
+
 
   //if(angle>=135)
   //angle = 0;
