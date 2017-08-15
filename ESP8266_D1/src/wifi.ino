@@ -22,6 +22,8 @@ void wifi_setup()
   }
   Serial.println(" connected");
 
+  wifi_set_sleep_type(NONE_SLEEP_T);//LIGHT_SLEEP_T);
+
   Udp.begin(localUdpPort);
   Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 

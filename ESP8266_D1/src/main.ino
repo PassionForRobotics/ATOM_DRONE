@@ -56,7 +56,7 @@ void setup()
   #endif // ENABLE_STEER
 }
 
-uint32_t lastLoopTime =0 , lastPrintTime = 0;
+uint32_t lastWIFITime = 0, lastLoopTime =0 , lastPrintTime = 0;
 
 sMOTIONSETPOINTS_t msetpts;
 
@@ -91,11 +91,20 @@ void loop()
 
     mpu_filter(&mpudata, &sdata);
 
-    #if defined(ENABLE_WIFI)
+    if(system_get_time()-lastWIFITime >=(10*1000))
+    {
+      lastWIFITime = system_get_time();;
 
-    data_received = wifi_loop(&mpudata, &msetpts);
+      #if defined(ENABLE_WIFI)
 
-    #endif // ENABLE_WIFI
+      data_received = wifi_loop(&mpudata, &msetpts);
+
+      #endif // ENABLE_WIFI
+    }
+    else
+    {
+      data_received = false;
+    }
 
     if(system_get_time()-lastPrintTime >=(100*1000))
     {
@@ -133,7 +142,8 @@ void loop()
 
     if(true == data_received)
     {
-      steer_loop(&mpudata, &msetpts);
+      if( (msetpts.x != 0) && (msetpts.y != 0) )
+        steer_loop(&mpudata, &msetpts);
     }
     #endif  // ENABLE_STEER
 

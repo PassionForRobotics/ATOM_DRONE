@@ -232,7 +232,7 @@ var myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);; // whet
 
 function udpDroppedTimedOut()
 {
-  console.log("UDP PACKET DROPPED.");
+  console.log(getDateTime()+" UDP PACKET DROPPED.");
   DOPRINT = 1;
   send();
 
@@ -268,7 +268,7 @@ function send()
     if (err) throw err;
   });
 
-  myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);
+  myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 1000);
 }
 
 
