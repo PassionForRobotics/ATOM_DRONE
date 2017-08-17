@@ -129,4 +129,16 @@ typedef struct sMOTIONSETPOINTS_t
 
 #define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
 
+
+typedef struct PID_Tune_Params_t
+{
+  //Define Variables we'll be connecting to
+  double Setpoint, Input, Output;
+
+  //Specify the links and initial tuning parameters
+  double Kp, Ki, Kd;
+
+}PID_Tune_Params_t;
+//typedef PID_Tune_Params_t PID_Tune_Params_t;
+
 #endif // DATA_H

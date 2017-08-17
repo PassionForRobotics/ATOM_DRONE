@@ -151,7 +151,9 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
   MPU.timestamp = system_get_time()/1000;
 
   GyroVec  = Vector(MPU.gX, MPU.gY, MPU.gZ);	// move gyro data to vector structure
-  Accel_Body = Vector(MPU.aX, MPU.aY, MPU.aZ);	// move accel data to vector structure
+  Accel_Body = Vector(MPU.aX, MPU.aY, -MPU.aZ);	// move accel data to vector structure
+  // Manipulated z as -z as sensor placement seemed inverted to me
+  // It seems there will be edge cases on border angles
 
   Accel_World = Rotate(AttitudeEstimateQuat, Accel_Body); // rotate accel from body frame to world frame
 
@@ -167,6 +169,12 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
 
   Vec3 YPR = YawPitchRoll(AttitudeEstimateQuat);
 
+  // Manipulate P
+  //YPR.z = map(YPR.z, -180, 180, 0, 360);
+
+  // Always manupulate if mechanically demands
+  // To keep human interpretation simple
+  // i.e. in place of -180 to 180 start, change it to 0 to 0 start
   _mpudata->timestamp = MPU.timestamp;
   _mpudata->AcX = _DEGREES(-YPR.y) ; // not z
   _mpudata->AcY = _DEGREES(-YPR.z) ;
@@ -177,6 +185,11 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
   _mpudata->GyZ = _DEGREES(GyroVec.z);
 
   lastmpudata.timestamp = _mpudata->timestamp;
+
+
+  // Manipulate
+  //_mpudata->AcY = map(_mpudata->AcY, -180, 180, 0, 360);
+
 
   return YPR;
   //lastmpudata = *_mpudata;

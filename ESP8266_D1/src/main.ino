@@ -11,12 +11,18 @@ extern "C" {
 }
 #endif
 
+
+
 #include "data.h"
 #include "config.h"
+
+
 
 #define ENABLE_WIFI
 #define ENABLE_STEER
 #define ENABLE_MPU
+
+
 
 
 void setup()
@@ -44,6 +50,7 @@ void setup()
   setup_OTA();
 
   #endif //ENABLE_WIFI
+
 
 
   // ENABLE_STEER
@@ -95,6 +102,9 @@ void loop()
     {
       lastWIFITime = system_get_time();;
 
+      // ENABLE_WIFI
+      //
+
       #if defined(ENABLE_WIFI)
 
       data_received = wifi_loop(&mpudata, &msetpts);
@@ -106,23 +116,33 @@ void loop()
       data_received = false;
     }
 
-    if(system_get_time()-lastPrintTime >=(100*1000))
+    #if defined(ENABLE_STEER)
+
+    //if(true == data_received)
+    //{
+    //  if( (msetpts.x != 0) && (msetpts.y != 0) )
+        PID_Tune_Params_t pplr = steer_loop(&mpudata, &msetpts);
+    //}
+
+    #endif  // ENABLE_STEER
+
+
+    if(system_get_time()-lastPrintTime >=(500*1000))
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
       lastPrintTime = system_get_time();
 
-      //Serial.print("  Yaw:");   Serial.print(_DEGREES(-YPR.x), 2);
-      //Serial.print("  Pitch:"); Serial.print(_DEGREES(-YPR.y), 2);
-      //Serial.print("  Roll:");Serial.println(_DEGREES(-YPR.z), 2);
-      //erial.print("RAW | "); Serial.printf(" dt %d | ", (int)(dt*1000)); printMPU(&rawmpudata);
-      //int dt = LOOP_TIME;
-      Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
-      //Serial.print(msetpts.x);Serial.print(" ");Serial.print(msetpts.y);print(" | ");
-      //Serial.print(mpudata.AcX);Serial.print(" ");Serial.print(mpudata.AcY);Serial.print(" ");Serial.print(mpudata.AcZ);
-      Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
-      //printMPU(&mpudata);
-      //Serial.printf("%d,%d,%d,%d,%d,%d\n",mpudata.AcX, sdata.X, mpudata.AcY, sdata.Y, mpudata.AcZ, sdata.Z );
+
+      //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
+      //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
+
+      Serial.print("PID | S:");
+      Serial.print(pplr.Setpoint);
+      Serial.print(" I:");
+      Serial.print(pplr.Input);
+      Serial.print(" O:");
+      Serial.println(pplr.Output);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);
@@ -135,17 +155,6 @@ void loop()
 
     #endif // ENABLE_MPU
 
-    // ENABLE_WIFI
-    //
-
-    #if defined(ENABLE_STEER)
-
-    if(true == data_received)
-    {
-      if( (msetpts.x != 0) && (msetpts.y != 0) )
-        steer_loop(&mpudata, &msetpts);
-    }
-    #endif  // ENABLE_STEER
 
 
     //delay(250);

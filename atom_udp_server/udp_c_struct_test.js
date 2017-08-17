@@ -5,6 +5,7 @@ var REMOTE_IP = '192.168.1.9'; //'192.168.43.25';
 
 var MY_FIXED_PORT = 20000;
 
+var UDP_PACKET_TIMEOUT  = 250;
 
 
 // typedef struct sMPURATA_t
@@ -228,7 +229,9 @@ server.on('message', function (message, remote) {
 const MESSAGE = new Buffer('02fffe00020000000f00000002ff0c010000000000000000000003', 'hex');
 
 var DOPRINT = 0;
-var myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 3000);; // whether UDP packet dropped
+var myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, UDP_PACKET_TIMEOUT);; // whether UDP packet dropped
+
+clearTimeout(myWatchDog);
 
 function udpDroppedTimedOut()
 {
@@ -244,7 +247,7 @@ var _mspts_msTime = getMillis(mspts_msTime);;
 
 function send()
 {
-  clearTimeout(myWatchDog);
+  //clearTimeout(myWatchDog);
 
   var _mspts_msTime = getMillis(mspts_msTime);//[1]/1000000
   mspts_dTime = _mspts_msTime[0] * 1000 + _mspts_msTime[1] / 1000000;
@@ -268,7 +271,8 @@ function send()
     if (err) throw err;
   });
 
-  myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, 1000);
+  clearTimeout(myWatchDog);
+  myWatchDog = setTimeout(function(){ udpDroppedTimedOut(); }, UDP_PACKET_TIMEOUT);
 }
 
 
