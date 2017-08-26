@@ -141,4 +141,15 @@ typedef struct PID_Tune_Params_t
 }PID_Tune_Params_t;
 //typedef PID_Tune_Params_t PID_Tune_Params_t;
 
+struct all_data
+{
+  int yaw;
+  int pitch;
+  int roll;
+  sMPUDATA_t mpuRAW;
+  int pingheight;
+  PID_Tune_Params_t pplr;
+  PID_Tune_Params_t ppfb;
+}all_data;
+
 #endif // DATA_H
