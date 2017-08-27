@@ -1,7 +1,7 @@
 var _ = require('c-struct');
 
 var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.1.9'; //'192.168.43.25';
+var REMOTE_IP = '192.168.1.5'; //'192.168.43.25';
 
 var MY_FIXED_PORT = 20000;
 

@@ -29,7 +29,7 @@ void wifi_setup()
 
 }
 
-boolean wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
+boolean wifi_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
 {
   boolean packet_received = false;
   int packetSize = Udp.parsePacket();
@@ -64,7 +64,8 @@ boolean wifi_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 
     // send back a reply, to the IP address and port we got the packet from
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.write((byte*)(mpudata), SIZE_OF_MPU_DATA);
+    //Udp.write((byte*)(mpudata), SIZE_OF_MPU_DATA);
+    Udp.write((byte*)(all_data), SIZE_OF_MPU_DATA);
     Udp.endPacket();
   }
   return packet_received;

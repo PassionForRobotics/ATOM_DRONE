@@ -3,6 +3,7 @@
 #include "data.h"
 
 #include <PID_v1.h>
+
 PID_Tune_Params_t pplr =
 {
   90.0, 90.0, 90.0,
@@ -11,25 +12,41 @@ PID_Tune_Params_t pplr =
 
 PID PIDlr(&pplr.Input, &pplr.Output, &pplr.Setpoint, pplr.Kp, pplr.Ki, pplr.Kd, DIRECT);
 
+PID_Tune_Params_t ppfb =
+{
+  90.0, 90.0, 90.0,
+  200.0, 30.0, 10.0
+}; // pid_params_up_down
+
+PID PIDfb(&ppfb.Input, &ppfb.Output, &ppfb.Setpoint, ppfb.Kp, ppfb.Ki, ppfb.Kd, DIRECT);
+
+PID_Tune_Params_t ppud =
+{
+  90.0, 90.0, 90.0,
+  200.0, 30.0, 10.0
+}; // pid_params_up_down
+
+PID PIDud(&ppud.Input, &ppud.Output, &ppud.Setpoint, ppud.Kp, ppud.Ki, ppud.Kd, DIRECT);
+
 // AutoPID Tune
 #include <PID_AutoTune_v0.h>
 
-byte ATuneModeRemember=2;
-//double input=80, output=50, setpoint=180;
-//double kp=2,ki=0.5,kd=2;
+PID_AutoTune_Params_t palr =
+{
+  2,
+  1.5, 100,
+  5,
+  50, 1, 100,
+  20,
+  false,
+  0,0,
+  //set to false to connect to the real worl
+  true,
+  0
+};
 
-double kpmodel=1.5, taup=100, theta[50];
-double outputStart=5;
-double aTuneStep=50, aTuneNoise=1, aTuneStartValue=100;
-unsigned int aTuneLookBack=20;
+PID_ATune PID_ATune_LR(&pplr.Input, &pplr.Output);
 
-boolean tuning = false;
-unsigned long  modelTime, serialTime;
-
-PID_ATune aTune(&pplr.Input, &pplr.Output);
-
-//set to false to connect to the real world
-boolean useSimulation = true;
 
 ///
 ///
@@ -88,27 +105,27 @@ void steer_setup()
   servo[3].write(y1);
 
 
-  if(useSimulation)
+  if(palr.useSimulation)
   {
     for(byte i=0;i<50;i++)
     {
-      theta[i]=outputStart;
+      palr.theta[i]=palr.outputStart;
     }
-    modelTime = 0;
+    palr.modelTime = 0;
   }
   //Setup the pid
   //myPID.SetMode(AUTOMATIC);
   PIDlr.SetOutputLimits(-45+90, 45+90); // Offsets are not taken into account for now
   PIDlr.SetMode(AUTOMATIC);
 
-  if(tuning)
+  if(palr.tuning)
   {
-    tuning=false;
+    palr.tuning=false;
     changeAutoTune();
-    tuning=true;
+    palr.tuning=true;
   }
 
-  serialTime = 0;
+  palr.serialTime = 0;
   //Serial.begin(9600);
 
 
@@ -118,7 +135,7 @@ void steer_setup()
 byte angle = 35;
 uint32_t lastSteerLoopTime = 0;
 
-PID_Tune_Params_t steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
+void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
 {
 
 
@@ -158,129 +175,134 @@ PID_Tune_Params_t steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 
   unsigned long now = millis();
 
-  if(!useSimulation)
+  if(!palr.useSimulation)
   { //pull the input in from the real world
-    pplr.Input = mpudata->AcY+90.0; // degrees //analogRead(0);
+    pplr.Input = all_data->mpuData.AcY+90.0; // degrees //analogRead(0);
   }
 
-  if(tuning)
+  if(palr.tuning)
   {
-    byte val = (aTune.Runtime());
+    byte val = (PID_ATune_LR.Runtime());
     if (val!=0)
     {
-      tuning = false;
+      palr.tuning = false;
     }
-    if(!tuning)
+    if(!palr.tuning)
     { //we're done, set the tuning parameters
-      pplr.Kp = aTune.GetKp();
-      pplr.Ki = aTune.GetKp();
-      pplr.Kd = aTune.GetKd();
-      PIDlr.SetTunings(pplr.Kp,pplr.Ki,pplr.Kd);
-      AutoTuneHelper(false);
-    }
+    pplr.Kp = PIDlr.GetKp();
+    pplr.Ki = PIDlr.GetKp();
+    pplr.Kd = PIDlr.GetKd();
+    PIDlr.SetTunings(pplr.Kp,pplr.Ki,pplr.Kd);
+    AutoTuneHelper(false);
   }
-  else
-  {
-    // pplr.Setpoint = x1-servo_offsets[2];
-    // pplr.Input = mpudata->AcY+90.0; // degree
-    // PIDlr.Compute();
-    // x1 = pplr.Output+servo_offsets[2];
-  }
+}
+else
+{
+  // pplr.Setpoint = x1-servo_offsets[2];
+  // pplr.Input = mpudata->AcY+90.0; // degree
+  // PIDlr.Compute();
+  // x1 = pplr.Output+servo_offsets[2];
+}
 
-  if(useSimulation)
+if(palr.useSimulation)
+{
+  palr.theta[30]=pplr.Output;
+  if(now>=palr.modelTime)
   {
-    theta[30]=pplr.Output;
-    if(now>=modelTime)
+    palr.modelTime +=100;
+    DoModel();
+  }
+}
+else
+{
+  //analogWrite(0,output);
+}
+
+//send-receive with processing if it's time
+if(millis()>palr.serialTime)
+{
+  SerialReceive();
+  SerialSend();
+  palr.serialTime+=500;
+}
+
+if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
+{
+  lastSteerLoopTime = system_get_time();
+
+
+  //if(true == data_received)
+  {
+    if( (msetpts->x != 0) && (msetpts->y != 0) )
+    //for(i=0;i<4;i++)
     {
-      modelTime +=100;
-      DoModel();
+      //Serial.printf("rnd %d\n", angle);
+      servo[0].write(x);
+
+      servo[1].write(y);
+
+      servo[2].write(x1);
+
+      servo[3].write(y1);
     }
-  }
-  else
-  {
-     //analogWrite(0,output);
+    //ESC.write(angle);
   }
 
-  //send-receive with processing if it's time
-  if(millis()>serialTime)
+
+  int escval = 0;
+  static bool ESC_armed = false;
+  if(2 == msetpts->hat)
   {
-    SerialReceive();
-    SerialSend();
-    serialTime+=500;
+    escval = MIN_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = true;
+    //Serial.printf("%d\n", msetpts->hat);
   }
 
-  if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
+  if(4 == msetpts->hat&& false == ESC_armed)
   {
-    lastSteerLoopTime = system_get_time();
+    escval = MAX_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+    //Serial.printf("%d\n", msetpts->hat);
+  }
 
+  if(6 == msetpts->hat)
+  {
+    escval = ZERO_THROTTLE;
+    ESC.writeMicroseconds(escval);
+    ESC_armed = false;
+    //Serial.printf("%d\n", msetpts->hat);
+  }
 
-    //if(true == data_received)
-    {
-      if( (msetpts->x != 0) && (msetpts->y != 0) )
-      //for(i=0;i<4;i++)
+  if ( (true == ESC_armed) )
+  {
+    escval = map(msetpts->slider
+      , 0, 255
+      , MIN_THROTTLE, MAX_THROTTLE);
+
+      if(0==escval)
       {
-        //Serial.printf("rnd %d\n", angle);
-        servo[0].write(x);
-
-        servo[1].write(y);
-
-        servo[2].write(x1);
-
-        servo[3].write(y1);
-      }
-      //ESC.write(angle);
-    }
-
-
-    int escval = 0;
-    static bool ESC_armed = false;
-    if(2 == msetpts->hat)
-    {
-      escval = MIN_THROTTLE;
-      ESC.writeMicroseconds(escval);
-      ESC_armed = true;
-      //Serial.printf("%d\n", msetpts->hat);
-    }
-
-    if(4 == msetpts->hat&& false == ESC_armed)
-    {
-      escval = MAX_THROTTLE;
-      ESC.writeMicroseconds(escval);
-      ESC_armed = false;
-      //Serial.printf("%d\n", msetpts->hat);
-    }
-
-    if(6 == msetpts->hat)
-    {
-      escval = ZERO_THROTTLE;
-      ESC.writeMicroseconds(escval);
-      ESC_armed = false;
-      //Serial.printf("%d\n", msetpts->hat);
-    }
-
-    if ( (true == ESC_armed) )
-    {
-      escval = map(msetpts->slider
-        , 0, 255
-        , MIN_THROTTLE, MAX_THROTTLE);
-
-        if(0==escval)
-        {
-          ESC_armed = false;
-        }
-
-        ESC.writeMicroseconds(escval);
+        ESC_armed = false;
       }
 
-
-
-      //if(angle>=135)
-      //angle = 0;
-
+      ESC.writeMicroseconds(escval);
     }
 
-    return pplr;
+
+
+    //if(angle>=135)
+    //angle = 0;
+
   }
+
+
+  //all_data->ppfb
+  all_data->pplr = pplr;
+  //all_data->ppud
+
+  //return pplr;
+}
 
 
 
@@ -288,20 +310,20 @@ PID_Tune_Params_t steer_loop(sMPUDATA_t *mpudata, sMOTIONSETPOINTS_t *msetpts)
 //
 void changeAutoTune()
 {
- if(!tuning)
+  if(!palr.tuning)
   {
     //Set the output to the desired starting frequency.
-    pplr.Output=aTuneStartValue;
-    aTune.SetNoiseBand(aTuneNoise);
-    aTune.SetOutputStep(aTuneStep);
-    aTune.SetLookbackSec((int)aTuneLookBack);
+    pplr.Output=palr.aTuneStartValue;
+    PID_ATune_LR.SetNoiseBand(palr.aTuneNoise);
+    PID_ATune_LR.SetOutputStep(palr.aTuneStep);
+    PID_ATune_LR.SetLookbackSec((int)palr.aTuneLookBack);
     AutoTuneHelper(true);
-    tuning = true;
+    palr.tuning = true;
   }
   else
   { //cancel autotune
-    aTune.Cancel();
-    tuning = false;
+    PID_ATune_LR.Cancel();
+    palr.tuning = false;
     AutoTuneHelper(false);
   }
 }
@@ -309,9 +331,9 @@ void changeAutoTune()
 void AutoTuneHelper(boolean start)
 {
   if(start)
-    ATuneModeRemember = PIDlr.GetMode();
+  palr.ATuneModeRemember = PIDlr.GetMode();
   else
-    PIDlr.SetMode(ATuneModeRemember);
+  PIDlr.SetMode(palr.ATuneModeRemember);
 }
 
 
@@ -333,9 +355,9 @@ void SerialReceive()
 {
   if(Serial.available())
   {
-   char b = Serial.read();
-   Serial.flush();
-   if((b=='1' && !tuning) || (b!='1' && tuning))changeAutoTune();
+    char b = Serial.read();
+    Serial.flush();
+    if((b=='1' && !palr.tuning) || (b!='1' && palr.tuning))changeAutoTune();
   }
 }
 
@@ -344,9 +366,9 @@ void DoModel()
   //cycle the dead time
   for(byte i=0;i<49;i++)
   {
-    theta[i] = theta[i+1];
+    palr.theta[i] = palr.theta[i+1];
   }
   //compute the input
-  pplr.Input = (kpmodel / taup) *(theta[0]-outputStart) + pplr.Input*(1-1/taup) + ((float)random(-10,10))/100;
+  pplr.Input = (palr.kpmodel / palr.taup) *(palr.theta[0]-palr.outputStart) + pplr.Input*(1-1/palr.taup) + ((float)random(-10,10))/100;
 
 }

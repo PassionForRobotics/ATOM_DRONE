@@ -29,8 +29,10 @@ void setup()
 {
   delay(3000);
   Serial.begin(115200);
-  Serial.printf("Build at %s %s\n",__DATE__, __TIME__);
-  Serial.printf("size of data %d\n", SIZE_OF_MPU_DATA);
+  Serial.printf("Version %s\n",_VER_);
+  Serial.printf("Build at %s %s\n", __DATE__, __TIME__);
+  Serial.printf("size of mpudata %d\n", SIZE_OF_MPU_DATA);
+  Serial.printf("size of all data %d\n", SIZE_OF_ALL_DATA);
 
   // ENABLE_MPU
   //
@@ -84,9 +86,10 @@ void loop()
 
     sMPUDATA_t mpudata ;
     sSmoothData_t sdata;
+    static debug_data debug_data;
+    sMPUDATA_t rawmpudata;
 
     #if !defined(QUATERNION_BASED_CALC)
-    sMPUDATA_t rawmpudata;
     mpu_loop(&rawmpudata);
     mpudata = rawmpudata;
     // #else
@@ -102,12 +105,23 @@ void loop()
     {
       lastWIFITime = system_get_time();;
 
+      debug_data.tune_type = PID_TUNE_TYPE_NONE;
+      debug_data.timestamp = millis();
+      debug_data.yaw = mpudata.AcZ;
+      debug_data.pitch = mpudata.AcY;
+      debug_data.roll = mpudata.AcX;
+      debug_data.pingheight = ping_loop();
+      debug_data.mpuData = mpudata;
+      debug_data.mpuRAW = rawmpudata;
+      //debug_data.pplr =
+
+
       // ENABLE_WIFI
       //
 
       #if defined(ENABLE_WIFI)
 
-      data_received = wifi_loop(&mpudata, &msetpts);
+      data_received = wifi_loop(&debug_data, &msetpts);
 
       #endif // ENABLE_WIFI
     }
@@ -121,7 +135,7 @@ void loop()
     //if(true == data_received)
     //{
     //  if( (msetpts.x != 0) && (msetpts.y != 0) )
-        PID_Tune_Params_t pplr = steer_loop(&mpudata, &msetpts);
+    steer_loop(&debug_data, &msetpts); // should be sent on next loop over wifi
     //}
 
     #endif  // ENABLE_STEER
@@ -138,11 +152,11 @@ void loop()
       //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
 
       Serial.print("PID | S:");
-      Serial.print(pplr.Setpoint);
+      Serial.print(debug_data.pplr.Setpoint);
       Serial.print(" I:");
-      Serial.print(pplr.Input);
+      Serial.print(debug_data.pplr.Input);
       Serial.print(" O:");
-      Serial.println(pplr.Output);
+      Serial.println(debug_data.pplr.Output);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);

@@ -4,13 +4,16 @@
 
 #include "Arduino.h"
 
+#define STR(x) #x
+#define XSTR(x) STR(x)
+
+#define _VER_ XSTR(VER)
 
 #define LOOP_TIME (400) // 400 uS// ms 126.58228ms
 #define STEER_LOOP_TIME (10000) // 10ms (1000) // 1 ms
 #define QUATERNION_BASED_CALC // euler or quat based
 
 #define _DEGREES(x) (57.29578 * x)
-
 
 struct sSmoothData_t
 {
@@ -19,24 +22,12 @@ struct sSmoothData_t
 
 struct sMPUDATA_f_t
 {
-
-  //unsigned char stx;
-  //unsigned char header;
-  //unsigned char data_len;
-  //unsigned char data_type;
-  //unsigned char res3;
   uint32_t timestamp;
   float AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 };
 
 struct sMPUDATA_t
 {
-
-  //unsigned char stx;
-  //unsigned char header;
-  //unsigned char data_len;
-  //unsigned char data_type;
-  //unsigned char res3;
   uint32_t timestamp;
   int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
 
@@ -125,7 +116,7 @@ typedef struct sMOTIONSETPOINTS_t
   uint8_t slider;
   uint16_t buttons;
 
-}sMOTIONSETPOINTS_t;
+};
 
 #define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
 
@@ -138,18 +129,54 @@ typedef struct PID_Tune_Params_t
   //Specify the links and initial tuning parameters
   double Kp, Ki, Kd;
 
-}PID_Tune_Params_t;
+};
 //typedef PID_Tune_Params_t PID_Tune_Params_t;
 
-struct all_data
+typedef struct PID_AutoTune_Params_t
 {
+  byte ATuneModeRemember;
+
+  double kpmodel, taup;
+  double outputStart;
+  double aTuneStep, aTuneNoise, aTuneStartValue;
+  unsigned int aTuneLookBack;
+
+  boolean tuning;
+  unsigned long  modelTime, serialTime;
+
+  //set to false to connect to the real world
+  boolean useSimulation;
+
+  double theta[50];
+};
+
+enum PID_TUNE_TYPE
+{
+  PID_TUNE_TYPE_NONE = 0,
+  PID_TUNE_TYPE_LEFT_RIGHT,
+  PID_TUNE_TYPE_FORE_BACK,
+  PID_TUNE_TYPE_UP_DOWN,
+  PID_TUNE_TYPE_TUNING_DONE,
+  PID_TUNE_TYPE_MAX = 0xff
+};
+
+typedef struct ALL_DATA
+{
+  PID_TUNE_TYPE tune_type;
+  uint32_t timestamp;
   int yaw;
   int pitch;
   int roll;
   sMPUDATA_t mpuRAW;
+  sMPUDATA_t mpuData;
   int pingheight;
   PID_Tune_Params_t pplr;
-  PID_Tune_Params_t ppfb;
-}all_data;
+  PID_Tune_Params_t ppfb;     //
+  PID_Tune_Params_t ppud; // Yaw and Ping
+};
+
+typedef ALL_DATA debug_data;
+
+#define SIZE_OF_ALL_DATA (sizeof(ALL_DATA))
 
 #endif // DATA_H

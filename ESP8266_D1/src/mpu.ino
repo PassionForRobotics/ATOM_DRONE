@@ -84,7 +84,7 @@ void mpu_setup()
 
 }
 
-
+// Please do not modify anything in this fn
 void mpu_loop(sMPUDATA_t *mpudata)
 {
 
@@ -176,9 +176,9 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
   // To keep human interpretation simple
   // i.e. in place of -180 to 180 start, change it to 0 to 0 start
   _mpudata->timestamp = MPU.timestamp;
-  _mpudata->AcX = _DEGREES(-YPR.y) ; // not z
-  _mpudata->AcY = _DEGREES(-YPR.z) ;
-  _mpudata->AcZ = _DEGREES(-YPR.x) ;
+  _mpudata->AcX = _DEGREES(-YPR.y) ; //Pitch // not z
+  _mpudata->AcY = _DEGREES(-YPR.z) ; //Roll
+  _mpudata->AcZ = _DEGREES(-YPR.x) ; //Yaw
   _mpudata->Tmp = MPU.tempRaw;//.temp_C();
   _mpudata->GyX = _DEGREES(GyroVec.x) ;
   _mpudata->GyY = _DEGREES(GyroVec.y) ;
