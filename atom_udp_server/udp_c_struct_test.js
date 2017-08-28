@@ -7,6 +7,10 @@ var MY_FIXED_PORT = 20000;
 
 var UDP_PACKET_TIMEOUT  = 250;
 
+console.log("Please work on common structure\npress CTRL+C");
+//exit();
+while(1);
+
 
 // typedef struct sMPURATA_t
 // {
