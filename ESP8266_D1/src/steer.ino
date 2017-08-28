@@ -20,7 +20,7 @@ PID_Tune_Params_t ppfb =
 
 PID PIDfb(&ppfb.Input, &ppfb.Output, &ppfb.Setpoint, ppfb.Kp, ppfb.Ki, ppfb.Kd, DIRECT);
 
-PID_Tune_Params_t ppud =
+PID_Tune_Params_t ppud = // the initial points needs to be merged with ping data
 {
   90.0, 90.0, 90.0,
   200.0, 30.0, 10.0
@@ -46,6 +46,23 @@ PID_AutoTune_Params_t palr =
 };
 
 PID_ATune PID_ATune_LR(&pplr.Input, &pplr.Output);
+
+
+PID_AutoTune_Params_t pafb =
+{
+  2,
+  1.5, 100,
+  5,
+  50, 1, 100,
+  20,
+  false,
+  0,0,
+  //set to false to connect to the real worl
+  true,
+  0
+};
+
+PID_ATune PID_ATune_FB(&ppfb.Input, &ppfb.Output);
 
 
 ///
@@ -105,30 +122,15 @@ void steer_setup()
   servo[3].write(y1);
 
 
-  if(palr.useSimulation)
-  {
-    for(byte i=0;i<50;i++)
-    {
-      palr.theta[i]=palr.outputStart;
-    }
-    palr.modelTime = 0;
-  }
-  //Setup the pid
-  //myPID.SetMode(AUTOMATIC);
   PIDlr.SetOutputLimits(-45+90, 45+90); // Offsets are not taken into account for now
   PIDlr.SetMode(AUTOMATIC);
 
-  if(palr.tuning)
-  {
-    palr.tuning=false;
-    changeAutoTune();
-    palr.tuning=true;
-  }
+  palr.AutoTunersInit(&pplr, &PID_ATune_LR, &PIDlr);
 
-  palr.serialTime = 0;
-  //Serial.begin(9600);
+  PIDfb.SetOutputLimits(-45+90, 45+90); // Offsets are not taken into account for now
+  PIDfb.SetMode(AUTOMATIC);
 
-
+  pafb.AutoTunersInit(&ppfb, &PID_ATune_FB, &PIDfb);
 
 }
 
@@ -173,58 +175,8 @@ void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
 
   //PID
 
-  unsigned long now = millis();
-
-  if(!palr.useSimulation)
-  { //pull the input in from the real world
-    pplr.Input = all_data->mpuData.AcY+90.0; // degrees //analogRead(0);
-  }
-
-  if(palr.tuning)
-  {
-    byte val = (PID_ATune_LR.Runtime());
-    if (val!=0)
-    {
-      palr.tuning = false;
-    }
-    if(!palr.tuning)
-    { //we're done, set the tuning parameters
-    pplr.Kp = PIDlr.GetKp();
-    pplr.Ki = PIDlr.GetKp();
-    pplr.Kd = PIDlr.GetKd();
-    PIDlr.SetTunings(pplr.Kp,pplr.Ki,pplr.Kd);
-    AutoTuneHelper(false);
-  }
-}
-else
-{
-  // pplr.Setpoint = x1-servo_offsets[2];
-  // pplr.Input = mpudata->AcY+90.0; // degree
-  // PIDlr.Compute();
-  // x1 = pplr.Output+servo_offsets[2];
-}
-
-if(palr.useSimulation)
-{
-  palr.theta[30]=pplr.Output;
-  if(now>=palr.modelTime)
-  {
-    palr.modelTime +=100;
-    DoModel();
-  }
-}
-else
-{
-  //analogWrite(0,output);
-}
-
-//send-receive with processing if it's time
-if(millis()>palr.serialTime)
-{
-  SerialReceive();
-  SerialSend();
-  palr.serialTime+=500;
-}
+  palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
+  pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
 
 if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
 {
@@ -299,43 +251,12 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
 
   //all_data->ppfb
   all_data->pplr = pplr;
+  all_data->ppfb = ppfb;
+  all_data->ppud = ppud;
   //all_data->ppud
 
   //return pplr;
 }
-
-
-
-// AutoPID tune modeling
-//
-void changeAutoTune()
-{
-  if(!palr.tuning)
-  {
-    //Set the output to the desired starting frequency.
-    pplr.Output=palr.aTuneStartValue;
-    PID_ATune_LR.SetNoiseBand(palr.aTuneNoise);
-    PID_ATune_LR.SetOutputStep(palr.aTuneStep);
-    PID_ATune_LR.SetLookbackSec((int)palr.aTuneLookBack);
-    AutoTuneHelper(true);
-    palr.tuning = true;
-  }
-  else
-  { //cancel autotune
-    PID_ATune_LR.Cancel();
-    palr.tuning = false;
-    AutoTuneHelper(false);
-  }
-}
-
-void AutoTuneHelper(boolean start)
-{
-  if(start)
-  palr.ATuneModeRemember = PIDlr.GetMode();
-  else
-  PIDlr.SetMode(palr.ATuneModeRemember);
-}
-
 
 void SerialSend()
 {
@@ -357,18 +278,42 @@ void SerialReceive()
   {
     char b = Serial.read();
     Serial.flush();
-    if((b=='1' && !palr.tuning) || (b!='1' && palr.tuning))changeAutoTune();
-  }
-}
 
-void DoModel()
-{
-  //cycle the dead time
-  for(byte i=0;i<49;i++)
-  {
-    palr.theta[i] = palr.theta[i+1];
-  }
-  //compute the input
-  pplr.Input = (palr.kpmodel / palr.taup) *(palr.theta[0]-palr.outputStart) + pplr.Input*(1-1/palr.taup) + ((float)random(-10,10))/100;
+    b = b - 48; //ascii to int
 
+    switch(b)
+    {
+      case PID_TUNE_TYPE_NONE:
+      {
+        if(palr.tuning)
+          palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+
+        if(pafb.tuning)
+          pafb.changeAutoTune(&ppfb, &PID_ATune_FB, &PIDfb);
+
+          // if ... pafb, paud
+      }break;
+
+      case PID_TUNE_TYPE_LEFT_RIGHT:
+      {
+        //if((b=='1' && !palr.tuning) || (b!='1' && palr.tuning))
+        palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+      }break;
+
+      case PID_TUNE_TYPE_FORE_BACK:
+      {
+        palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+      }break;
+
+      case PID_TUNE_TYPE_UP_DOWN:
+      {
+
+      }break;
+
+      default:
+      {
+        Serial.printf("PID mode : Not implemented\n" );
+      }
+    }
+  }
 }

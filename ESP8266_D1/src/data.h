@@ -4,6 +4,11 @@
 
 #include "Arduino.h"
 
+
+#include <PID_v1.h>
+#include <PID_AutoTune_v0.h>
+
+
 #define STR(x) #x
 #define XSTR(x) STR(x)
 
@@ -103,9 +108,11 @@ struct sMPUDATA_t
   //unsigned char etx;
 };
 
+typedef sMPUDATA_t sMPUDATA_t;
+
 #define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
 
-typedef struct sMOTIONSETPOINTS_t
+struct sMOTIONSETPOINTS_t
 {
   uint32_t timestamp;
   uint16_t x;
@@ -118,10 +125,12 @@ typedef struct sMOTIONSETPOINTS_t
 
 };
 
+typedef sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
+
 #define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
 
 
-typedef struct PID_Tune_Params_t
+struct PID_Tune_Params_t
 {
   //Define Variables we'll be connecting to
   double Setpoint, Input, Output;
@@ -130,25 +139,8 @@ typedef struct PID_Tune_Params_t
   double Kp, Ki, Kd;
 
 };
-//typedef PID_Tune_Params_t PID_Tune_Params_t;
 
-typedef struct PID_AutoTune_Params_t
-{
-  byte ATuneModeRemember;
-
-  double kpmodel, taup;
-  double outputStart;
-  double aTuneStep, aTuneNoise, aTuneStartValue;
-  unsigned int aTuneLookBack;
-
-  boolean tuning;
-  unsigned long  modelTime, serialTime;
-
-  //set to false to connect to the real world
-  boolean useSimulation;
-
-  double theta[50];
-};
+typedef PID_Tune_Params_t PID_Tune_Params_t;
 
 enum PID_TUNE_TYPE
 {
@@ -160,7 +152,9 @@ enum PID_TUNE_TYPE
   PID_TUNE_TYPE_MAX = 0xff
 };
 
-typedef struct ALL_DATA
+typedef PID_TUNE_TYPE PID_TUNE_TYPE;
+
+struct ALL_DATA
 {
   PID_TUNE_TYPE tune_type;
   uint32_t timestamp;
@@ -178,5 +172,153 @@ typedef struct ALL_DATA
 typedef ALL_DATA debug_data;
 
 #define SIZE_OF_ALL_DATA (sizeof(ALL_DATA))
+
+
+struct PID_AutoTune_Params_t
+{
+  byte ATuneModeRemember;
+
+  double kpmodel, taup;
+  double outputStart;
+  double aTuneStep, aTuneNoise, aTuneStartValue;
+  unsigned int aTuneLookBack;
+
+  boolean tuning;
+  unsigned long  modelTime, serialTime;
+
+  //set to false to connect to the real world
+  boolean useSimulation;
+
+  double theta[50];
+
+
+  void AutoTunersInit(PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
+  {
+    if(useSimulation)
+    {
+      for(byte i=0;i<50;i++)
+      {
+        theta[i]=outputStart;
+      }
+      modelTime = 0;
+    }
+    //Setup the pid
+    //myPID.SetMode(AUTOMATIC);
+
+
+    if(tuning)
+    {
+      tuning=false;
+      changeAutoTune(pidparams, PID_ATune, PID);
+      tuning=true;
+    }
+
+    serialTime = 0;
+
+  }
+
+  void AutoTuneHelper(boolean start, PID *pid)
+  {
+    if(start)
+    ATuneModeRemember = pid->GetMode();
+    else
+    pid->SetMode(ATuneModeRemember);
+  }
+
+  void DoModel(PID_Tune_Params_t *pidparams)
+  {
+    //cycle the dead time
+    for(byte i=0;i<49;i++)
+    {
+      theta[i] = theta[i+1];
+    }
+    //compute the input
+    pidparams->Input = (kpmodel / taup) *(theta[0] - outputStart) + pidparams->Input*(1-1/taup) + ((float)random(-10,10))/100;
+
+  }
+
+  // AutoPID tune modeling
+  //
+  void changeAutoTune(PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
+  {
+    if(!tuning)
+    {
+      //Set the output to the desired starting frequency.
+      pidparams->Output=aTuneStartValue;
+      PID_ATune->SetNoiseBand(aTuneNoise);
+      PID_ATune->SetOutputStep(aTuneStep);
+      PID_ATune->SetLookbackSec((int)aTuneLookBack);
+      AutoTuneHelper(true, PID);
+      tuning = true;
+    }
+    else
+    { //cancel autotune
+      PID_ATune->Cancel();
+      tuning = false;
+      AutoTuneHelper(false, PID);
+    }
+  }
+
+  void pid_loop(debug_data * all_data, PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
+  {
+    //PID
+
+    unsigned long now = millis();
+
+    if(!useSimulation)
+    { //pull the input in from the real world
+      pidparams->Input = all_data->mpuData.AcY+90.0; // degrees //analogRead(0);
+    }
+
+    if(tuning)
+    {
+      byte val = (PID_ATune->Runtime());
+      if (val!=0)
+      {
+        tuning = false;
+      }
+      if(!tuning)
+      { //we're done, set the tuning parameters
+        pidparams->Kp = PID_ATune->GetKp();
+        pidparams->Ki = PID_ATune->GetKp();
+        pidparams->Kd = PID_ATune->GetKd();
+        PID->SetTunings(pidparams->Kp,pidparams->Ki,pidparams->Kd);
+        AutoTuneHelper(true, PID);//AutoTuneHelper(false);
+      }
+    }
+    else
+    {
+      // pplr.Setpoint = x1-servo_offsets[2];
+      // pplr.Input = mpudata->AcY+90.0; // degree
+      // PIDlr.Compute();
+      // x1 = pplr.Output+servo_offsets[2];
+    }
+
+    if(useSimulation)
+    {
+      theta[30]=pidparams->Output;
+      if(now>=modelTime)
+      {
+        modelTime +=100;
+        DoModel(pidparams);
+      }
+    }
+    else
+    {
+      //analogWrite(0,output);
+    }
+
+    //send-receive with processing if it's time
+    if(millis()>serialTime)
+    {
+      //SerialReceive();
+      //SerialSend();
+      serialTime+=500;
+    }
+  }
+
+};
+
+typedef PID_AutoTune_Params_t PID_AutoTune_Params_t;
 
 #endif // DATA_H
