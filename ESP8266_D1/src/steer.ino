@@ -178,6 +178,13 @@ void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
   palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
   pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
 
+  // Use
+  //all_data->pplr.Output
+  //all_data->ppfb.Output
+  
+
+
+
 if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
 {
   lastSteerLoopTime = system_get_time();

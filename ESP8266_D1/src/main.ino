@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "MPU6050.h"
-#include "NewPingESP8266.h"
+#include "NewPing.h"
 #include "Servo.h"
 
 #include <Math3D.h>
