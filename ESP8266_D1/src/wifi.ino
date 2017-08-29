@@ -8,7 +8,12 @@
 WiFiUDP Udp;
 
 unsigned int localUdpPort = 10000;
-char incomingPacket[255] = {0};
+char incomingPacket[SIZE_OF_ALL_DATA] = {0};
+
+// #include <pb_arduino.h>
+// #include <pb_encode.h>
+//
+// pb_ostream_s pb_out = as_pb_ostream(Udp);
 
 void wifi_setup()
 {
@@ -64,8 +69,10 @@ boolean wifi_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
 
     // send back a reply, to the IP address and port we got the packet from
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+    //pb_encode(&pb_out,
+    //pb_print_write(&pb_out,(all_data), SIZE_OF_ALL_DATA);
     //Udp.write((byte*)(mpudata), SIZE_OF_MPU_DATA);
-    Udp.write((byte*)(all_data), SIZE_OF_MPU_DATA);
+    //Udp.write((byte*)(all_data), SIZE_OF_MPU_DATA);
     Udp.endPacket();
   }
   return packet_received;
