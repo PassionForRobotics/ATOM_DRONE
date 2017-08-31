@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/listener.dir/src/listener.cpp.o"
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom1/devel/lib/beginner_tutorials/listener.pdb"
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom1/devel/lib/beginner_tutorials/listener"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/lib/beginner_tutorials/listener.pdb"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/lib/beginner_tutorials/listener"
 )
 
 # Per-language clean rules from dependency scanning.

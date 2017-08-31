@@ -1,0 +1,8 @@
+prefix=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/install
+
+Name: atom_esp_listener
+Description: Description of atom_esp_listener
+Version: 0.0.1
+Cflags: 
+Libs: -L/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/install/lib 
+Requires: 
