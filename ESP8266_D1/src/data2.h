@@ -106,6 +106,7 @@ struct sMOTIONSETPOINTS_t
 
 struct PID_Tune_Params_t
 {
+  uint32_t timestamp;
   //Define Variables we'll be connecting to
   double Setpoint, Input, Output;
 
@@ -128,12 +129,12 @@ struct ALL_DATA
 {
   PID_TUNE_TYPE tune_type;
   uint32_t timestamp;
-  int yaw;
-  int pitch;
-  int roll;
+  float yaw;
+  float pitch;
+  float roll;
   sMPUDATA_t mpuRAW;
   sMPUDATA_t mpuData;
-  int pingheight;
+  float pingheight;
   PID_Tune_Params_t pplr;
   PID_Tune_Params_t ppfb;     //
   PID_Tune_Params_t ppud; // Yaw and Ping

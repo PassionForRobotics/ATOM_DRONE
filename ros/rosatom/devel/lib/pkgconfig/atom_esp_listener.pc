@@ -3,6 +3,6 @@ prefix=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel
 Name: atom_esp_listener
 Description: Description of atom_esp_listener
 Version: 0.0.1
-Cflags: 
+Cflags: -I/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/include
 Libs: -L/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/lib 
-Requires: 
+Requires: roscpp rospy std_msgs message_runtime
