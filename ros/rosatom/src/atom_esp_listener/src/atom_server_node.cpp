@@ -13,6 +13,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "/home/rahuldeo/ATOM/ATOM_DRONE/ESP8266_D1/src/data2.h"
+debug_data data;
+
 // TODO: Anything to socket proper close
 // It is not working ???
 // May be ROS is using it??
@@ -20,6 +23,57 @@ void my_handler(int s){
            printf("Caught signal %d\n",s);
            exit(1); 
 
+}
+
+void printdata(debug_data *_data)
+{  
+  ROS_INFO("d.mD.ax %d", _data->mpuData.AcX);
+  ROS_INFO("d.mD.ay %d", _data->mpuData.AcY);
+  ROS_INFO("d.mD.az %d", _data->mpuData.AcZ);
+  ROS_INFO("d.mD.ts %d", _data->mpuData.timestamp);
+  ROS_INFO("d.mD.Tmp %d", _data->mpuData.Tmp);
+  ROS_INFO("d.mD.gx %d", _data->mpuData.GyX);
+  ROS_INFO("d.mD.gy %d", _data->mpuData.GyY);
+  ROS_INFO("d.mD.gz %d", _data->mpuData.GyZ);
+
+  ROS_INFO("d.mR.ax %d", _data->mpuRAW.AcX);
+  ROS_INFO("d.mR.ay %d", _data->mpuRAW.AcY);
+  ROS_INFO("d.mR.az %d", _data->mpuRAW.AcZ);
+  ROS_INFO("d.mR.ts %d", _data->mpuRAW.timestamp);
+  ROS_INFO("d.mR.Tmp %d", _data->mpuRAW.Tmp);
+  ROS_INFO("d.mR.gx %d", _data->mpuRAW.GyX);
+  ROS_INFO("d.mR.gy %d", _data->mpuRAW.GyY);
+  ROS_INFO("d.mR.gz %d", _data->mpuRAW.GyZ);
+
+  ROS_INFO("d.pgh %d", _data->pingheight);
+ 
+  ROS_INFO("d.pidfb.I %f", _data->ppfb.Input);
+  ROS_INFO("d.pidfb.Kd %f", _data->ppfb.Kd);
+  ROS_INFO("d.pidfb.Ki %f", _data->ppfb.Ki);
+  ROS_INFO("d.pidfb.Kp %f", _data->ppfb.Kp);
+  ROS_INFO("d.pidfb.O %f", _data->ppfb.Output);
+  ROS_INFO("d.pidfb.S %f", _data->ppfb.Setpoint);
+
+  ROS_INFO("d.pidlr.I %f", _data->pplr.Input);
+  ROS_INFO("d.pidlr.Kd %f", _data->pplr.Kd);
+  ROS_INFO("d.pidlr.Ki %f", _data->pplr.Ki);
+  ROS_INFO("d.pidlr.Kp %f", _data->pplr.Kp);
+  ROS_INFO("d.pidlr.O %f", _data->pplr.Output);
+  ROS_INFO("d.pidlr.S %f", _data->pplr.Setpoint);
+
+  ROS_INFO("d.pidud.I %f", _data->ppud.Input);
+  ROS_INFO("d.pidud.Kd %f", _data->ppud.Kd);
+  ROS_INFO("d.pidud.Ki %f", _data->ppud.Ki);
+  ROS_INFO("d.pidud.Kp %f", _data->ppud.Kp);
+  ROS_INFO("d.pidud.O %f", _data->ppud.Output);
+  ROS_INFO("d.pidud.S %f", _data->ppud.Setpoint);
+
+  ROS_INFO("d.yaw %d", _data->yaw);
+  ROS_INFO("d.pitch %d", _data->pitch);
+  ROS_INFO("d.roll %d", _data->roll);
+
+  ROS_INFO("d.ts %d", _data->timestamp);
+  ROS_INFO("d.pidtt %d", _data->tune_type);
 }
 
 #define LISTENER 
@@ -40,7 +94,7 @@ int main (int argc, char** argv)
   sigIntHandler.sa_flags = 0;
 
   sigaction(SIGINT, &sigIntHandler, NULL);
-   
+  
   ros::init(argc, argv, "atom_server_node");
   ros::NodeHandle nh;
  
@@ -50,7 +104,10 @@ int main (int argc, char** argv)
   std_msgs::String message;
   std::stringstream ss;
    
-  char buffer[255];
+  char buffer[SIZE_OF_ALL_DATA+1];
+  
+  ROS_INFO("SIZE_OF_ALL_DATA %d", (int)SIZE_OF_ALL_DATA);
+  
   int socket_fd, accepted_socket_fd;
   
   struct sockaddr_in servaddr;
@@ -109,17 +166,21 @@ int main (int argc, char** argv)
     int read_size = 0;
     ROS_INFO_STREAM("loop"); 
    
-    if( (read_size = recv(accepted_socket_fd , buffer , 100 , 0)) > 0 )
+    if( (read_size = recv(accepted_socket_fd , buffer , SIZE_OF_ALL_DATA , 0)) > 0 )
     { 
       ss << buffer;
       message.data = ss.str();
+      
+      memcpy((char*)&data, buffer, SIZE_OF_ALL_DATA);
       ROS_INFO("buff %s", buffer);
+      printdata(&data);
+      
       server_pub.publish(message);
       
       ros::spinOnce();
       
-       ss.str(std::string()); 
-       bzero(buffer,256);
+      ss.str(std::string()); 
+      bzero(buffer,SIZE_OF_ALL_DATA);
      
     }  
     else
