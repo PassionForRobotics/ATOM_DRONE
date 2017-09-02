@@ -11,13 +11,15 @@ const _deserializer = _ros_msg_utils.Deserialize;
 const _arrayDeserializer = _deserializer.Array;
 const _finder = _ros_msg_utils.Find;
 const _getByteLength = _ros_msg_utils.getByteLength;
+let std_msgs = _finder('std_msgs');
 
 //-----------------------------------------------------------
 
-class data {
+class alldata {
   constructor(initObj={}) {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
+      this.H = null;
       this.mpuData_AcX = null;
       this.mpuData_AcY = null;
       this.mpuData_AcZ = null;
@@ -63,6 +65,12 @@ class data {
       this.tune_type = null;
     }
     else {
+      if (initObj.hasOwnProperty('H')) {
+        this.H = initObj.H
+      }
+      else {
+        this.H = new std_msgs.msg.Header();
+      }
       if (initObj.hasOwnProperty('mpuData_AcX')) {
         this.mpuData_AcX = initObj.mpuData_AcX
       }
@@ -325,7 +333,9 @@ class data {
   }
 
   static serialize(obj, buffer, bufferOffset) {
-    // Serializes a message object of type data
+    // Serializes a message object of type alldata
+    // Serialize message field [H]
+    bufferOffset = std_msgs.msg.Header.serialize(obj.H, buffer, bufferOffset);
     // Serialize message field [mpuData_AcX]
     bufferOffset = _serializer.int16(obj.mpuData_AcX, buffer, bufferOffset);
     // Serialize message field [mpuData_AcY]
@@ -416,9 +426,11 @@ class data {
   }
 
   static deserialize(buffer, bufferOffset=[0]) {
-    //deserializes a message object of type data
+    //deserializes a message object of type alldata
     let len;
-    let data = new data(null);
+    let data = new alldata(null);
+    // Deserialize message field [H]
+    data.H = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
     // Deserialize message field [mpuData_AcX]
     data.mpuData_AcX = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [mpuData_AcY]
@@ -509,22 +521,25 @@ class data {
   }
 
   static getMessageSize(object) {
-    return 212;
+    let length = 0;
+    length += std_msgs.msg.Header.getMessageSize(object.H);
+    return length + 212;
   }
 
   static datatype() {
     // Returns string type for a message object
-    return 'atom_esp_listener/data';
+    return 'atom_esp_listener/alldata';
   }
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '468ea019e00a2e85450ca1ffc75e76ac';
+    return '89b11db5299c2f38020d1ab5e96c3b97';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
+    Header H
     int16  mpuData_AcX
     int16  mpuData_AcY
     int16  mpuData_AcZ
@@ -576,6 +591,24 @@ class data {
     uint32  timestamp
     int16  tune_type
     
+    ================================================================================
+    MSG: std_msgs/Header
+    # Standard metadata for higher-level stamped data types.
+    # This is generally used to communicate timestamped data 
+    # in a particular coordinate frame.
+    # 
+    # sequence ID: consecutively increasing ID 
+    uint32 seq
+    #Two-integer timestamp that is expressed as:
+    # * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+    # * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+    # time-handling sugar is provided by the client library
+    time stamp
+    #Frame this data is associated with
+    # 0: no frame
+    # 1: global frame
+    string frame_id
+    
     `;
   }
 
@@ -584,7 +617,14 @@ class data {
     if (typeof msg !== 'object' || msg === null) {
       msg = {};
     }
-    const resolved = new data(null);
+    const resolved = new alldata(null);
+    if (msg.H !== undefined) {
+      resolved.H = std_msgs.msg.Header.Resolve(msg.H)
+    }
+    else {
+      resolved.H = new std_msgs.msg.Header()
+    }
+
     if (msg.mpuData_AcX !== undefined) {
       resolved.mpuData_AcX = msg.mpuData_AcX;
     }
@@ -890,4 +930,4 @@ class data {
     }
 };
 
-module.exports = data;
+module.exports = alldata;

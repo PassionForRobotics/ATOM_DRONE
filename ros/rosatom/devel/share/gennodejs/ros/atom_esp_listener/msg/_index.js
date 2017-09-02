@@ -1,8 +1,8 @@
 
 "use strict";
 
-let data = require('./data.js');
+let alldata = require('./alldata.js');
 
 module.exports = {
-  data: data,
+  alldata: alldata,
 };

@@ -17,9 +17,9 @@ add_custom_target(atom_esp_listener_generate_messages ALL)
 
 
 
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_custom_target(_atom_esp_listener_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "atom_esp_listener" "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "atom_esp_listener" "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" "std_msgs/Header"
 )
 
 #
@@ -29,9 +29,9 @@ add_custom_target(_atom_esp_listener_generate_messages_check_deps_${_filename}
 ### Section generating for lang: gencpp
 ### Generating Messages
 _generate_msg_cpp(atom_esp_listener
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/atom_esp_listener
 )
 
@@ -49,7 +49,7 @@ add_custom_target(atom_esp_listener_generate_messages_cpp
 add_dependencies(atom_esp_listener_generate_messages atom_esp_listener_generate_messages_cpp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_dependencies(atom_esp_listener_generate_messages_cpp _atom_esp_listener_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -62,9 +62,9 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_listener_generate_messages
 ### Section generating for lang: geneus
 ### Generating Messages
 _generate_msg_eus(atom_esp_listener
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/atom_esp_listener
 )
 
@@ -82,7 +82,7 @@ add_custom_target(atom_esp_listener_generate_messages_eus
 add_dependencies(atom_esp_listener_generate_messages atom_esp_listener_generate_messages_eus)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_dependencies(atom_esp_listener_generate_messages_eus _atom_esp_listener_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -95,9 +95,9 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_listener_generate_messages
 ### Section generating for lang: genlisp
 ### Generating Messages
 _generate_msg_lisp(atom_esp_listener
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/atom_esp_listener
 )
 
@@ -115,7 +115,7 @@ add_custom_target(atom_esp_listener_generate_messages_lisp
 add_dependencies(atom_esp_listener_generate_messages atom_esp_listener_generate_messages_lisp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_dependencies(atom_esp_listener_generate_messages_lisp _atom_esp_listener_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -128,9 +128,9 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_listener_generate_messages
 ### Section generating for lang: gennodejs
 ### Generating Messages
 _generate_msg_nodejs(atom_esp_listener
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/atom_esp_listener
 )
 
@@ -148,7 +148,7 @@ add_custom_target(atom_esp_listener_generate_messages_nodejs
 add_dependencies(atom_esp_listener_generate_messages atom_esp_listener_generate_messages_nodejs)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_dependencies(atom_esp_listener_generate_messages_nodejs _atom_esp_listener_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -161,9 +161,9 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_listener_generate_messages
 ### Section generating for lang: genpy
 ### Generating Messages
 _generate_msg_py(atom_esp_listener
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/atom_esp_listener
 )
 
@@ -181,7 +181,7 @@ add_custom_target(atom_esp_listener_generate_messages_py
 add_dependencies(atom_esp_listener_generate_messages atom_esp_listener_generate_messages_py)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg" NAME_WE)
+get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg" NAME_WE)
 add_dependencies(atom_esp_listener_generate_messages_py _atom_esp_listener_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility

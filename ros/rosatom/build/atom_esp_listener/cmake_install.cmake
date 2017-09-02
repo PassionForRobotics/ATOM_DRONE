@@ -33,7 +33,7 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/atom_esp_listener/msg" TYPE FILE FILES "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/atom_esp_listener/msg" TYPE FILE FILES "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")

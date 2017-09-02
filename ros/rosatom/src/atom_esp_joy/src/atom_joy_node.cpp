@@ -198,7 +198,7 @@ int main(int argc, char **argv)
    * buffer up before throwing some away.
    */
 // %Tag(PUBLISHER)%
-  ros::Publisher joydata_pub = n.advertise<atom_esp_joy::joydata>("joydata", 1000);
+  ros::Publisher joydata_pub = n.advertise<atom_esp_joy::joydata>("atom_joydata", 1000);
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
    * a unique string for each message.
    */
 // %Tag(ROS_OK)%
-  int count = 0;
+  int32_t count = 0;
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
@@ -233,7 +233,7 @@ int main(int argc, char **argv)
     LogitechAxes(a[0], &x, &y, &z, &s, &btns); // ctrl+c is not working here ???
     msg.H.stamp = ros::Time::now();
     // msg.H.frame_id = "?"
-    // msg.H.seq = autofilled;
+    msg.H.seq = count;
     msg.X = x;
     msg.Y = y;
     msg.Z = z;
@@ -268,7 +268,8 @@ int main(int argc, char **argv)
 // %EndTag(RATE_SLEEP)%
     ++count;
   }
-
+  
+  ROS_WARN("EXIT");
 
   return 0;
 }

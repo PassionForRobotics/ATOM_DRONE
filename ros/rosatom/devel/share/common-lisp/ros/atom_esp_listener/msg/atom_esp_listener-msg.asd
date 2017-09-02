@@ -2,8 +2,9 @@
 (cl:in-package :asdf)
 
 (defsystem "atom_esp_listener-msg"
-  :depends-on (:roslisp-msg-protocol :roslisp-utils )
+  :depends-on (:roslisp-msg-protocol :roslisp-utils :std_msgs-msg
+)
   :components ((:file "_package")
-    (:file "data" :depends-on ("_package_data"))
-    (:file "_package_data" :depends-on ("_package"))
+    (:file "alldata" :depends-on ("_package_alldata"))
+    (:file "_package_alldata" :depends-on ("_package"))
   ))

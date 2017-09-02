@@ -8,8 +8,8 @@
 #include <arpa/inet.h>
 #include "std_msgs/String.h"
 
-#include <atom_esp_listener/data.h>
-atom_esp_listener::data msg;
+#include <atom_esp_listener/alldata.h>
+atom_esp_listener::alldata msg;
 
 #include "atom_esp_joy/joydata.h"
 atom_esp_joy::joydata joydata;
@@ -64,7 +64,7 @@ void my_handler(int s){
 
 }
 
-void copydata(const debug_data *_data, atom_esp_listener::data *_msg)
+void copydata(const debug_data *_data, atom_esp_listener::alldata *_msg)
 {
   _msg->  mpuData_AcX         = _data->mpuData.AcX;
   _msg->  mpuData_AcY         = _data->mpuData.AcY;
@@ -174,7 +174,7 @@ void printdata(const debug_data *_data)
 #define LISTENER
 using namespace std;
 
-void chatterCallback(const atom_esp_listener::data msg)
+void chatterCallback(const atom_esp_listener::alldata msg)
 {
   //printdata(data);
   //ROS_INFO("I heard: [%s]", msg->data.c_str());
@@ -210,9 +210,9 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "atom_server_node");
   ros::NodeHandle nh;
 
-  ros::Publisher server_pub = nh.advertise<atom_esp_listener::data>("atom_drone_all_data", 1000);
+  ros::Publisher server_pub = nh.advertise<atom_esp_listener::alldata>("atom_alldata", 1000);
   //ros::Subscriber server_sub = nh.subscribe("atom_drone_all_data", 1000, chatterCallback); // test sub
-  ros::Subscriber joy_sub = nh.subscribe("joydata", 10, joyCallback); // test sub
+  ros::Subscriber joy_sub = nh.subscribe("atom_joydata", 10, joyCallback); // test sub
   
 
   std_msgs::String message;
@@ -276,7 +276,8 @@ int main (int argc, char** argv)
     {
       ROS_INFO_STREAM("Connected");
     }
-
+    
+  int32_t count = 0;
   while(ros::ok())
   {
     int read_size = 0;
@@ -287,12 +288,15 @@ int main (int argc, char** argv)
       memcpy((char*)&all_data, buffer, SIZE_OF_ALL_DATA);
       
       copydata(&all_data, &msg);
+      msg.H.stamp = ros::Time::now();
+      // msg.H.frame_id = "?"
+       msg.H.seq = count;
       //ROS_INFO("buff %s", buffer);
       //printdata(&data);
 
       server_pub.publish(msg);
       
-      int n = write(accepted_socket_fd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // Thread safety could be an issue
+      int n = write(accepted_socket_fd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // SEEMS OK: Thread safety could be an issue
       if (n < 0) ROS_ERROR("ERROR writing to socket");
       //setpoints
 
@@ -300,7 +304,8 @@ int main (int argc, char** argv)
 
       //ss.str(std::string());
       bzero(buffer,SIZE_OF_ALL_DATA);
-
+      
+      ++count;
     }
     else
     {
@@ -308,6 +313,8 @@ int main (int argc, char** argv)
     }
 
   }
+  
+  ROS_WARN("EXIT");
 
   return 0;
 }

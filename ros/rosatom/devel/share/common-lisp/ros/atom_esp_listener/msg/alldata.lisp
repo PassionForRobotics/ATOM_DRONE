@@ -4,10 +4,15 @@
 (cl:in-package atom_esp_listener-msg)
 
 
-;//! \htmlinclude data.msg.html
+;//! \htmlinclude alldata.msg.html
 
-(cl:defclass <data> (roslisp-msg-protocol:ros-message)
-  ((mpuData_AcX
+(cl:defclass <alldata> (roslisp-msg-protocol:ros-message)
+  ((H
+    :reader H
+    :initarg :H
+    :type std_msgs-msg:Header
+    :initform (cl:make-instance 'std_msgs-msg:Header))
+   (mpuData_AcX
     :reader mpuData_AcX
     :initarg :mpuData_AcX
     :type cl:fixnum
@@ -224,230 +229,236 @@
     :initform 0))
 )
 
-(cl:defclass data (<data>)
+(cl:defclass alldata (<alldata>)
   ())
 
-(cl:defmethod cl:initialize-instance :after ((m <data>) cl:&rest args)
+(cl:defmethod cl:initialize-instance :after ((m <alldata>) cl:&rest args)
   (cl:declare (cl:ignorable args))
-  (cl:unless (cl:typep m 'data)
-    (roslisp-msg-protocol:msg-deprecation-warning "using old message class name atom_esp_listener-msg:<data> is deprecated: use atom_esp_listener-msg:data instead.")))
+  (cl:unless (cl:typep m 'alldata)
+    (roslisp-msg-protocol:msg-deprecation-warning "using old message class name atom_esp_listener-msg:<alldata> is deprecated: use atom_esp_listener-msg:alldata instead.")))
+
+(cl:ensure-generic-function 'H-val :lambda-list '(m))
+(cl:defmethod H-val ((m <alldata>))
+  (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:H-val is deprecated.  Use atom_esp_listener-msg:H instead.")
+  (H m))
 
 (cl:ensure-generic-function 'mpuData_AcX-val :lambda-list '(m))
-(cl:defmethod mpuData_AcX-val ((m <data>))
+(cl:defmethod mpuData_AcX-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_AcX-val is deprecated.  Use atom_esp_listener-msg:mpuData_AcX instead.")
   (mpuData_AcX m))
 
 (cl:ensure-generic-function 'mpuData_AcY-val :lambda-list '(m))
-(cl:defmethod mpuData_AcY-val ((m <data>))
+(cl:defmethod mpuData_AcY-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_AcY-val is deprecated.  Use atom_esp_listener-msg:mpuData_AcY instead.")
   (mpuData_AcY m))
 
 (cl:ensure-generic-function 'mpuData_AcZ-val :lambda-list '(m))
-(cl:defmethod mpuData_AcZ-val ((m <data>))
+(cl:defmethod mpuData_AcZ-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_AcZ-val is deprecated.  Use atom_esp_listener-msg:mpuData_AcZ instead.")
   (mpuData_AcZ m))
 
 (cl:ensure-generic-function 'mpuData_timestamp-val :lambda-list '(m))
-(cl:defmethod mpuData_timestamp-val ((m <data>))
+(cl:defmethod mpuData_timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_timestamp-val is deprecated.  Use atom_esp_listener-msg:mpuData_timestamp instead.")
   (mpuData_timestamp m))
 
 (cl:ensure-generic-function 'mpuData_Tmp-val :lambda-list '(m))
-(cl:defmethod mpuData_Tmp-val ((m <data>))
+(cl:defmethod mpuData_Tmp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_Tmp-val is deprecated.  Use atom_esp_listener-msg:mpuData_Tmp instead.")
   (mpuData_Tmp m))
 
 (cl:ensure-generic-function 'mpuData_GyX-val :lambda-list '(m))
-(cl:defmethod mpuData_GyX-val ((m <data>))
+(cl:defmethod mpuData_GyX-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_GyX-val is deprecated.  Use atom_esp_listener-msg:mpuData_GyX instead.")
   (mpuData_GyX m))
 
 (cl:ensure-generic-function 'mpuData_GyY-val :lambda-list '(m))
-(cl:defmethod mpuData_GyY-val ((m <data>))
+(cl:defmethod mpuData_GyY-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_GyY-val is deprecated.  Use atom_esp_listener-msg:mpuData_GyY instead.")
   (mpuData_GyY m))
 
 (cl:ensure-generic-function 'mpuData_GyZ-val :lambda-list '(m))
-(cl:defmethod mpuData_GyZ-val ((m <data>))
+(cl:defmethod mpuData_GyZ-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuData_GyZ-val is deprecated.  Use atom_esp_listener-msg:mpuData_GyZ instead.")
   (mpuData_GyZ m))
 
 (cl:ensure-generic-function 'mpuRAW_AcX-val :lambda-list '(m))
-(cl:defmethod mpuRAW_AcX-val ((m <data>))
+(cl:defmethod mpuRAW_AcX-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_AcX-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_AcX instead.")
   (mpuRAW_AcX m))
 
 (cl:ensure-generic-function 'mpuRAW_AcY-val :lambda-list '(m))
-(cl:defmethod mpuRAW_AcY-val ((m <data>))
+(cl:defmethod mpuRAW_AcY-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_AcY-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_AcY instead.")
   (mpuRAW_AcY m))
 
 (cl:ensure-generic-function 'mpuRAW_AcZ-val :lambda-list '(m))
-(cl:defmethod mpuRAW_AcZ-val ((m <data>))
+(cl:defmethod mpuRAW_AcZ-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_AcZ-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_AcZ instead.")
   (mpuRAW_AcZ m))
 
 (cl:ensure-generic-function 'mpuRAW_timestamp-val :lambda-list '(m))
-(cl:defmethod mpuRAW_timestamp-val ((m <data>))
+(cl:defmethod mpuRAW_timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_timestamp-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_timestamp instead.")
   (mpuRAW_timestamp m))
 
 (cl:ensure-generic-function 'mpuRAW_Tmp-val :lambda-list '(m))
-(cl:defmethod mpuRAW_Tmp-val ((m <data>))
+(cl:defmethod mpuRAW_Tmp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_Tmp-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_Tmp instead.")
   (mpuRAW_Tmp m))
 
 (cl:ensure-generic-function 'mpuRAW_GyX-val :lambda-list '(m))
-(cl:defmethod mpuRAW_GyX-val ((m <data>))
+(cl:defmethod mpuRAW_GyX-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_GyX-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_GyX instead.")
   (mpuRAW_GyX m))
 
 (cl:ensure-generic-function 'mpuRAW_GyY-val :lambda-list '(m))
-(cl:defmethod mpuRAW_GyY-val ((m <data>))
+(cl:defmethod mpuRAW_GyY-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_GyY-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_GyY instead.")
   (mpuRAW_GyY m))
 
 (cl:ensure-generic-function 'mpuRAW_GyZ-val :lambda-list '(m))
-(cl:defmethod mpuRAW_GyZ-val ((m <data>))
+(cl:defmethod mpuRAW_GyZ-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:mpuRAW_GyZ-val is deprecated.  Use atom_esp_listener-msg:mpuRAW_GyZ instead.")
   (mpuRAW_GyZ m))
 
 (cl:ensure-generic-function 'pingheight-val :lambda-list '(m))
-(cl:defmethod pingheight-val ((m <data>))
+(cl:defmethod pingheight-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pingheight-val is deprecated.  Use atom_esp_listener-msg:pingheight instead.")
   (pingheight m))
 
 (cl:ensure-generic-function 'ppfb_timestamp-val :lambda-list '(m))
-(cl:defmethod ppfb_timestamp-val ((m <data>))
+(cl:defmethod ppfb_timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_timestamp-val is deprecated.  Use atom_esp_listener-msg:ppfb_timestamp instead.")
   (ppfb_timestamp m))
 
 (cl:ensure-generic-function 'ppfb_Input-val :lambda-list '(m))
-(cl:defmethod ppfb_Input-val ((m <data>))
+(cl:defmethod ppfb_Input-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Input-val is deprecated.  Use atom_esp_listener-msg:ppfb_Input instead.")
   (ppfb_Input m))
 
 (cl:ensure-generic-function 'ppfb_Kd-val :lambda-list '(m))
-(cl:defmethod ppfb_Kd-val ((m <data>))
+(cl:defmethod ppfb_Kd-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Kd-val is deprecated.  Use atom_esp_listener-msg:ppfb_Kd instead.")
   (ppfb_Kd m))
 
 (cl:ensure-generic-function 'ppfb_Ki-val :lambda-list '(m))
-(cl:defmethod ppfb_Ki-val ((m <data>))
+(cl:defmethod ppfb_Ki-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Ki-val is deprecated.  Use atom_esp_listener-msg:ppfb_Ki instead.")
   (ppfb_Ki m))
 
 (cl:ensure-generic-function 'ppfb_Kp-val :lambda-list '(m))
-(cl:defmethod ppfb_Kp-val ((m <data>))
+(cl:defmethod ppfb_Kp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Kp-val is deprecated.  Use atom_esp_listener-msg:ppfb_Kp instead.")
   (ppfb_Kp m))
 
 (cl:ensure-generic-function 'ppfb_Output-val :lambda-list '(m))
-(cl:defmethod ppfb_Output-val ((m <data>))
+(cl:defmethod ppfb_Output-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Output-val is deprecated.  Use atom_esp_listener-msg:ppfb_Output instead.")
   (ppfb_Output m))
 
 (cl:ensure-generic-function 'ppfb_Setpoint-val :lambda-list '(m))
-(cl:defmethod ppfb_Setpoint-val ((m <data>))
+(cl:defmethod ppfb_Setpoint-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppfb_Setpoint-val is deprecated.  Use atom_esp_listener-msg:ppfb_Setpoint instead.")
   (ppfb_Setpoint m))
 
 (cl:ensure-generic-function 'pplr_timestamp-val :lambda-list '(m))
-(cl:defmethod pplr_timestamp-val ((m <data>))
+(cl:defmethod pplr_timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_timestamp-val is deprecated.  Use atom_esp_listener-msg:pplr_timestamp instead.")
   (pplr_timestamp m))
 
 (cl:ensure-generic-function 'pplr_Input-val :lambda-list '(m))
-(cl:defmethod pplr_Input-val ((m <data>))
+(cl:defmethod pplr_Input-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Input-val is deprecated.  Use atom_esp_listener-msg:pplr_Input instead.")
   (pplr_Input m))
 
 (cl:ensure-generic-function 'pplr_Kd-val :lambda-list '(m))
-(cl:defmethod pplr_Kd-val ((m <data>))
+(cl:defmethod pplr_Kd-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Kd-val is deprecated.  Use atom_esp_listener-msg:pplr_Kd instead.")
   (pplr_Kd m))
 
 (cl:ensure-generic-function 'pplr_Ki-val :lambda-list '(m))
-(cl:defmethod pplr_Ki-val ((m <data>))
+(cl:defmethod pplr_Ki-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Ki-val is deprecated.  Use atom_esp_listener-msg:pplr_Ki instead.")
   (pplr_Ki m))
 
 (cl:ensure-generic-function 'pplr_Kp-val :lambda-list '(m))
-(cl:defmethod pplr_Kp-val ((m <data>))
+(cl:defmethod pplr_Kp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Kp-val is deprecated.  Use atom_esp_listener-msg:pplr_Kp instead.")
   (pplr_Kp m))
 
 (cl:ensure-generic-function 'pplr_Output-val :lambda-list '(m))
-(cl:defmethod pplr_Output-val ((m <data>))
+(cl:defmethod pplr_Output-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Output-val is deprecated.  Use atom_esp_listener-msg:pplr_Output instead.")
   (pplr_Output m))
 
 (cl:ensure-generic-function 'pplr_Setpoint-val :lambda-list '(m))
-(cl:defmethod pplr_Setpoint-val ((m <data>))
+(cl:defmethod pplr_Setpoint-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pplr_Setpoint-val is deprecated.  Use atom_esp_listener-msg:pplr_Setpoint instead.")
   (pplr_Setpoint m))
 
 (cl:ensure-generic-function 'ppud_timestamp-val :lambda-list '(m))
-(cl:defmethod ppud_timestamp-val ((m <data>))
+(cl:defmethod ppud_timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_timestamp-val is deprecated.  Use atom_esp_listener-msg:ppud_timestamp instead.")
   (ppud_timestamp m))
 
 (cl:ensure-generic-function 'ppud_Input-val :lambda-list '(m))
-(cl:defmethod ppud_Input-val ((m <data>))
+(cl:defmethod ppud_Input-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Input-val is deprecated.  Use atom_esp_listener-msg:ppud_Input instead.")
   (ppud_Input m))
 
 (cl:ensure-generic-function 'ppud_Kd-val :lambda-list '(m))
-(cl:defmethod ppud_Kd-val ((m <data>))
+(cl:defmethod ppud_Kd-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Kd-val is deprecated.  Use atom_esp_listener-msg:ppud_Kd instead.")
   (ppud_Kd m))
 
 (cl:ensure-generic-function 'ppud_Ki-val :lambda-list '(m))
-(cl:defmethod ppud_Ki-val ((m <data>))
+(cl:defmethod ppud_Ki-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Ki-val is deprecated.  Use atom_esp_listener-msg:ppud_Ki instead.")
   (ppud_Ki m))
 
 (cl:ensure-generic-function 'ppud_Kp-val :lambda-list '(m))
-(cl:defmethod ppud_Kp-val ((m <data>))
+(cl:defmethod ppud_Kp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Kp-val is deprecated.  Use atom_esp_listener-msg:ppud_Kp instead.")
   (ppud_Kp m))
 
 (cl:ensure-generic-function 'ppud_Output-val :lambda-list '(m))
-(cl:defmethod ppud_Output-val ((m <data>))
+(cl:defmethod ppud_Output-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Output-val is deprecated.  Use atom_esp_listener-msg:ppud_Output instead.")
   (ppud_Output m))
 
 (cl:ensure-generic-function 'ppud_Setpoint-val :lambda-list '(m))
-(cl:defmethod ppud_Setpoint-val ((m <data>))
+(cl:defmethod ppud_Setpoint-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:ppud_Setpoint-val is deprecated.  Use atom_esp_listener-msg:ppud_Setpoint instead.")
   (ppud_Setpoint m))
 
 (cl:ensure-generic-function 'yaw-val :lambda-list '(m))
-(cl:defmethod yaw-val ((m <data>))
+(cl:defmethod yaw-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:yaw-val is deprecated.  Use atom_esp_listener-msg:yaw instead.")
   (yaw m))
 
 (cl:ensure-generic-function 'pitch-val :lambda-list '(m))
-(cl:defmethod pitch-val ((m <data>))
+(cl:defmethod pitch-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:pitch-val is deprecated.  Use atom_esp_listener-msg:pitch instead.")
   (pitch m))
 
 (cl:ensure-generic-function 'roll-val :lambda-list '(m))
-(cl:defmethod roll-val ((m <data>))
+(cl:defmethod roll-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:roll-val is deprecated.  Use atom_esp_listener-msg:roll instead.")
   (roll m))
 
 (cl:ensure-generic-function 'timestamp-val :lambda-list '(m))
-(cl:defmethod timestamp-val ((m <data>))
+(cl:defmethod timestamp-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:timestamp-val is deprecated.  Use atom_esp_listener-msg:timestamp instead.")
   (timestamp m))
 
 (cl:ensure-generic-function 'tune_type-val :lambda-list '(m))
-(cl:defmethod tune_type-val ((m <data>))
+(cl:defmethod tune_type-val ((m <alldata>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader atom_esp_listener-msg:tune_type-val is deprecated.  Use atom_esp_listener-msg:tune_type instead.")
   (tune_type m))
-(cl:defmethod roslisp-msg-protocol:serialize ((msg <data>) ostream)
-  "Serializes a message object of type '<data>"
+(cl:defmethod roslisp-msg-protocol:serialize ((msg <alldata>) ostream)
+  "Serializes a message object of type '<alldata>"
+  (roslisp-msg-protocol:serialize (cl:slot-value msg 'H) ostream)
   (cl:let* ((signed (cl:slot-value msg 'mpuData_AcX)) (unsigned (cl:if (cl:< signed 0) (cl:+ signed 65536) signed)))
     (cl:write-byte (cl:ldb (cl:byte 8 0) unsigned) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 8) unsigned) ostream)
@@ -714,8 +725,9 @@
     (cl:write-byte (cl:ldb (cl:byte 8 8) unsigned) ostream)
     )
 )
-(cl:defmethod roslisp-msg-protocol:deserialize ((msg <data>) istream)
-  "Deserializes a message object of type '<data>"
+(cl:defmethod roslisp-msg-protocol:deserialize ((msg <alldata>) istream)
+  "Deserializes a message object of type '<alldata>"
+  (roslisp-msg-protocol:deserialize (cl:slot-value msg 'H) istream)
     (cl:let ((unsigned 0))
       (cl:setf (cl:ldb (cl:byte 8 0) unsigned) (cl:read-byte istream))
       (cl:setf (cl:ldb (cl:byte 8 8) unsigned) (cl:read-byte istream))
@@ -1004,26 +1016,27 @@
       (cl:setf (cl:slot-value msg 'tune_type) (cl:if (cl:< unsigned 32768) unsigned (cl:- unsigned 65536))))
   msg
 )
-(cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql '<data>)))
-  "Returns string type for a message object of type '<data>"
-  "atom_esp_listener/data")
-(cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql 'data)))
-  "Returns string type for a message object of type 'data"
-  "atom_esp_listener/data")
-(cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<data>)))
-  "Returns md5sum for a message object of type '<data>"
-  "468ea019e00a2e85450ca1ffc75e76ac")
-(cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'data)))
-  "Returns md5sum for a message object of type 'data"
-  "468ea019e00a2e85450ca1ffc75e76ac")
-(cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<data>)))
-  "Returns full string definition for message of type '<data>"
-  (cl:format cl:nil "int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%~%"))
-(cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'data)))
-  "Returns full string definition for message of type 'data"
-  (cl:format cl:nil "int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%~%"))
-(cl:defmethod roslisp-msg-protocol:serialization-length ((msg <data>))
+(cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql '<alldata>)))
+  "Returns string type for a message object of type '<alldata>"
+  "atom_esp_listener/alldata")
+(cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql 'alldata)))
+  "Returns string type for a message object of type 'alldata"
+  "atom_esp_listener/alldata")
+(cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<alldata>)))
+  "Returns md5sum for a message object of type '<alldata>"
+  "89b11db5299c2f38020d1ab5e96c3b97")
+(cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'alldata)))
+  "Returns md5sum for a message object of type 'alldata"
+  "89b11db5299c2f38020d1ab5e96c3b97")
+(cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<alldata>)))
+  "Returns full string definition for message of type '<alldata>"
+  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
+(cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'alldata)))
+  "Returns full string definition for message of type 'alldata"
+  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
+(cl:defmethod roslisp-msg-protocol:serialization-length ((msg <alldata>))
   (cl:+ 0
+     (roslisp-msg-protocol:serialization-length (cl:slot-value msg 'H))
      2
      2
      2
@@ -1068,9 +1081,10 @@
      4
      2
 ))
-(cl:defmethod roslisp-msg-protocol:ros-message-to-list ((msg <data>))
+(cl:defmethod roslisp-msg-protocol:ros-message-to-list ((msg <alldata>))
   "Converts a ROS message object to a list"
-  (cl:list 'data
+  (cl:list 'alldata
+    (cl:cons ':H (H msg))
     (cl:cons ':mpuData_AcX (mpuData_AcX msg))
     (cl:cons ':mpuData_AcY (mpuData_AcY msg))
     (cl:cons ':mpuData_AcZ (mpuData_AcZ msg))

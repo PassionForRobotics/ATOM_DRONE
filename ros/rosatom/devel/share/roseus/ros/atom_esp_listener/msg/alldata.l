@@ -1,24 +1,27 @@
 ;; Auto-generated. Do not edit!
 
 
-(when (boundp 'atom_esp_listener::data)
+(when (boundp 'atom_esp_listener::alldata)
   (if (not (find-package "ATOM_ESP_LISTENER"))
     (make-package "ATOM_ESP_LISTENER"))
-  (shadow 'data (find-package "ATOM_ESP_LISTENER")))
-(unless (find-package "ATOM_ESP_LISTENER::DATA")
-  (make-package "ATOM_ESP_LISTENER::DATA"))
+  (shadow 'alldata (find-package "ATOM_ESP_LISTENER")))
+(unless (find-package "ATOM_ESP_LISTENER::ALLDATA")
+  (make-package "ATOM_ESP_LISTENER::ALLDATA"))
 
 (in-package "ROS")
-;;//! \htmlinclude data.msg.html
+;;//! \htmlinclude alldata.msg.html
+(if (not (find-package "STD_MSGS"))
+  (ros::roseus-add-msgs "std_msgs"))
 
 
-(defclass atom_esp_listener::data
+(defclass atom_esp_listener::alldata
   :super ros::object
-  :slots (_mpuData_AcX _mpuData_AcY _mpuData_AcZ _mpuData_timestamp _mpuData_Tmp _mpuData_GyX _mpuData_GyY _mpuData_GyZ _mpuRAW_AcX _mpuRAW_AcY _mpuRAW_AcZ _mpuRAW_timestamp _mpuRAW_Tmp _mpuRAW_GyX _mpuRAW_GyY _mpuRAW_GyZ _pingheight _ppfb_timestamp _ppfb_Input _ppfb_Kd _ppfb_Ki _ppfb_Kp _ppfb_Output _ppfb_Setpoint _pplr_timestamp _pplr_Input _pplr_Kd _pplr_Ki _pplr_Kp _pplr_Output _pplr_Setpoint _ppud_timestamp _ppud_Input _ppud_Kd _ppud_Ki _ppud_Kp _ppud_Output _ppud_Setpoint _yaw _pitch _roll _timestamp _tune_type ))
+  :slots (_H _mpuData_AcX _mpuData_AcY _mpuData_AcZ _mpuData_timestamp _mpuData_Tmp _mpuData_GyX _mpuData_GyY _mpuData_GyZ _mpuRAW_AcX _mpuRAW_AcY _mpuRAW_AcZ _mpuRAW_timestamp _mpuRAW_Tmp _mpuRAW_GyX _mpuRAW_GyY _mpuRAW_GyZ _pingheight _ppfb_timestamp _ppfb_Input _ppfb_Kd _ppfb_Ki _ppfb_Kp _ppfb_Output _ppfb_Setpoint _pplr_timestamp _pplr_Input _pplr_Kd _pplr_Ki _pplr_Kp _pplr_Output _pplr_Setpoint _ppud_timestamp _ppud_Input _ppud_Kd _ppud_Ki _ppud_Kp _ppud_Output _ppud_Setpoint _yaw _pitch _roll _timestamp _tune_type ))
 
-(defmethod atom_esp_listener::data
+(defmethod atom_esp_listener::alldata
   (:init
    (&key
+    ((:H __H) (instance std_msgs::Header :init))
     ((:mpuData_AcX __mpuData_AcX) 0)
     ((:mpuData_AcY __mpuData_AcY) 0)
     ((:mpuData_AcZ __mpuData_AcZ) 0)
@@ -64,6 +67,7 @@
     ((:tune_type __tune_type) 0)
     )
    (send-super :init)
+   (setq _H __H)
    (setq _mpuData_AcX (round __mpuData_AcX))
    (setq _mpuData_AcY (round __mpuData_AcY))
    (setq _mpuData_AcZ (round __mpuData_AcZ))
@@ -108,6 +112,13 @@
    (setq _timestamp (round __timestamp))
    (setq _tune_type (round __tune_type))
    self)
+  (:H
+   (&rest __H)
+   (if (keywordp (car __H))
+       (send* _H __H)
+     (progn
+       (if __H (setq _H (car __H)))
+       _H)))
   (:mpuData_AcX
    (&optional __mpuData_AcX)
    (if __mpuData_AcX (setq _mpuData_AcX __mpuData_AcX)) _mpuData_AcX)
@@ -240,6 +251,8 @@
   (:serialization-length
    ()
    (+
+    ;; std_msgs/Header _H
+    (send _H :serialization-length)
     ;; int16 _mpuData_AcX
     2
     ;; int16 _mpuData_AcY
@@ -331,6 +344,8 @@
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
+     ;; std_msgs/Header _H
+       (send _H :serialize s)
      ;; int16 _mpuData_AcX
        (write-word _mpuData_AcX s)
      ;; int16 _mpuData_AcY
@@ -421,6 +436,8 @@
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
+   ;; std_msgs/Header _H
+     (send _H :deserialize buf ptr-) (incf ptr- (send _H :serialization-length))
    ;; int16 _mpuData_AcX
      (setq _mpuData_AcX (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;; int16 _mpuData_AcY
@@ -511,10 +528,11 @@
    self)
   )
 
-(setf (get atom_esp_listener::data :md5sum-) "468ea019e00a2e85450ca1ffc75e76ac")
-(setf (get atom_esp_listener::data :datatype-) "atom_esp_listener/data")
-(setf (get atom_esp_listener::data :definition-)
-      "int16  mpuData_AcX
+(setf (get atom_esp_listener::alldata :md5sum-) "89b11db5299c2f38020d1ab5e96c3b97")
+(setf (get atom_esp_listener::alldata :datatype-) "atom_esp_listener/alldata")
+(setf (get atom_esp_listener::alldata :definition-)
+      "Header H
+int16  mpuData_AcX
 int16  mpuData_AcY
 int16  mpuData_AcZ
 uint32  mpuData_timestamp
@@ -565,10 +583,28 @@ float32  roll
 uint32  timestamp
 int16  tune_type
 
+================================================================================
+MSG: std_msgs/Header
+# Standard metadata for higher-level stamped data types.
+# This is generally used to communicate timestamped data 
+# in a particular coordinate frame.
+# 
+# sequence ID: consecutively increasing ID 
+uint32 seq
+#Two-integer timestamp that is expressed as:
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')
+# time-handling sugar is provided by the client library
+time stamp
+#Frame this data is associated with
+# 0: no frame
+# 1: global frame
+string frame_id
+
 ")
 
 
 
-(provide :atom_esp_listener/data "468ea019e00a2e85450ca1ffc75e76ac")
+(provide :atom_esp_listener/alldata "89b11db5299c2f38020d1ab5e96c3b97")
 
 

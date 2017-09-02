@@ -1,6 +1,6 @@
 # generated from genmsg/cmake/pkg-genmsg.context.in
 
-messages_str = "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/data.msg"
+messages_str = "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg/alldata.msg"
 services_str = ""
 pkg_name = "atom_esp_listener"
 dependencies_str = "std_msgs"

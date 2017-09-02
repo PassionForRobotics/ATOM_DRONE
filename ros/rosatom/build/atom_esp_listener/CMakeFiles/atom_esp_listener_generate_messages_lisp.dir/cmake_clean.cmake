@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/atom_esp_listener_generate_messages_lisp"
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/share/common-lisp/ros/atom_esp_listener/msg/data.lisp"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/share/common-lisp/ros/atom_esp_listener/msg/alldata.lisp"
 )
 
 # Per-language clean rules from dependency scanning.
