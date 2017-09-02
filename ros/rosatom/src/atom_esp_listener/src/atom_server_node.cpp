@@ -11,6 +11,9 @@
 #include <atom_esp_listener/data.h>
 atom_esp_listener::data msg;
 
+#include "atom_esp_joy/joydata.h"
+atom_esp_joy::joydata joydata;
+
 #include <signal.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -18,6 +21,39 @@ atom_esp_listener::data msg;
 
 #include "/home/rahuldeo/ATOM/ATOM_DRONE/ESP8266_D1/src/data2.h"
 debug_data all_data;
+sGENERICSETPOINTS_t setpoints;
+
+
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
+
+#define SHORT_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
+#define SHORT_TO_BINARY(byte)  \
+  (byte & 0x8000 ? '1' : '0'), \
+  (byte & 0x4000 ? '1' : '0'), \
+  (byte & 0x2000 ? '1' : '0'), \
+  (byte & 0x1000 ? '1' : '0'), \
+  (byte & 0x0800 ? '1' : '0'), \
+  (byte & 0x0400 ? '1' : '0'), \
+  (byte & 0x0200 ? '1' : '0'), \
+  (byte & 0x0100 ? '1' : '0'), \
+  (byte & 0x0080 ? '1' : '0'), \
+  (byte & 0x0040 ? '1' : '0'), \
+  (byte & 0x0020 ? '1' : '0'), \
+  (byte & 0x0010 ? '1' : '0'), \
+  (byte & 0x0008 ? '1' : '0'), \
+  (byte & 0x0004 ? '1' : '0'), \
+  (byte & 0x0002 ? '1' : '0'), \
+  (byte & 0x0001 ? '1' : '0') 
+  
 
 // TODO: Anything to socket proper close
 // It is not working ???
@@ -144,6 +180,22 @@ void chatterCallback(const atom_esp_listener::data msg)
   //ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
 
+void joyCallback(const atom_esp_joy::joydata msg)
+{
+
+   //ROS_INFO("Sub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
+   
+   setpoints.timestampsec = msg.H.stamp.sec;
+   setpoints.timestampnsec = msg.H.stamp.nsec;
+   setpoints.x = msg.X;
+   setpoints.y = msg.Y;
+   setpoints.z = msg.Z;
+   setpoints.s = msg.S; 
+   setpoints.buttons = msg.buttons;
+   
+  //printdata(data);
+  //ROS_INFO("I heard: [%s]", msg->data.c_str());
+}
 
 int main (int argc, char** argv)
 {
@@ -158,8 +210,10 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "atom_server_node");
   ros::NodeHandle nh;
 
-  ros::Publisher server_pub = nh.advertise<atom_esp_listener::data>("chatter", 1000);
-  //ros::Subscriber server_sub = nh.subscribe("chatter", 1000, chatterCallback);
+  ros::Publisher server_pub = nh.advertise<atom_esp_listener::data>("atom_drone_all_data", 1000);
+  //ros::Subscriber server_sub = nh.subscribe("atom_drone_all_data", 1000, chatterCallback); // test sub
+  ros::Subscriber joy_sub = nh.subscribe("joydata", 10, joyCallback); // test sub
+  
 
   std_msgs::String message;
   std::stringstream ss;
@@ -170,7 +224,8 @@ int main (int argc, char** argv)
 
   int socket_fd, accepted_socket_fd;
 
-  struct sockaddr_in servaddr;
+  struct sockaddr_in servaddr, clientaddr;
+  socklen_t clilen;
 
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd < 0)
@@ -213,7 +268,8 @@ int main (int argc, char** argv)
   ROS_INFO_STREAM("listen..");
 
   // TODO : Non-blocked
-   accepted_socket_fd = accept(socket_fd, (struct sockaddr*) NULL, NULL);
+   clilen = sizeof(clientaddr);
+   accepted_socket_fd = accept(socket_fd, (struct sockaddr*) &clientaddr, &clilen);
     if (accepted_socket_fd < 0)
     	ROS_ERROR_STREAM("ERROR on accept");
     else
@@ -224,22 +280,25 @@ int main (int argc, char** argv)
   while(ros::ok())
   {
     int read_size = 0;
-    ROS_INFO_STREAM("loop");
+    //ROS_INFO_STREAM("loop");
 
-    if( (read_size = recv(accepted_socket_fd , buffer , SIZE_OF_ALL_DATA , 0)) > 0 )
-    {
-      ss << buffer;
-      message.data = ss.str();
-
+    if( (read_size = recv(accepted_socket_fd , buffer , SIZE_OF_ALL_DATA , 0)) > 0 ) // code convention !! 
+    { 
       memcpy((char*)&all_data, buffer, SIZE_OF_ALL_DATA);
-      ROS_INFO("buff %s", buffer);
+      
+      copydata(&all_data, &msg);
+      //ROS_INFO("buff %s", buffer);
       //printdata(&data);
 
-      server_pub.publish(message);
+      server_pub.publish(msg);
+      
+      int n = write(accepted_socket_fd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // Thread safety could be an issue
+      if (n < 0) ROS_ERROR("ERROR writing to socket");
+      //setpoints
 
       ros::spinOnce();
 
-      ss.str(std::string());
+      //ss.str(std::string());
       bzero(buffer,SIZE_OF_ALL_DATA);
 
     }

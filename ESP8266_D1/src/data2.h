@@ -101,7 +101,17 @@ struct sMOTIONSETPOINTS_t
   //uint8_t buttons_a;
   uint8_t slider;
   uint16_t buttons;
+};
 
+struct sGENERICSETPOINTS_t
+{
+  uint32_t timestampsec;
+  uint32_t timestampnsec;
+  int16_t x;
+  int16_t y;
+  int16_t z;
+  int16_t s; //slider
+  uint16_t buttons;
 };
 
 struct PID_Tune_Params_t
@@ -145,6 +155,9 @@ typedef sMPUDATA_t sMPUDATA_t;
 
 typedef sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
 #define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
+
+typedef sGENERICSETPOINTS_t sGENERICSETPOINTS_t;
+#define SIZE_OF_GMSETPOINTS_DATA (sizeof(sGENERICSETPOINTS_t))
 
 typedef PID_Tune_Params_t PID_Tune_Params_t;
 
