@@ -3,7 +3,6 @@
 
 atom_esp_listener/CMakeFiles/atom_server_node.dir/src/atom_server_node.cpp.o
  /home/rahuldeo/ATOM/ATOM_DRONE/ESP8266_D1/src/data2.h
- /home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/include/atom_esp_listener/data.h
  /home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/src/atom_server_node.cpp
  /opt/ros/kinetic/include/ros/advertise_options.h
  /opt/ros/kinetic/include/ros/advertise_service_options.h

@@ -117,6 +117,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/gtest/cmake_install.cmake")
+  include("/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_joy/cmake_install.cmake")
   include("/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_listener/cmake_install.cmake")
   include("/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/beginner_tutorials/cmake_install.cmake")
 

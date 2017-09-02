@@ -8,4 +8,3 @@
 
 # modified environment variables
 export PWD="/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build"
-export PYTHONPATH="/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/lib/python2.7/dist-packages:$PYTHONPATH"

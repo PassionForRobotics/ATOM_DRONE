@@ -5,5 +5,6 @@
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
 subdirs(gtest)
+subdirs(atom_esp_joy)
 subdirs(atom_esp_listener)
 subdirs(beginner_tutorials)
