@@ -1,5 +1,7 @@
 (cl:in-package atom_esp_joy-msg)
-(cl:export '(X-VAL
+(cl:export '(H-VAL
+          H
+          X-VAL
           X
           Y-VAL
           Y

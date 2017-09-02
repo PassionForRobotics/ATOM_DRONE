@@ -61,6 +61,7 @@ atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/ros/wall_timer.h
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/ros/wall_timer_options.h
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/rosconsole/macros_generated.h
+atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/std_msgs/Header.h
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/std_msgs/String.h
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/xmlrpcpp/XmlRpcDecl.h
 atom_esp_joy/CMakeFiles/atom_esp_joy_node.dir/src/atom_joy_node.cpp.o: /opt/ros/kinetic/include/xmlrpcpp/XmlRpcValue.h

@@ -19,7 +19,7 @@ add_custom_target(atom_esp_joy_generate_messages ALL)
 
 get_filename_component(_filename "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg" NAME_WE)
 add_custom_target(_atom_esp_joy_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "atom_esp_joy" "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "atom_esp_joy" "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg" "std_msgs/Header"
 )
 
 #
@@ -31,7 +31,7 @@ add_custom_target(_atom_esp_joy_generate_messages_check_deps_${_filename}
 _generate_msg_cpp(atom_esp_joy
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/atom_esp_joy
 )
 
@@ -64,7 +64,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_joy_generate_messages_cpp)
 _generate_msg_eus(atom_esp_joy
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/atom_esp_joy
 )
 
@@ -97,7 +97,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_joy_generate_messages_eus)
 _generate_msg_lisp(atom_esp_joy
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/atom_esp_joy
 )
 
@@ -130,7 +130,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_joy_generate_messages_lisp
 _generate_msg_nodejs(atom_esp_joy
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/atom_esp_joy
 )
 
@@ -163,7 +163,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS atom_esp_joy_generate_messages_node
 _generate_msg_py(atom_esp_joy
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg/joydata.msg"
   "${MSG_I_FLAGS}"
-  ""
+  "/opt/ros/kinetic/share/std_msgs/cmake/../msg/Header.msg"
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/atom_esp_joy
 )
 

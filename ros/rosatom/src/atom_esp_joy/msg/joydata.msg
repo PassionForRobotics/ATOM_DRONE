@@ -1,8 +1,9 @@
+Header H
 int16 X
 int16 Y
 int16 Z
 int16 S
-uint16 buttons # F1,B2,3,4,5,6,7,8,9,10,11,12,H1,2,3,4
+uint16 buttons # MSB F1,B2,3,4,5,6,7,8,9,10,11,12,H1,2,3,4 LSB
 # 0000 0
 # 0001 1
 # 0010 2

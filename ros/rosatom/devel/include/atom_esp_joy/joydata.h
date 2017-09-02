@@ -15,6 +15,7 @@
 #include <ros/builtin_message_traits.h>
 #include <ros/message_operations.h>
 
+#include <std_msgs/Header.h>
 
 namespace atom_esp_joy
 {
@@ -24,14 +25,16 @@ struct joydata_
   typedef joydata_<ContainerAllocator> Type;
 
   joydata_()
-    : X(0)
+    : H()
+    , X(0)
     , Y(0)
     , Z(0)
     , S(0)
     , buttons(0)  {
     }
   joydata_(const ContainerAllocator& _alloc)
-    : X(0)
+    : H(_alloc)
+    , X(0)
     , Y(0)
     , Z(0)
     , S(0)
@@ -40,6 +43,9 @@ struct joydata_
     }
 
 
+
+   typedef  ::std_msgs::Header_<ContainerAllocator>  _H_type;
+  _H_type H;
 
    typedef int16_t _X_type;
   _X_type X;
@@ -89,7 +95,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': True, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
 // {'atom_esp_joy': ['/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg'], 'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -99,12 +105,12 @@ namespace message_traits
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::atom_esp_joy::joydata_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::atom_esp_joy::joydata_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -133,12 +139,12 @@ struct MD5Sum< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "9ea973d7e29e9a09bf4c38bea786a98f";
+    return "b9528701db416223921ea3eb84e581e7";
   }
 
   static const char* value(const ::atom_esp_joy::joydata_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x9ea973d7e29e9a09ULL;
-  static const uint64_t static_value2 = 0xbf4c38bea786a98fULL;
+  static const uint64_t static_value1 = 0xb9528701db416223ULL;
+  static const uint64_t static_value2 = 0x921ea3eb84e581e7ULL;
 };
 
 template<class ContainerAllocator>
@@ -157,11 +163,12 @@ struct Definition< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "int16 X\n\
+    return "Header H\n\
+int16 X\n\
 int16 Y\n\
 int16 Z\n\
 int16 S\n\
-uint16 buttons # F1,B2,3,4,5,6,7,8,9,10,11,12,H1,2,3,4\n\
+uint16 buttons # MSB F1,B2,3,4,5,6,7,8,9,10,11,12,H1,2,3,4 LSB\n\
 # 0000 0\n\
 # 0001 1\n\
 # 0010 2\n\
@@ -171,6 +178,24 @@ uint16 buttons # F1,B2,3,4,5,6,7,8,9,10,11,12,H1,2,3,4\n\
 # 0110 6\n\
 # 0111 7\n\
 # 1000 8\n\
+\n\
+================================================================================\n\
+MSG: std_msgs/Header\n\
+# Standard metadata for higher-level stamped data types.\n\
+# This is generally used to communicate timestamped data \n\
+# in a particular coordinate frame.\n\
+# \n\
+# sequence ID: consecutively increasing ID \n\
+uint32 seq\n\
+#Two-integer timestamp that is expressed as:\n\
+# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')\n\
+# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')\n\
+# time-handling sugar is provided by the client library\n\
+time stamp\n\
+#Frame this data is associated with\n\
+# 0: no frame\n\
+# 1: global frame\n\
+string frame_id\n\
 ";
   }
 
@@ -189,6 +214,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
+      stream.next(m.H);
       stream.next(m.X);
       stream.next(m.Y);
       stream.next(m.Z);
@@ -212,6 +238,9 @@ struct Printer< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::atom_esp_joy::joydata_<ContainerAllocator>& v)
   {
+    s << indent << "H: ";
+    s << std::endl;
+    Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.H);
     s << indent << "X: ";
     Printer<int16_t>::stream(s, indent + "  ", v.X);
     s << indent << "Y: ";

@@ -33,7 +33,37 @@
 #include "atom_esp_joy/joydata.h"
 // %EndTag(MSG_HEADER)%
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
 
+#define SHORT_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
+#define SHORT_TO_BINARY(byte)  \
+  (byte & 0x8000 ? '1' : '0'), \
+  (byte & 0x4000 ? '1' : '0'), \
+  (byte & 0x2000 ? '1' : '0'), \
+  (byte & 0x1000 ? '1' : '0'), \
+  (byte & 0x0800 ? '1' : '0'), \
+  (byte & 0x0400 ? '1' : '0'), \
+  (byte & 0x0200 ? '1' : '0'), \
+  (byte & 0x0100 ? '1' : '0'), \
+  (byte & 0x0080 ? '1' : '0'), \
+  (byte & 0x0040 ? '1' : '0'), \
+  (byte & 0x0020 ? '1' : '0'), \
+  (byte & 0x0010 ? '1' : '0'), \
+  (byte & 0x0008 ? '1' : '0'), \
+  (byte & 0x0004 ? '1' : '0'), \
+  (byte & 0x0002 ? '1' : '0'), \
+  (byte & 0x0001 ? '1' : '0') 
+  
+    
 #include <iostream>
 #include "atom_esp_joy/Extreme3DProService.hpp"
 #include <chrono>
@@ -53,8 +83,9 @@ Extreme3DProService& es = Extreme3DProService::GetInstance();
 
 atom_esp_joy::joydata joydata;
 
-void LogitechAxes(int id)
+void LogitechAxes(int id, int16_t *_x, int16_t *_y, int16_t *_z, int16_t *_s, int16_t *_btns)
 {
+//#define PRINT_JOYDATA
     int x, y, z, slider;
     std::map<Extreme3DProButton, bool> buttons;
     POV pov;
@@ -68,25 +99,57 @@ void LogitechAxes(int id)
     if (!es.GetSlider(id, slider))
         slider = 0;
 
+    *_x = (int16_t)x;
+    *_y = (int16_t)y;
+    *_z = (int16_t)z;
+    *_s = (int16_t)slider;
+
+    #if defined(PRINT_JOYDATA)
+    	std::cout << "X: " << x << " | Y: " << y << " | Z: " << z << " | Slider: " << slider << " | Btns: [ ";
+    #endif
+
     if( ! es.GetButtons(id, buttons))
     {
 
     }
+
+    #define BASEBUTTONID (288)
+    //unsigned char indx = 0;
+    *_btns = 0;
+    // _btns as per joydata.msg
+    // get 4 LSBs for POV from _btns
+    // right shift _btns
+    // and get all the buttons from MSB
+
+    //int btnarr[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+    //_btnarr must be of size 13 at least or an uint16
+
+    for (auto pair : buttons)
+    {
+        //btnarr[((int)pair.first)-((int)BASEBUTTONID)] = pair.second;
+        *_btns |= ((int)pair.second) << (((int)pair.first)-BASEBUTTONID) ;
+
+
+    #if defined(PRINT_JOYDATA)
+        std::cout <<"["<< static_cast<int>(pair.first)-((int)BASEBUTTONID)+1 << "]:" << pair.second ;
+        //<< " (" << btnarr[((int)pair.first)-((int)BASEBUTTONID)] << "), ";
+    #endif
+    }
+
+
+    #if defined(PRINT_JOYDATA)
+    std::cout << "] | *_btns: " << *_btns << " | (";
+    #endif
+
+    *_btns <<= 4;
+
     if( ! es.GetPOV(id, pov))
     {
 
     }
+    *_btns |= ((int)pov & 0x000F) ; // to check
+    //std::cout << *_btns << ") | &F: "<< ((int)pov & 0x000F) << " | pov: " << (int)pov  << std::endl;
 
-
-    std::cout << "X: " << x << " | Y: " << y << " | Z: " << z << " | Slider: " << slider << " ";//std::endl;
-    std::cout << "| Buttons: [ ";
-
-    for (auto pair : buttons)
-        std::cout << static_cast<int>(pair.first) << ": " << pair.second << " | ";
-
-    std::cout << " ] | POV: " << (int)pov << std::endl;
-
-    // X: 0 | Y: 2 | Z: 0 | Slider: 0 | Buttons: [  288:0 289:0 290:0 291:0 292:0 293:0 295:0 296:0 297:0 298:0 299:0 ] POV: 0
 }
 
 /**
@@ -161,12 +224,22 @@ int main(int argc, char **argv)
      */
 // %Tag(FILL_MESSAGE)%
     atom_esp_joy::joydata msg;
-    int x, y, z, s, btns; // please check the type 16/32 bits
+    int16_t x, y, z, s, btns; // please check the type 16/32 bits
     //joyserrun.GetAbsoluteAxesAndBtns(&x, &y, &z, &s, &btns);
     auto& a = es.GetIDs();
-        if (a.size() <= 0)
-            continue;
-        LogitechAxes(a[0]);
+    if (a.size() <= 0)
+    	continue;
+
+    LogitechAxes(a[0], &x, &y, &z, &s, &btns); // ctrl+c is not working here ???
+    msg.H.stamp = ros::Time::now();
+    // msg.H.frame_id = "?"
+    // msg.H.seq = autofilled;
+    msg.X = x;
+    msg.Y = y;
+    msg.Z = z;
+    msg.S = s;
+    msg.buttons = btns & (0x0000FFFF); // check diffrerent datatypes
+    ROS_INFO("Pub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
     //std::stringstream ss;
     //ss << "hello world " << count;
     msg = msg;
