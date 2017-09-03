@@ -246,7 +246,7 @@ int main (int argc, char** argv)
   //ros::Subscriber server_sub = nh.subscribe("atom_drone_all_data", 1000, chatterCallback); // test sub
   ros::Rate loop_rate(10);
 
-  char buffer[SIZE_OF_ALL_DATA+1];
+  //char buffer[SIZE_OF_ALL_DATA+1];
 
   ROS_INFO("SIZE_OF_ALL_DATA %d", (int)SIZE_OF_ALL_DATA);
 
@@ -343,10 +343,10 @@ int main (int argc, char** argv)
   set_nonblock(new_sd);
   ROS_INFO_STREAM("[ESP]: Successful Connection!");
 
-  char in[SIZE_OF_ALL_DATA];
-  char out[SIZE_OF_ALL_DATA];
-  memset(&in, 0, SIZE_OF_ALL_DATA);
-  memset(&out, 0, SIZE_OF_ALL_DATA);
+  //char in[SIZE_OF_ALL_DATA];
+  //char out[SIZE_OF_GMSETPOINTS_DATA];
+  //memset(&in, 0, SIZE_OF_ALL_DATA);
+  //memset(&out, 0, SIZE_OF_GMSETPOINTS_DATA);
   int numSent;
   int numRead;
 
@@ -377,9 +377,12 @@ int main (int argc, char** argv)
       //clear set
       FD_CLR(new_sd, &read_flags);
 
-      memset(&in, 0, SIZE_OF_ALL_DATA);
-
-      numRead = recv(new_sd, in, SIZE_OF_ALL_DATA, 0);
+      //memset(&in, 0, SIZE_OF_ALL_DATA);
+      memset(&all_data, 0, SIZE_OF_ALL_DATA);
+      ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
+      numRead = recv(new_sd, (void*)&all_data, SIZE_OF_ALL_DATA, 0);
+      ROS_DEBUG_THROTTLE(30, "LOOP %d , pidmode: %d", __LINE__, all_data.tune_type);
+      
       if(numRead <= 0) {
         ROS_ERROR_STREAM("[ESP]: Error in socket, probably closed by client, recovery attempt ... ");
         ROS_ERROR_STREAM("[ESP]: ... [press CTRL+\\ to force exit]");
@@ -387,16 +390,16 @@ int main (int argc, char** argv)
         goto relink;
         //break;
       }
-      else if(in[0] != '\0')
+      else if((((char*)(&all_data))[0] != '\0') || (SIZE_OF_ALL_DATA == numRead) )
       {
         //cout<<"\nClient: "<<in;
-        memcpy((char*)&all_data, in, SIZE_OF_ALL_DATA);
-
+        //memcpy((char*)&all_data, in, SIZE_OF_ALL_DATA);
+	ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
         copy_alldata(&all_data, &msg);
         msg.H.stamp = ros::Time::now();
         // msg.H.frame_id = "?"
         msg.H.seq = count++;
-        ROS_DEBUG_THROTTLE(10, "[ESP]: DATA from ESP");
+        ROS_DEBUG_THROTTLE(30, "[ESP]: DATA from ESP %f, %f, %f", all_data.yaw, all_data.pitch, all_data.roll );
         //printdata(&data);
 
         server_pub.publish(msg);
@@ -409,6 +412,7 @@ int main (int argc, char** argv)
 
 	if(0 != setpoints.timestampsec)
 	{
+	    ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
             int n = write(new_sd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // SEEMS OK: Thread safety could be an issue
             if (n < 0)
             {
@@ -418,8 +422,10 @@ int main (int argc, char** argv)
               goto relink;
             }
         }
+        ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
         loop_rate.sleep();
       }
+      ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
 
     }   //end if ready for read
 

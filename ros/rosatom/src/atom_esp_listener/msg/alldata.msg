@@ -17,7 +17,7 @@ int16  mpuRAW_GyX
 int16  mpuRAW_GyY
 int16  mpuRAW_GyZ
 
-int16  pingheight
+float32  pingheight
 
 uint32  ppfb_timestamp
 float64  ppfb_Input
@@ -48,4 +48,4 @@ float32  pitch
 float32  roll
 
 uint32  timestamp
-int16  tune_type
+uint16  tune_type

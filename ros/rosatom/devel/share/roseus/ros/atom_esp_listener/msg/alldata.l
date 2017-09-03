@@ -38,7 +38,7 @@
     ((:mpuRAW_GyX __mpuRAW_GyX) 0)
     ((:mpuRAW_GyY __mpuRAW_GyY) 0)
     ((:mpuRAW_GyZ __mpuRAW_GyZ) 0)
-    ((:pingheight __pingheight) 0)
+    ((:pingheight __pingheight) 0.0)
     ((:ppfb_timestamp __ppfb_timestamp) 0)
     ((:ppfb_Input __ppfb_Input) 0.0)
     ((:ppfb_Kd __ppfb_Kd) 0.0)
@@ -84,7 +84,7 @@
    (setq _mpuRAW_GyX (round __mpuRAW_GyX))
    (setq _mpuRAW_GyY (round __mpuRAW_GyY))
    (setq _mpuRAW_GyZ (round __mpuRAW_GyZ))
-   (setq _pingheight (round __pingheight))
+   (setq _pingheight (float __pingheight))
    (setq _ppfb_timestamp (round __ppfb_timestamp))
    (setq _ppfb_Input (float __ppfb_Input))
    (setq _ppfb_Kd (float __ppfb_Kd))
@@ -285,8 +285,8 @@
     2
     ;; int16 _mpuRAW_GyZ
     2
-    ;; int16 _pingheight
-    2
+    ;; float32 _pingheight
+    4
     ;; uint32 _ppfb_timestamp
     4
     ;; float64 _ppfb_Input
@@ -337,7 +337,7 @@
     4
     ;; uint32 _timestamp
     4
-    ;; int16 _tune_type
+    ;; uint16 _tune_type
     2
     ))
   (:serialize
@@ -378,8 +378,8 @@
        (write-word _mpuRAW_GyY s)
      ;; int16 _mpuRAW_GyZ
        (write-word _mpuRAW_GyZ s)
-     ;; int16 _pingheight
-       (write-word _pingheight s)
+     ;; float32 _pingheight
+       (sys::poke _pingheight (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
      ;; uint32 _ppfb_timestamp
        (write-long _ppfb_timestamp s)
      ;; float64 _ppfb_Input
@@ -430,7 +430,7 @@
        (sys::poke _roll (send s :buffer) (send s :count) :float) (incf (stream-count s) 4)
      ;; uint32 _timestamp
        (write-long _timestamp s)
-     ;; int16 _tune_type
+     ;; uint16 _tune_type
        (write-word _tune_type s)
      ;;
      (if (null strm) (get-output-stream-string s))))
@@ -470,8 +470,8 @@
      (setq _mpuRAW_GyY (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;; int16 _mpuRAW_GyZ
      (setq _mpuRAW_GyZ (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _pingheight
-     (setq _pingheight (sys::peek buf ptr- :short)) (incf ptr- 2)
+   ;; float32 _pingheight
+     (setq _pingheight (sys::peek buf ptr- :float)) (incf ptr- 4)
    ;; uint32 _ppfb_timestamp
      (setq _ppfb_timestamp (sys::peek buf ptr- :integer)) (incf ptr- 4)
    ;; float64 _ppfb_Input
@@ -522,13 +522,13 @@
      (setq _roll (sys::peek buf ptr- :float)) (incf ptr- 4)
    ;; uint32 _timestamp
      (setq _timestamp (sys::peek buf ptr- :integer)) (incf ptr- 4)
-   ;; int16 _tune_type
+   ;; uint16 _tune_type
      (setq _tune_type (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;;
    self)
   )
 
-(setf (get atom_esp_listener::alldata :md5sum-) "89b11db5299c2f38020d1ab5e96c3b97")
+(setf (get atom_esp_listener::alldata :md5sum-) "92f8517c65a9c6e751033ceff53a0609")
 (setf (get atom_esp_listener::alldata :datatype-) "atom_esp_listener/alldata")
 (setf (get atom_esp_listener::alldata :definition-)
       "Header H
@@ -550,7 +550,7 @@ int16  mpuRAW_GyX
 int16  mpuRAW_GyY
 int16  mpuRAW_GyZ
 
-int16  pingheight
+float32  pingheight
 
 uint32  ppfb_timestamp
 float64  ppfb_Input
@@ -581,7 +581,7 @@ float32  pitch
 float32  roll
 
 uint32  timestamp
-int16  tune_type
+uint16  tune_type
 
 ================================================================================
 MSG: std_msgs/Header
@@ -605,6 +605,6 @@ string frame_id
 
 
 
-(provide :atom_esp_listener/alldata "89b11db5299c2f38020d1ab5e96c3b97")
+(provide :atom_esp_listener/alldata "92f8517c65a9c6e751033ceff53a0609")
 
 

@@ -63,6 +63,8 @@ const uint16_t serverPort = 11511;//11411;
 unsigned int localUdpPort = 10000;
 char incomingPacket[SIZE_OF_ALL_DATA] = {0};
 
+void printdata(const debug_data *_data);
+
 // #include <pb_arduino.h>
 // #include <pb_encode.h>
 //
@@ -135,6 +137,11 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
     return false;
   }
 
+  all_data->tune_type = PID_TUNE_TYPE_FORE_BACK;
+  all_data->ppud.Kd = 23.23;
+  printdata(all_data);
+
+
   client.write((uint8_t*)&all_data, SIZE_OF_ALL_DATA);
   //Serial.print("check "); Serial.println(__LINE__);
 
@@ -146,7 +153,7 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
     //size_t s = client.peekBytes((uint8_t *)&setpoints, size_t SIZE_OF_GMSETPOINTS_DATA);
     //Serial.print("check "); Serial.println(__LINE__);
     int nc = client.read((uint8_t *) setpoints, (size_t) SIZE_OF_GMSETPOINTS_DATA);
-    if(SIZE_OF_GMSETPOINTS_DATA == nc)
+    //if(SIZE_OF_GMSETPOINTS_DATA == nc)
     {
       packet_received = true;
     }
@@ -194,4 +201,74 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
   // }
   return packet_received;
 
+}
+
+void printdata(const debug_data *_data)
+{
+
+  static uint32_t lastPrintAllDataTime = 0;
+  if(system_get_time()-lastPrintAllDataTime >=(5000*1000))
+  {
+     lastPrintAllDataTime = system_get_time();
+
+  }
+  else
+  {
+    return;
+  }
+
+  Serial.printf("d.mD.ax %d, ", _data->mpuData.AcX);
+  Serial.printf("d.mD.ay %d, ", _data->mpuData.AcY);
+  Serial.printf("d.mD.az %d, ", _data->mpuData.AcZ);
+  Serial.printf("d.mD.ts %d, ", _data->mpuData.timestamp);
+  Serial.printf("d.mD.Tmp %d, ", _data->mpuData.Tmp);
+  Serial.printf("d.mD.gx %d, ", _data->mpuData.GyX);
+  Serial.printf("d.mD.gy %d, ", _data->mpuData.GyY);
+  Serial.printf("d.mD.gz %d, ", _data->mpuData.GyZ);
+
+  Serial.printf("d.mR.ax %d, ", _data->mpuRAW.AcX);
+  Serial.printf("d.mR.ay %d, ", _data->mpuRAW.AcY);
+  Serial.printf("d.mR.az %d, ", _data->mpuRAW.AcZ);
+  Serial.printf("d.mR.ts %d, ", _data->mpuRAW.timestamp);
+  Serial.printf("d.mR.Tmp %d, ", _data->mpuRAW.Tmp);
+  Serial.printf("d.mR.gx %d, ", _data->mpuRAW.GyX);
+  Serial.printf("d.mR.gy %d, ", _data->mpuRAW.GyY);
+  Serial.printf("d.mR.gz %d, ", _data->mpuRAW.GyZ);
+
+  Serial.printf("d.pgh ");
+  Serial.print(_data->pingheight);
+  Serial.printf(", ");
+
+  Serial.printf("d.pidfb.I %d, ", (int)100* _data->ppfb.Input);
+  Serial.printf("d.pidfb.Kd %d, ", (int)(100* _data->ppfb.Kd));
+  Serial.printf("d.pidfb.Ki %d, ", (int)100* _data->ppfb.Ki);
+  Serial.printf("d.pidfb.Kp %d, ", (int)100* _data->ppfb.Kp);
+  Serial.printf("d.pidfb.O %d, ", (int)100* _data->ppfb.Output);
+  Serial.printf("d.pidfb.S %d, ", (int)100* _data->ppfb.Setpoint);
+
+  Serial.printf("d.pidlr.I %d, ", (int)100* _data->pplr.Input);
+  Serial.printf("d.pidlr.Kd %d, ", (int)100* _data->pplr.Kd);
+  Serial.printf("d.pidlr.Ki %d, ", (int)100* _data->pplr.Ki);
+  Serial.printf("d.pidlr.Kp %d, ", (int)100* _data->pplr.Kp);
+  Serial.printf("d.pidlr.O %d, ", (int)100* _data->pplr.Output);
+  Serial.printf("d.pidlr.S %d, ", (int)100* _data->pplr.Setpoint);
+
+  Serial.printf("d.pidud.I %d, ", (int)100* _data->ppud.Input);
+
+  //Serial.printf("d.pidud.Kd %d, ", (int)100* _data->ppud.Kd);
+  Serial.printf("d.pidud.Kd ");
+  Serial.print(_data->ppud.Kd);
+  Serial.printf(", ");
+
+  Serial.printf("d.pidud.Ki %d, ", (int)100* _data->ppud.Ki);
+  Serial.printf("d.pidud.Kp %d, ", (int)100* _data->ppud.Kp);
+  Serial.printf("d.pidud.O %d, ", (int)100* _data->ppud.Output);
+  Serial.printf("d.pidud.S %d, ", (int)100* _data->ppud.Setpoint);
+
+  Serial.printf("d.yaw %d, ", (int)100* _data->yaw);
+  Serial.printf("d.pitch %d, ", (int)100* _data->pitch);
+  Serial.printf("d.roll %d, ", (int)100* _data->roll);
+
+  Serial.printf("d.ts %d, ", _data->timestamp);
+  Serial.printf("d.pidtt %d\n", _data->tune_type);
 }

@@ -105,7 +105,7 @@ void loop()
     {
       lastWIFITime = system_get_time();;
 
-      debug_data.tune_type = PID_TUNE_TYPE_NONE;
+
       debug_data.timestamp = millis();
       debug_data.yaw = mpudata.AcZ;
       debug_data.pitch = mpudata.AcY;
@@ -122,6 +122,7 @@ void loop()
       #if defined(ENABLE_WIFI)
 
       data_received = wifi_loop(&debug_data, &msetpts);
+      debug_data.tune_type = msetpts.pid_tune_type;
 
       #endif // ENABLE_WIFI
     }
@@ -151,11 +152,13 @@ void loop()
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
       lastPrintTime = system_get_time();
-      if(data_received)
+      //if(data_received)
       {
         printgmpts(&msetpts);
+        printMPU(&mpudata);
+
       }
-      else
+      //else
       {
         //Serial.println("[ WARN] [.] Probable connection loss.");
       }

@@ -171,7 +171,7 @@ class alldata {
         this.pingheight = initObj.pingheight
       }
       else {
-        this.pingheight = 0;
+        this.pingheight = 0.0;
       }
       if (initObj.hasOwnProperty('ppfb_timestamp')) {
         this.ppfb_timestamp = initObj.ppfb_timestamp
@@ -369,7 +369,7 @@ class alldata {
     // Serialize message field [mpuRAW_GyZ]
     bufferOffset = _serializer.int16(obj.mpuRAW_GyZ, buffer, bufferOffset);
     // Serialize message field [pingheight]
-    bufferOffset = _serializer.int16(obj.pingheight, buffer, bufferOffset);
+    bufferOffset = _serializer.float32(obj.pingheight, buffer, bufferOffset);
     // Serialize message field [ppfb_timestamp]
     bufferOffset = _serializer.uint32(obj.ppfb_timestamp, buffer, bufferOffset);
     // Serialize message field [ppfb_Input]
@@ -421,7 +421,7 @@ class alldata {
     // Serialize message field [timestamp]
     bufferOffset = _serializer.uint32(obj.timestamp, buffer, bufferOffset);
     // Serialize message field [tune_type]
-    bufferOffset = _serializer.int16(obj.tune_type, buffer, bufferOffset);
+    bufferOffset = _serializer.uint16(obj.tune_type, buffer, bufferOffset);
     return bufferOffset;
   }
 
@@ -464,7 +464,7 @@ class alldata {
     // Deserialize message field [mpuRAW_GyZ]
     data.mpuRAW_GyZ = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [pingheight]
-    data.pingheight = _deserializer.int16(buffer, bufferOffset);
+    data.pingheight = _deserializer.float32(buffer, bufferOffset);
     // Deserialize message field [ppfb_timestamp]
     data.ppfb_timestamp = _deserializer.uint32(buffer, bufferOffset);
     // Deserialize message field [ppfb_Input]
@@ -516,14 +516,14 @@ class alldata {
     // Deserialize message field [timestamp]
     data.timestamp = _deserializer.uint32(buffer, bufferOffset);
     // Deserialize message field [tune_type]
-    data.tune_type = _deserializer.int16(buffer, bufferOffset);
+    data.tune_type = _deserializer.uint16(buffer, bufferOffset);
     return data;
   }
 
   static getMessageSize(object) {
     let length = 0;
     length += std_msgs.msg.Header.getMessageSize(object.H);
-    return length + 212;
+    return length + 214;
   }
 
   static datatype() {
@@ -533,7 +533,7 @@ class alldata {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '89b11db5299c2f38020d1ab5e96c3b97';
+    return '92f8517c65a9c6e751033ceff53a0609';
   }
 
   static messageDefinition() {
@@ -558,7 +558,7 @@ class alldata {
     int16  mpuRAW_GyY
     int16  mpuRAW_GyZ
     
-    int16  pingheight
+    float32  pingheight
     
     uint32  ppfb_timestamp
     float64  ppfb_Input
@@ -589,7 +589,7 @@ class alldata {
     float32  roll
     
     uint32  timestamp
-    int16  tune_type
+    uint16  tune_type
     
     ================================================================================
     MSG: std_msgs/Header
@@ -741,7 +741,7 @@ class alldata {
       resolved.pingheight = msg.pingheight;
     }
     else {
-      resolved.pingheight = 0
+      resolved.pingheight = 0.0
     }
 
     if (msg.ppfb_timestamp !== undefined) {

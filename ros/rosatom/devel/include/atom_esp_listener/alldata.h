@@ -42,7 +42,7 @@ struct alldata_
     , mpuRAW_GyX(0)
     , mpuRAW_GyY(0)
     , mpuRAW_GyZ(0)
-    , pingheight(0)
+    , pingheight(0.0)
     , ppfb_timestamp(0)
     , ppfb_Input(0.0)
     , ppfb_Kd(0.0)
@@ -88,7 +88,7 @@ struct alldata_
     , mpuRAW_GyX(0)
     , mpuRAW_GyY(0)
     , mpuRAW_GyZ(0)
-    , pingheight(0)
+    , pingheight(0.0)
     , ppfb_timestamp(0)
     , ppfb_Input(0.0)
     , ppfb_Kd(0.0)
@@ -171,7 +171,7 @@ struct alldata_
    typedef int16_t _mpuRAW_GyZ_type;
   _mpuRAW_GyZ_type mpuRAW_GyZ;
 
-   typedef int16_t _pingheight_type;
+   typedef float _pingheight_type;
   _pingheight_type pingheight;
 
    typedef uint32_t _ppfb_timestamp_type;
@@ -249,7 +249,7 @@ struct alldata_
    typedef uint32_t _timestamp_type;
   _timestamp_type timestamp;
 
-   typedef int16_t _tune_type_type;
+   typedef uint16_t _tune_type_type;
   _tune_type_type tune_type;
 
 
@@ -329,12 +329,12 @@ struct MD5Sum< ::atom_esp_listener::alldata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "89b11db5299c2f38020d1ab5e96c3b97";
+    return "92f8517c65a9c6e751033ceff53a0609";
   }
 
   static const char* value(const ::atom_esp_listener::alldata_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x89b11db5299c2f38ULL;
-  static const uint64_t static_value2 = 0x020d1ab5e96c3b97ULL;
+  static const uint64_t static_value1 = 0x92f8517c65a9c6e7ULL;
+  static const uint64_t static_value2 = 0x51033ceff53a0609ULL;
 };
 
 template<class ContainerAllocator>
@@ -372,7 +372,7 @@ int16  mpuRAW_GyX\n\
 int16  mpuRAW_GyY\n\
 int16  mpuRAW_GyZ\n\
 \n\
-int16  pingheight\n\
+float32  pingheight\n\
 \n\
 uint32  ppfb_timestamp\n\
 float64  ppfb_Input\n\
@@ -403,7 +403,7 @@ float32  pitch\n\
 float32  roll\n\
 \n\
 uint32  timestamp\n\
-int16  tune_type\n\
+uint16  tune_type\n\
 \n\
 ================================================================================\n\
 MSG: std_msgs/Header\n\
@@ -538,7 +538,7 @@ struct Printer< ::atom_esp_listener::alldata_<ContainerAllocator> >
     s << indent << "mpuRAW_GyZ: ";
     Printer<int16_t>::stream(s, indent + "  ", v.mpuRAW_GyZ);
     s << indent << "pingheight: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.pingheight);
+    Printer<float>::stream(s, indent + "  ", v.pingheight);
     s << indent << "ppfb_timestamp: ";
     Printer<uint32_t>::stream(s, indent + "  ", v.ppfb_timestamp);
     s << indent << "ppfb_Input: ";
@@ -590,7 +590,7 @@ struct Printer< ::atom_esp_listener::alldata_<ContainerAllocator> >
     s << indent << "timestamp: ";
     Printer<uint32_t>::stream(s, indent + "  ", v.timestamp);
     s << indent << "tune_type: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.tune_type);
+    Printer<uint16_t>::stream(s, indent + "  ", v.tune_type);
   }
 };
 

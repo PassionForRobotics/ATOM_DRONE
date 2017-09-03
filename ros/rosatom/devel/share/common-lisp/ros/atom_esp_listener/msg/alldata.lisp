@@ -95,8 +95,8 @@
    (pingheight
     :reader pingheight
     :initarg :pingheight
-    :type cl:fixnum
-    :initform 0)
+    :type cl:float
+    :initform 0.0)
    (ppfb_timestamp
     :reader ppfb_timestamp
     :initarg :ppfb_timestamp
@@ -523,10 +523,11 @@
     (cl:write-byte (cl:ldb (cl:byte 8 0) unsigned) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 8) unsigned) ostream)
     )
-  (cl:let* ((signed (cl:slot-value msg 'pingheight)) (unsigned (cl:if (cl:< signed 0) (cl:+ signed 65536) signed)))
-    (cl:write-byte (cl:ldb (cl:byte 8 0) unsigned) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 8) unsigned) ostream)
-    )
+  (cl:let ((bits (roslisp-utils:encode-single-float-bits (cl:slot-value msg 'pingheight))))
+    (cl:write-byte (cl:ldb (cl:byte 8 0) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 8) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 16) bits) ostream)
+    (cl:write-byte (cl:ldb (cl:byte 8 24) bits) ostream))
   (cl:write-byte (cl:ldb (cl:byte 8 0) (cl:slot-value msg 'ppfb_timestamp)) ostream)
   (cl:write-byte (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'ppfb_timestamp)) ostream)
   (cl:write-byte (cl:ldb (cl:byte 8 16) (cl:slot-value msg 'ppfb_timestamp)) ostream)
@@ -720,10 +721,8 @@
   (cl:write-byte (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'timestamp)) ostream)
   (cl:write-byte (cl:ldb (cl:byte 8 16) (cl:slot-value msg 'timestamp)) ostream)
   (cl:write-byte (cl:ldb (cl:byte 8 24) (cl:slot-value msg 'timestamp)) ostream)
-  (cl:let* ((signed (cl:slot-value msg 'tune_type)) (unsigned (cl:if (cl:< signed 0) (cl:+ signed 65536) signed)))
-    (cl:write-byte (cl:ldb (cl:byte 8 0) unsigned) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 8) unsigned) ostream)
-    )
+  (cl:write-byte (cl:ldb (cl:byte 8 0) (cl:slot-value msg 'tune_type)) ostream)
+  (cl:write-byte (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'tune_type)) ostream)
 )
 (cl:defmethod roslisp-msg-protocol:deserialize ((msg <alldata>) istream)
   "Deserializes a message object of type '<alldata>"
@@ -792,10 +791,12 @@
       (cl:setf (cl:ldb (cl:byte 8 0) unsigned) (cl:read-byte istream))
       (cl:setf (cl:ldb (cl:byte 8 8) unsigned) (cl:read-byte istream))
       (cl:setf (cl:slot-value msg 'mpuRAW_GyZ) (cl:if (cl:< unsigned 32768) unsigned (cl:- unsigned 65536))))
-    (cl:let ((unsigned 0))
-      (cl:setf (cl:ldb (cl:byte 8 0) unsigned) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 8) unsigned) (cl:read-byte istream))
-      (cl:setf (cl:slot-value msg 'pingheight) (cl:if (cl:< unsigned 32768) unsigned (cl:- unsigned 65536))))
+    (cl:let ((bits 0))
+      (cl:setf (cl:ldb (cl:byte 8 0) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 8) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 16) bits) (cl:read-byte istream))
+      (cl:setf (cl:ldb (cl:byte 8 24) bits) (cl:read-byte istream))
+    (cl:setf (cl:slot-value msg 'pingheight) (roslisp-utils:decode-single-float-bits bits)))
     (cl:setf (cl:ldb (cl:byte 8 0) (cl:slot-value msg 'ppfb_timestamp)) (cl:read-byte istream))
     (cl:setf (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'ppfb_timestamp)) (cl:read-byte istream))
     (cl:setf (cl:ldb (cl:byte 8 16) (cl:slot-value msg 'ppfb_timestamp)) (cl:read-byte istream))
@@ -1010,10 +1011,8 @@
     (cl:setf (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'timestamp)) (cl:read-byte istream))
     (cl:setf (cl:ldb (cl:byte 8 16) (cl:slot-value msg 'timestamp)) (cl:read-byte istream))
     (cl:setf (cl:ldb (cl:byte 8 24) (cl:slot-value msg 'timestamp)) (cl:read-byte istream))
-    (cl:let ((unsigned 0))
-      (cl:setf (cl:ldb (cl:byte 8 0) unsigned) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 8) unsigned) (cl:read-byte istream))
-      (cl:setf (cl:slot-value msg 'tune_type) (cl:if (cl:< unsigned 32768) unsigned (cl:- unsigned 65536))))
+    (cl:setf (cl:ldb (cl:byte 8 0) (cl:slot-value msg 'tune_type)) (cl:read-byte istream))
+    (cl:setf (cl:ldb (cl:byte 8 8) (cl:slot-value msg 'tune_type)) (cl:read-byte istream))
   msg
 )
 (cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql '<alldata>)))
@@ -1024,16 +1023,16 @@
   "atom_esp_listener/alldata")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<alldata>)))
   "Returns md5sum for a message object of type '<alldata>"
-  "89b11db5299c2f38020d1ab5e96c3b97")
+  "92f8517c65a9c6e751033ceff53a0609")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'alldata)))
   "Returns md5sum for a message object of type 'alldata"
-  "89b11db5299c2f38020d1ab5e96c3b97")
+  "92f8517c65a9c6e751033ceff53a0609")
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<alldata>)))
   "Returns full string definition for message of type '<alldata>"
-  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
+  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%float32  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%uint16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'alldata)))
   "Returns full string definition for message of type 'alldata"
-  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%int16  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%int16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
+  (cl:format cl:nil "Header H~%int16  mpuData_AcX~%int16  mpuData_AcY~%int16  mpuData_AcZ~%uint32  mpuData_timestamp~%int16  mpuData_Tmp~%int16  mpuData_GyX~%int16  mpuData_GyY~%int16  mpuData_GyZ~%~%int16  mpuRAW_AcX~%int16  mpuRAW_AcY~%int16  mpuRAW_AcZ~%uint32  mpuRAW_timestamp~%int16  mpuRAW_Tmp~%int16  mpuRAW_GyX~%int16  mpuRAW_GyY~%int16  mpuRAW_GyZ~%~%float32  pingheight~%~%uint32  ppfb_timestamp~%float64  ppfb_Input~%float64  ppfb_Kd~%float64  ppfb_Ki~%float64  ppfb_Kp~%float64  ppfb_Output~%float64  ppfb_Setpoint~%~%uint32  pplr_timestamp~%float64  pplr_Input~%float64  pplr_Kd~%float64  pplr_Ki~%float64  pplr_Kp~%float64  pplr_Output~%float64  pplr_Setpoint~%~%uint32  ppud_timestamp~%float64  ppud_Input~%float64  ppud_Kd~%float64  ppud_Ki~%float64  ppud_Kp~%float64  ppud_Output~%float64  ppud_Setpoint~%~%float32  yaw~%float32  pitch~%float32  roll~%~%uint32  timestamp~%uint16  tune_type~%~%================================================================================~%MSG: std_msgs/Header~%# Standard metadata for higher-level stamped data types.~%# This is generally used to communicate timestamped data ~%# in a particular coordinate frame.~%# ~%# sequence ID: consecutively increasing ID ~%uint32 seq~%#Two-integer timestamp that is expressed as:~%# * stamp.sec: seconds (stamp_secs) since epoch (in Python the variable is called 'secs')~%# * stamp.nsec: nanoseconds since stamp_secs (in Python the variable is called 'nsecs')~%# time-handling sugar is provided by the client library~%time stamp~%#Frame this data is associated with~%# 0: no frame~%# 1: global frame~%string frame_id~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:serialization-length ((msg <alldata>))
   (cl:+ 0
      (roslisp-msg-protocol:serialization-length (cl:slot-value msg 'H))
@@ -1053,7 +1052,7 @@
      2
      2
      2
-     2
+     4
      4
      8
      8
