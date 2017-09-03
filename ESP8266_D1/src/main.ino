@@ -155,7 +155,8 @@ void loop()
       //if(data_received)
       {
         printgmpts(&msetpts);
-        printMPU(&mpudata);
+        printMPU(&debug_data.mpuRAW);
+        printMPU(&rawmpudata);
 
       }
       //else

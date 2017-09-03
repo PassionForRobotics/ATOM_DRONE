@@ -142,53 +142,53 @@ void copy_alldata(const debug_data *_data, atom_esp_listener::alldata *_msg)
 
 void printdata(const debug_data *_data)
 {
-  ROS_INFO("d.mD.ax %d", _data->mpuData.AcX);
-  ROS_INFO("d.mD.ay %d", _data->mpuData.AcY);
-  ROS_INFO("d.mD.az %d", _data->mpuData.AcZ);
-  ROS_INFO("d.mD.ts %d", _data->mpuData.timestamp);
-  ROS_INFO("d.mD.Tmp %d", _data->mpuData.Tmp);
-  ROS_INFO("d.mD.gx %d", _data->mpuData.GyX);
-  ROS_INFO("d.mD.gy %d", _data->mpuData.GyY);
-  ROS_INFO("d.mD.gz %d", _data->mpuData.GyZ);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.ax %d", _data->mpuData.AcX);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.ay %d", _data->mpuData.AcY);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.az %d", _data->mpuData.AcZ);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.ts %d", _data->mpuData.timestamp);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.Tmp %d", _data->mpuData.Tmp);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.gx %d", _data->mpuData.GyX);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.gy %d", _data->mpuData.GyY);
+  ROS_DEBUG_THROTTLE(30,  "d.mD.gz %d", _data->mpuData.GyZ);
 
-  ROS_INFO("d.mR.ax %d", _data->mpuRAW.AcX);
-  ROS_INFO("d.mR.ay %d", _data->mpuRAW.AcY);
-  ROS_INFO("d.mR.az %d", _data->mpuRAW.AcZ);
-  ROS_INFO("d.mR.ts %d", _data->mpuRAW.timestamp);
-  ROS_INFO("d.mR.Tmp %d", _data->mpuRAW.Tmp);
-  ROS_INFO("d.mR.gx %d", _data->mpuRAW.GyX);
-  ROS_INFO("d.mR.gy %d", _data->mpuRAW.GyY);
-  ROS_INFO("d.mR.gz %d", _data->mpuRAW.GyZ);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.ax %d", _data->mpuRAW.AcX);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.ay %d", _data->mpuRAW.AcY);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.az %d", _data->mpuRAW.AcZ);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.ts %d", _data->mpuRAW.timestamp);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.Tmp %d", _data->mpuRAW.Tmp);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.gx %d", _data->mpuRAW.GyX);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.gy %d", _data->mpuRAW.GyY);
+  ROS_DEBUG_THROTTLE(30,  "d.mR.gz %d", _data->mpuRAW.GyZ);
 
-  ROS_INFO("d.pgh %f", _data->pingheight);
+  ROS_DEBUG_THROTTLE(30,  "d.pgh %f", _data->pingheight);
 
-  ROS_INFO("d.pidfb.I %f", _data->ppfb.Input);
-  ROS_INFO("d.pidfb.Kd %f", _data->ppfb.Kd);
-  ROS_INFO("d.pidfb.Ki %f", _data->ppfb.Ki);
-  ROS_INFO("d.pidfb.Kp %f", _data->ppfb.Kp);
-  ROS_INFO("d.pidfb.O %f", _data->ppfb.Output);
-  ROS_INFO("d.pidfb.S %f", _data->ppfb.Setpoint);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.I %f", _data->ppfb.Input);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.Kd %f", _data->ppfb.Kd);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.Ki %f", _data->ppfb.Ki);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.Kp %f", _data->ppfb.Kp);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.O %f", _data->ppfb.Output);
+  ROS_DEBUG_THROTTLE(30,  "d.pidfb.S %f", _data->ppfb.Setpoint);
 
-  ROS_INFO("d.pidlr.I %f", _data->pplr.Input);
-  ROS_INFO("d.pidlr.Kd %f", _data->pplr.Kd);
-  ROS_INFO("d.pidlr.Ki %f", _data->pplr.Ki);
-  ROS_INFO("d.pidlr.Kp %f", _data->pplr.Kp);
-  ROS_INFO("d.pidlr.O %f", _data->pplr.Output);
-  ROS_INFO("d.pidlr.S %f", _data->pplr.Setpoint);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.I %f", _data->pplr.Input);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.Kd %f", _data->pplr.Kd);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.Ki %f", _data->pplr.Ki);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.Kp %f", _data->pplr.Kp);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.O %f", _data->pplr.Output);
+  ROS_DEBUG_THROTTLE(30,  "d.pidlr.S %f", _data->pplr.Setpoint);
 
-  ROS_INFO("d.pidud.I %f", _data->ppud.Input);
-  ROS_INFO("d.pidud.Kd %f", _data->ppud.Kd);
-  ROS_INFO("d.pidud.Ki %f", _data->ppud.Ki);
-  ROS_INFO("d.pidud.Kp %f", _data->ppud.Kp);
-  ROS_INFO("d.pidud.O %f", _data->ppud.Output);
-  ROS_INFO("d.pidud.S %f", _data->ppud.Setpoint);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.I %f", _data->ppud.Input);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.Kd %f", _data->ppud.Kd);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.Ki %f", _data->ppud.Ki);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.Kp %f", _data->ppud.Kp);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.O %f", _data->ppud.Output);
+  ROS_DEBUG_THROTTLE(30,  "d.pidud.S %f", _data->ppud.Setpoint);
 
-  ROS_INFO("d.yaw %f", _data->yaw);
-  ROS_INFO("d.pitch %f", _data->pitch);
-  ROS_INFO("d.roll %f", _data->roll);
+  ROS_DEBUG_THROTTLE(30,  "d.yaw %f", _data->yaw);
+  ROS_DEBUG_THROTTLE(30,  "d.pitch %f", _data->pitch);
+  ROS_DEBUG_THROTTLE(30,  "d.roll %f", _data->roll);
 
-  ROS_INFO("d.ts %d", _data->timestamp);
-  ROS_INFO("d.pidtt %d", _data->tune_type);
+  ROS_DEBUG_THROTTLE(30,  "d.ts %d", _data->timestamp);
+  ROS_DEBUG_THROTTLE(30,  "d.pidtt %d", _data->tune_type);
 }
 
 #define LISTENER
@@ -390,16 +390,17 @@ int main (int argc, char** argv)
         goto relink;
         //break;
       }
-      else if((((char*)(&all_data))[0] != '\0') || (SIZE_OF_ALL_DATA == numRead) )
+      else //if((((char*)(&all_data))[0] != '\0') || (SIZE_OF_ALL_DATA == numRead) )
       {
         //cout<<"\nClient: "<<in;
         //memcpy((char*)&all_data, in, SIZE_OF_ALL_DATA);
+        printdata(&all_data);
 	ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
         copy_alldata(&all_data, &msg);
         msg.H.stamp = ros::Time::now();
         // msg.H.frame_id = "?"
         msg.H.seq = count++;
-        ROS_DEBUG_THROTTLE(30, "[ESP]: DATA from ESP %f, %f, %f", all_data.yaw, all_data.pitch, all_data.roll );
+        ROS_DEBUG_THROTTLE(30, "[ESP]: DATA from ESP %f, %f, %f", (float)all_data.yaw, (float)all_data.pitch, (float)all_data.roll );
         //printdata(&data);
 
         server_pub.publish(msg);

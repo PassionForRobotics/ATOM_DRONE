@@ -142,7 +142,7 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
   printdata(all_data);
 
 
-  client.write((uint8_t*)&all_data, SIZE_OF_ALL_DATA);
+  client.write((uint8_t*)all_data, SIZE_OF_ALL_DATA);
   //Serial.print("check "); Serial.println(__LINE__);
 
 
@@ -265,9 +265,18 @@ void printdata(const debug_data *_data)
   Serial.printf("d.pidud.O %d, ", (int)100* _data->ppud.Output);
   Serial.printf("d.pidud.S %d, ", (int)100* _data->ppud.Setpoint);
 
-  Serial.printf("d.yaw %d, ", (int)100* _data->yaw);
-  Serial.printf("d.pitch %d, ", (int)100* _data->pitch);
-  Serial.printf("d.roll %d, ", (int)100* _data->roll);
+  Serial.printf("d.yaw ");
+  Serial.print(_data->yaw);
+  Serial.printf(", ");
+  //Serial.printf("d.yaw %d, ", (int)100* _data->yaw);
+  Serial.printf("d.pitch ");
+  Serial.print(_data->pitch);
+  Serial.printf(", ");
+  //Serial.printf("d.pitch %d, ", (int)100* _data->pitch);
+  Serial.printf("d.roll ");
+  Serial.print(_data->roll);
+  Serial.printf(", ");
+  //Serial.printf("d.roll %d, ", (int)100* _data->roll);
 
   Serial.printf("d.ts %d, ", _data->timestamp);
   Serial.printf("d.pidtt %d\n", _data->tune_type);
