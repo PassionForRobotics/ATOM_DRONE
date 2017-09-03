@@ -157,7 +157,7 @@ struct sGENERICSETPOINTS_t
   //{
   //  eBUTTONS_t ebuttons;
     int16_t buttons;
-    PID_TUNE_TYPE PID_TUNE;
+    PID_TUNE_TYPE pid_tune_type;
   ///};
 };
 

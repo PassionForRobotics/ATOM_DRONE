@@ -13,6 +13,16 @@ sGENERICSETPOINTS_t setpoints;
 
 WiFiClient client;
 
+char* PID_TUNE_TYPE_str[]=
+{
+  "PID_TUNE_TYPE_NONE",
+  "PID_TUNE_TYPE_LEFT_RIGHT",
+  "PID_TUNE_TYPE_FORE_BACK",
+  "PID_TUNE_TYPE_UP_DOWN",
+  "PID_TUNE_TYPE_TUNING_DONE",
+  "PID_TUNE_TYPE_MAX"
+};
+
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -61,10 +71,31 @@ char incomingPacket[SIZE_OF_ALL_DATA] = {0};
 void printgmpts(sGENERICSETPOINTS_t *setpoints)
 {
   //return;
-  Serial.printf("[ INFO] [%d.%d]: Sub Joy: x:%d, y:%d, z:%d, s:%d b: " SHORT_TO_BINARY_PATTERN, setpoints->timestampsec, setpoints->timestampnsec
-  , setpoints->x, setpoints->y, setpoints->z, setpoints->s, SHORT_TO_BINARY(setpoints->buttons));
+  Serial.printf("[ INFO] [%d.%d]: Sub Joy: x:%d, y:%d, z:%d, s:%d, b: " SHORT_TO_BINARY_PATTERN ", PIDMODE: %s", setpoints->timestampsec, setpoints->timestampnsec
+  , setpoints->x, setpoints->y, setpoints->z, setpoints->s, SHORT_TO_BINARY(setpoints->buttons), PID_TUNE_TYPE_str[setpoints->pid_tune_type]);
   Serial.println();
 
+}
+
+void connectserver()
+{
+  const int httpPort = serverPort;
+  if (!client.connect(/*"localhost"*/serverip, httpPort))
+  {
+
+    static uint32_t lastServerDisconTime = 0;
+    if(system_get_time()-lastServerDisconTime >=(5000*1000))
+    {
+       lastServerDisconTime = system_get_time();
+       Serial.println("connection failed reconnecting .. ");
+    }
+    //ESP.restart();
+    //return;
+  }
+  else
+  {
+    Serial.println("connection ESTABLISHED");
+  }
 }
 
 void wifi_setup()
@@ -86,16 +117,7 @@ void wifi_setup()
 
   wifi_set_sleep_type(NONE_SLEEP_T);//LIGHT_SLEEP_T);
 
-  const int httpPort = serverPort;
-  if (!client.connect(/*"localhost"*/serverip, httpPort)) {
-
-    Serial.println("connection failed restart .. ");
-    ESP.restart();
-    return;
-  }
-  {
-    Serial.println("connection ESTABLISHED");
-  }
+  connectserver();
 
   //Udp.begin(localUdpPort);
   //Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
@@ -105,6 +127,13 @@ void wifi_setup()
 boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
 {
   boolean packet_received = false;
+
+  if(!client.connected())
+  {
+    client.stop();
+    connectserver();
+    return false;
+  }
 
   client.write((uint8_t*)&all_data, SIZE_OF_ALL_DATA);
   //Serial.print("check "); Serial.println(__LINE__);

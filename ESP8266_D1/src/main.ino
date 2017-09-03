@@ -101,7 +101,7 @@ void loop()
 
     mpu_filter(&mpudata, &sdata);
 
-    if(system_get_time()-lastWIFITime >=(10*1000))
+    //if(system_get_time()-lastWIFITime >=(10*1000))
     {
       lastWIFITime = system_get_time();;
 
@@ -125,9 +125,9 @@ void loop()
 
       #endif // ENABLE_WIFI
     }
-    else
+    //else
     {
-      data_received = false;
+      //data_received = false;
     }
 
     #if defined(ENABLE_STEER)
@@ -151,7 +151,14 @@ void loop()
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
       lastPrintTime = system_get_time();
-      printgmpts(&msetpts);
+      if(data_received)
+      {
+        printgmpts(&msetpts);
+      }
+      else
+      {
+        //Serial.println("[ WARN] [.] Probable connection loss.");
+      }
 
 
       //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
