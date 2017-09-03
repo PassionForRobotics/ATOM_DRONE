@@ -89,6 +89,8 @@ std_msgs/String.h
 /home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/src/std_msgs/String.h
 atom_esp_joy/joydata.h
 /home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/src/atom_esp_joy/joydata.h
+pthread.h
+-
 iostream
 -
 atom_esp_joy/Extreme3DProService.hpp
@@ -96,6 +98,10 @@ atom_esp_joy/Extreme3DProService.hpp
 chrono
 -
 sstream
+-
+stdlib.h
+-
+stdio.h
 -
 
 /opt/ros/kinetic/include/ros/advertise_options.h

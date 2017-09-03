@@ -11,7 +11,7 @@ Needs building two times. - will check later
 
 * rosrun atom_esp_joy atom_joy_node
 
-
+* rqt_plot /atom_joydata/X:Y:Z:S:buttons
 
 Credit: https://github.com/WisconsinRobotics/JoystickLibrary
 

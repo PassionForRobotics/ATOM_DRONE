@@ -20,8 +20,13 @@ Enumerator::Enumerator()
 Enumerator::~Enumerator()
 {
     this->started = false;
+    
+    //if(NULL != this->impl->deviceListenerThread)
+    	std::terminate();//this->impl->deviceListenerThread);
+    
     if (this->impl)
         delete this->impl;
+    std::cout << "~Enumerator()";
 }
 
 void Enumerator::RegisterInstance(DeviceChangeCallback callback)

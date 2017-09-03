@@ -11,6 +11,7 @@ JoystickService::JoystickService()
 
 JoystickService::~JoystickService()
 {
+	std::cout << "~JoystickService()";
 }
 
 bool JoystickLibrary::JoystickService::Initialize()

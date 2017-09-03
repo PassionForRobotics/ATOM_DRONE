@@ -67,7 +67,7 @@ void setup()
 
 uint32_t lastWIFITime = 0, lastLoopTime =0 , lastPrintTime = 0;
 
-sMOTIONSETPOINTS_t msetpts;
+sGENERICSETPOINTS_t msetpts;
 
 void loop()
 {
@@ -151,12 +151,12 @@ void loop()
       //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
       //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
 
-      Serial.print("PID | S:");
-      Serial.print(debug_data.pplr.Setpoint);
-      Serial.print(" I:");
-      Serial.print(debug_data.pplr.Input);
-      Serial.print(" O:");
-      Serial.println(debug_data.pplr.Output);
+      // Serial.print("PID | S:");
+      // Serial.print(debug_data.pplr.Setpoint);
+      // Serial.print(" I:");
+      // Serial.print(debug_data.pplr.Input);
+      // Serial.print(" O:");
+      // Serial.println(debug_data.pplr.Output);
     }
 
     // Serial.print("AcX = "); Serial.print(mpudata.AcX);

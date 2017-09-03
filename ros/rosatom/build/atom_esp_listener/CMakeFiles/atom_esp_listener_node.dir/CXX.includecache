@@ -75,6 +75,10 @@ stdio.h
 -
 unistd.h
 -
+fcntl.h
+-
+pthread.h
+-
 /home/rahuldeo/ATOM/ATOM_DRONE/ESP8266_D1/src/data2.h
 -
 

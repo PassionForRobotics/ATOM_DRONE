@@ -6,6 +6,7 @@
 
 PID_Tune_Params_t pplr =
 {
+  0,
   90.0, 90.0, 90.0,
   200.0, 30.0, 10.0
 }; // pid_params_left_right
@@ -14,6 +15,7 @@ PID PIDlr(&pplr.Input, &pplr.Output, &pplr.Setpoint, pplr.Kp, pplr.Ki, pplr.Kd, 
 
 PID_Tune_Params_t ppfb =
 {
+  0,
   90.0, 90.0, 90.0,
   200.0, 30.0, 10.0
 }; // pid_params_up_down
@@ -22,6 +24,7 @@ PID PIDfb(&ppfb.Input, &ppfb.Output, &ppfb.Setpoint, ppfb.Kp, ppfb.Ki, ppfb.Kd, 
 
 PID_Tune_Params_t ppud = // the initial points needs to be merged with ping data
 {
+  0,
   90.0, 90.0, 90.0,
   200.0, 30.0, 10.0
 }; // pid_params_up_down
@@ -69,6 +72,16 @@ PID_ATune PID_ATune_FB(&ppfb.Input, &ppfb.Output);
 ///
 ///
 
+#define SET_POINT_X_MIN (-100)
+#define SET_POINT_X_MAX (100 )
+#define SET_POINT_Y_MIN (-100)
+#define SET_POINT_Y_MAX (100 )
+#define SET_POINT_Z_MIN (-100)
+#define SET_POINT_Z_MAX (100 )
+#define SET_POINT_S_MIN (0   )
+#define SET_POINT_S_MAX (100 )
+
+
 Servo servo[4];  // create servo object to control a servo
 int pins[4] = {D5, D6, D7, D8}; // D9 is LED
 int i = 0;
@@ -105,13 +118,13 @@ void steer_setup()
     //servo[i].write(90+servo_offsets[i]);
   }
 
-  byte x = map(512, 1023, 0, -45+90+servo_offsets[0], 45+90+servo_offsets[0]);
+  byte x  = map(0, SET_POINT_X_MAX, SET_POINT_X_MIN, -45+90+servo_offsets[0], 45+90+servo_offsets[0]);
   //x += 90;
-  byte y = map(512, 0, 1023, -45+90+servo_offsets[1], 45+90+servo_offsets[1]);
+  byte y  = map(0, SET_POINT_Y_MIN, SET_POINT_Y_MAX, -45+90+servo_offsets[1], 45+90+servo_offsets[1]);
 
-  byte x1 = map(512, 0, 1023, -45+90+servo_offsets[2], 45+90+servo_offsets[2]);
+  byte x1 = map(0, SET_POINT_X_MIN, SET_POINT_X_MAX, -45+90+servo_offsets[2], 45+90+servo_offsets[2]);
 
-  byte y1 = map(512, 1023, 0, -45+90+servo_offsets[3], 45+90+servo_offsets[3]);
+  byte y1 = map(0, SET_POINT_Y_MAX, SET_POINT_Y_MIN, -45+90+servo_offsets[3], 45+90+servo_offsets[3]);
 
   servo[0].write(x);
 
@@ -137,7 +150,7 @@ void steer_setup()
 byte angle = 35;
 uint32_t lastSteerLoopTime = 0;
 
-void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
+void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
 {
 
 
@@ -153,15 +166,15 @@ void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
   //
   // byte tw = map(msetpts->twist, 0, 255, -SERVO_TWIST_ANGLE_LIMIT, SERVO_TWIST_ANGLE_LIMIT);
 
-  byte x = map(msetpts->x, 1023, 0, -45+90+servo_offsets[0], 45+90+servo_offsets[0]);
+  byte x  = map(msetpts->x,     SET_POINT_X_MAX, SET_POINT_X_MIN, -45+90+servo_offsets[0], 45+90+servo_offsets[0]);
   //x += 90;
-  byte y = map(msetpts->y, 0, 1023, -45+90+servo_offsets[1], 45+90+servo_offsets[1]);
+  byte y  = map(msetpts->y,     SET_POINT_Y_MIN, SET_POINT_Y_MAX, -45+90+servo_offsets[1], 45+90+servo_offsets[1]);
 
-  byte x1 = map(msetpts->x, 0, 1023, -45+90+servo_offsets[2], 45+90+servo_offsets[2]);
+  byte x1 = map(msetpts->x,     SET_POINT_X_MIN, SET_POINT_X_MAX, -45+90+servo_offsets[2], 45+90+servo_offsets[2]);
 
-  byte y1 = map(msetpts->y, 1023, 0, -45+90+servo_offsets[3], 45+90+servo_offsets[3]);
+  byte y1 = map(msetpts->y,     SET_POINT_Y_MAX, SET_POINT_Y_MIN, -45+90+servo_offsets[3], 45+90+servo_offsets[3]);
 
-  byte tw = map(msetpts->twist, 0, 255, -SERVO_TWIST_ANGLE_LIMIT, SERVO_TWIST_ANGLE_LIMIT);
+  byte tw = map(msetpts->z, SET_POINT_Z_MIN, SET_POINT_Z_MAX, -SERVO_TWIST_ANGLE_LIMIT, SERVO_TWIST_ANGLE_LIMIT);
 
   x += tw;
   x1 += tw;
@@ -181,7 +194,7 @@ void steer_loop(debug_data *all_data, sMOTIONSETPOINTS_t *msetpts)
   // Use
   //all_data->pplr.Output
   //all_data->ppfb.Output
-  
+
 
 
 
@@ -208,9 +221,10 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
   }
 
 
+  POV hat = (POV)msetpts->ebuttons.HAT ;
   int escval = 0;
   static bool ESC_armed = false;
-  if(2 == msetpts->hat)
+  if(POV_WEST == hat )
   {
     escval = MIN_THROTTLE;
     ESC.writeMicroseconds(escval);
@@ -218,7 +232,7 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
     //Serial.printf("%d\n", msetpts->hat);
   }
 
-  if(4 == msetpts->hat&& false == ESC_armed)
+  if(POV_EAST == hat&& false == ESC_armed)
   {
     escval = MAX_THROTTLE;
     ESC.writeMicroseconds(escval);
@@ -226,7 +240,7 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
     //Serial.printf("%d\n", msetpts->hat);
   }
 
-  if(6 == msetpts->hat)
+  if(POV_SOUTH == hat)
   {
     escval = ZERO_THROTTLE;
     ESC.writeMicroseconds(escval);
@@ -236,8 +250,8 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
 
   if ( (true == ESC_armed) )
   {
-    escval = map(msetpts->slider
-      , 0, 255
+    escval = map(msetpts->s
+      , SET_POINT_S_MIN, SET_POINT_S_MAX
       , MIN_THROTTLE, MAX_THROTTLE);
 
       if(0==escval)

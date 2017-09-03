@@ -90,7 +90,7 @@ struct sMPUDATA_t
 
   //unsigned char etx;
 };
- 
+
 struct sMOTIONSETPOINTS_t
 {
   uint32_t timestamp;
@@ -103,6 +103,36 @@ struct sMOTIONSETPOINTS_t
   uint16_t buttons;
 };
 
+enum POV
+{
+  POV_NONE = 0,                               /**< POV hat is not in use.              */
+  POV_WEST = 1 << 0,                          /**< POV hat is facing left.             */
+  POV_EAST = 1 << 1,                          /**< POV hat is facing right.            */
+  POV_NORTH = 1 << 2,                         /**< POV hat is facing up.               */
+  POV_SOUTH = 1 << 3,                         /**< POV hat is facing down.             */
+  POV_NORTHWEST = POV_NORTH | POV_WEST,       /**< POV hat is facing up and left.      */
+  POV_NORTHEAST = POV_NORTH | POV_EAST,       /**< POV hat is facing up and right.     */
+  POV_SOUTHWEST = POV_SOUTH | POV_WEST,       /**< POV hat is facing south and left.   */
+  POV_SOUTHEAST = POV_SOUTH | POV_EAST        /**< POV hat is facing south and right.  */
+};
+
+struct eBUTTONS_t //:: uint16_t
+{
+  uint16_t HAT:4;  // 13,14,15,16
+  uint16_t B_12:1; // 12
+  uint16_t B_11:1; // 11
+  uint16_t B_10:1; // 10
+  uint16_t B_09:1; // 09
+  uint16_t B_07:1; // 08
+  uint16_t B_08:1; // 07
+  uint16_t B_06:1; // 06
+  uint16_t B_05:1; // 05
+  uint16_t B_04:1; // 04
+  uint16_t B_03:1; // 03
+  uint16_t B_02:1; // 02
+  uint16_t B_01:1; // 01
+};
+
 struct sGENERICSETPOINTS_t
 {
   uint32_t timestampsec;
@@ -111,7 +141,11 @@ struct sGENERICSETPOINTS_t
   int16_t y;
   int16_t z;
   int16_t s; //slider
-  uint16_t buttons;
+  union
+  {
+    eBUTTONS_t ebuttons;
+    int16_t buttons;
+  };
 };
 
 struct PID_Tune_Params_t

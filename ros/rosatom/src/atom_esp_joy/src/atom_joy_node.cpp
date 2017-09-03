@@ -33,6 +33,8 @@
 #include "atom_esp_joy/joydata.h"
 // %EndTag(MSG_HEADER)%
 
+#include <pthread.h> // exit test
+
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
   (byte & 0x80 ? '1' : '0'), \
@@ -152,6 +154,12 @@ void LogitechAxes(int id, int16_t *_x, int16_t *_y, int16_t *_z, int16_t *_s, in
 
 }
 
+#include <stdlib.h>
+#include <stdio.h>
+void onExit(){
+    ROS_WARN("EXIT");
+}
+
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
@@ -167,6 +175,8 @@ int main(int argc, char **argv)
    * You must call one of the versions of ros::init() before using any other
    * part of the ROS system.
    */
+   atexit(onExit);
+   
 // %Tag(INIT)%
   ros::init(argc, argv, "joy_node");
 // %EndTag(INIT)%
@@ -270,6 +280,7 @@ int main(int argc, char **argv)
   }
   
   ROS_WARN("EXIT");
+  pthread_exit(NULL);
 
   return 0;
 }

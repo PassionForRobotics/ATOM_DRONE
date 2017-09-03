@@ -258,6 +258,7 @@ void datainc(debug_data *_data)
 
 void printgmpts(sGENERICSETPOINTS_t *setpoints)
 {
+  return;
   Serial.printf("[ INFO] [%d.%d]: Sub Joy: x:%d, y:%d, z:%d, s:%d b: " SHORT_TO_BINARY_PATTERN, setpoints->timestampsec, setpoints->timestampnsec
   , setpoints->x, setpoints->y, setpoints->z, setpoints->s, SHORT_TO_BINARY(setpoints->buttons));
   Serial.println();

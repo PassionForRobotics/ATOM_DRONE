@@ -1,4 +1,5 @@
 #include "atom_esp_joy/Extreme3DProService.hpp"
+#include <iostream>
 
 using namespace JoystickLibrary;
 
@@ -17,6 +18,7 @@ Extreme3DProService::Extreme3DProService() : JoystickService()
 
 Extreme3DProService::~Extreme3DProService()
 {
+	std::cout << "~Extreme3DProService()";
 }
 
 void Extreme3DProService::OnDeviceChanged(DeviceStateChange ds)
