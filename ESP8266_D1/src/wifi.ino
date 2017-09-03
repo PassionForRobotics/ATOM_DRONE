@@ -69,22 +69,29 @@ void printgmpts(sGENERICSETPOINTS_t *setpoints)
 
 void wifi_setup()
 {
-
+  int retrycount = 10;
   Serial.printf("Connecting to %s ", WIFISSID);
   WiFi.begin(WIFISSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.print(".");
+    if((--retrycount) == 0)
+    {
+      Serial.print("retry count exceeds 10 restarting ...");
+      ESP.restart();
+    }
   }
-  Serial.println(" connected  ... connecin to server ... ");
+  Serial.println(" connected  ... connecting to server ... ");
 
   wifi_set_sleep_type(NONE_SLEEP_T);//LIGHT_SLEEP_T);
 
   const int httpPort = serverPort;
   if (!client.connect(/*"localhost"*/serverip, httpPort)) {
+
+    Serial.println("connection failed restart .. ");
+    ESP.restart();
     return;
-    Serial.println("connection failed");
   }
   {
     Serial.println("connection ESTABLISHED");
@@ -100,12 +107,22 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
   boolean packet_received = false;
 
   client.write((uint8_t*)&all_data, SIZE_OF_ALL_DATA);
+  //Serial.print("check "); Serial.println(__LINE__);
 
-  if(client.available())
+
+  while(client.available()) // if(client.available()) is crashing ???
   {
-    packet_received = true;
-    int line = client.read((uint8_t *) &setpoints, (size_t) SIZE_OF_GMSETPOINTS_DATA);
-    printgmpts(setpoints);
+    //Serial.print("check "); Serial.println(__LINE__);
+
+    //size_t s = client.peekBytes((uint8_t *)&setpoints, size_t SIZE_OF_GMSETPOINTS_DATA);
+    //Serial.print("check "); Serial.println(__LINE__);
+    int nc = client.read((uint8_t *) setpoints, (size_t) SIZE_OF_GMSETPOINTS_DATA);
+    if(SIZE_OF_GMSETPOINTS_DATA == nc)
+    {
+      packet_received = true;
+    }
+    //Serial.print("check "); Serial.println(__LINE__);
+    //printgmpts(setpoints);
   }
 
   // int packetSize = Udp.parsePacket();

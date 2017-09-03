@@ -103,6 +103,18 @@ struct sMOTIONSETPOINTS_t
   uint16_t buttons;
 };
 
+
+enum PID_TUNE_TYPE
+{
+  PID_TUNE_TYPE_NONE = 0,
+  PID_TUNE_TYPE_LEFT_RIGHT,
+  PID_TUNE_TYPE_FORE_BACK,
+  PID_TUNE_TYPE_UP_DOWN,
+  PID_TUNE_TYPE_TUNING_DONE,
+  PID_TUNE_TYPE_MAX = 0xff
+};
+
+
 enum POV
 {
   POV_NONE = 0,                               /**< POV hat is not in use.              */
@@ -141,11 +153,12 @@ struct sGENERICSETPOINTS_t
   int16_t y;
   int16_t z;
   int16_t s; //slider
-  union
-  {
-    eBUTTONS_t ebuttons;
+  //union
+  //{
+  //  eBUTTONS_t ebuttons;
     int16_t buttons;
-  };
+    PID_TUNE_TYPE PID_TUNE;
+  ///};
 };
 
 struct PID_Tune_Params_t
@@ -157,16 +170,6 @@ struct PID_Tune_Params_t
   //Specify the links and initial tuning parameters
   double Kp, Ki, Kd;
 
-};
-
-enum PID_TUNE_TYPE
-{
-  PID_TUNE_TYPE_NONE = 0,
-  PID_TUNE_TYPE_LEFT_RIGHT,
-  PID_TUNE_TYPE_FORE_BACK,
-  PID_TUNE_TYPE_UP_DOWN,
-  PID_TUNE_TYPE_TUNING_DONE,
-  PID_TUNE_TYPE_MAX = 0xff
 };
 
 struct ALL_DATA

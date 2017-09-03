@@ -216,8 +216,9 @@ int main(int argc, char **argv)
 // %EndTag(LOOP_RATE)%
 
     bool s = es.Initialize();
-    std::cout << "Waiting for js plugin" << std::endl;
+    ROS_INFO("Waiting for js plugin ... ");
     while (es.GetNumberConnected() < 1);
+    ROS_DEBUG("RUNNING NOW...");
 
    //joyserrun.Start();
   /**
@@ -249,7 +250,7 @@ int main(int argc, char **argv)
     msg.Z = z;
     msg.S = s;
     msg.buttons = btns & (0x0000FFFF); // check diffrerent datatypes
-    ROS_INFO("Pub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
+    ROS_DEBUG_THROTTLE(10,"Pub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
     //std::stringstream ss;
     //ss << "hello world " << count;
     msg = msg;

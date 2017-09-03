@@ -135,8 +135,13 @@ void loop()
     //if(true == data_received)
     //{
     //  if( (msetpts.x != 0) && (msetpts.y != 0) )
+
+    // Without this empty line esp is crashing ????
+    Serial.print("");//check "); Serial.println(__LINE__); // Without this empty line esp is crashing ????
     steer_loop(&debug_data, &msetpts); // should be sent on next loop over wifi
     //}
+    // Without this empty line esp is crashing ????
+    Serial.print("");//check "); Serial.println(__LINE__) // Without this empty line esp is crashing ????;
 
     #endif  // ENABLE_STEER
 
@@ -146,6 +151,7 @@ void loop()
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
       lastPrintTime = system_get_time();
+      printgmpts(&msetpts);
 
 
       //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));

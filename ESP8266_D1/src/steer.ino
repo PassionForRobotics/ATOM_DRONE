@@ -221,7 +221,7 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
   }
 
 
-  POV hat = (POV)msetpts->ebuttons.HAT ;
+  POV hat = (POV)(0x000F&msetpts->buttons) ;
   int escval = 0;
   static bool ESC_armed = false;
   if(POV_WEST == hat )

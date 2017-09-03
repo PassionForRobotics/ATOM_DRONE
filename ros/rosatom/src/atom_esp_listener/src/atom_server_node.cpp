@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include "std_msgs/String.h"
 
@@ -68,7 +69,22 @@ void my_handler(int s){
 
 }
 
-void copydata(const debug_data *_data, atom_esp_listener::alldata *_msg)
+void copy_joydata(sGENERICSETPOINTS_t *_data, const atom_esp_joy::joydata *_msg)
+{ 
+    
+    _data->timestampsec = _msg->H.stamp.sec;
+    _data->timestampnsec = _msg->H.stamp.nsec;
+    
+    _data->x		= _msg->X;
+    _data->y		= _msg->Y;
+    _data->z		= _msg->Z;
+    _data->s		= _msg->S;
+    _data->buttons	= _msg->buttons;
+    
+}
+
+
+void copy_alldata(const debug_data *_data, atom_esp_listener::alldata *_msg)
 {
   _msg->  mpuData_AcX         = _data->mpuData.AcX;
   _msg->  mpuData_AcY         = _data->mpuData.AcY;
@@ -187,7 +203,7 @@ void chatterCallback(const atom_esp_listener::alldata msg)
 void joyCallback(const atom_esp_joy::joydata msg)
 {
 
-   //ROS_INFO("Sub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
+   //ROS_DEBUG_THROTTLE(10, "Sub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, msg.X, msg.Y, msg.Z, msg.S, SHORT_TO_BINARY(msg.buttons) );
    
    setpoints.timestampsec = msg.H.stamp.sec;
    setpoints.timestampnsec = msg.H.stamp.nsec;
@@ -197,9 +213,19 @@ void joyCallback(const atom_esp_joy::joydata msg)
    setpoints.s = msg.S; 
    setpoints.buttons = msg.buttons;
    
+    ROS_DEBUG_THROTTLE(10, "Pub Joy: x:%d, y:%d, z:%d, s:%d, b:" SHORT_TO_BINARY_PATTERN, setpoints.x, setpoints.y, setpoints.z, setpoints.s, SHORT_TO_BINARY(setpoints.buttons) );
+   
+   
   //printdata(data);
   //ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
+
+struct sockaddr name;
+void *get_in_addr(struct sockaddr *sa);
+void set_nonblock(int socket);
+//char* PORT = "11511";
+int PORT = 11511;
+//#define STDIN 00 0
 
 int main (int argc, char** argv)
 {
@@ -214,119 +240,218 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "atom_server_node");
   ros::NodeHandle nh;
 
-  ros::Publisher server_pub = nh.advertise<atom_esp_listener::alldata>("atom_alldata", 1000);
+  ros::Publisher server_pub = nh.advertise<atom_esp_listener::alldata>("atom_alldata", 10);
   //ros::Subscriber server_sub = nh.subscribe("atom_drone_all_data", 1000, chatterCallback); // test sub
   ros::Subscriber joy_sub = nh.subscribe("atom_joydata", 10, joyCallback); // test sub
   
-
-  std_msgs::String message;
-  std::stringstream ss;
-
+  ros::Rate loop_rate(10);
+  
   char buffer[SIZE_OF_ALL_DATA+1];
 
   ROS_INFO("SIZE_OF_ALL_DATA %d", (int)SIZE_OF_ALL_DATA);
 
-  int socket_fd, accepted_socket_fd;
+  int status, sock, adrlen, new_sd;
 
-  struct sockaddr_in servaddr, clientaddr;
+    struct addrinfo hints;
+    //struct addrinfo *servinfo;  //will point to the results
+    struct sockaddr_in servaddr, clientaddr;
   socklen_t clilen;
+  
+    //store the connecting address and size
+    struct sockaddr_storage their_addr;
+    socklen_t their_addr_size;
 
-  socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (socket_fd < 0)
-  ROS_ERROR_STREAM("ERROR opening socket");
-  else
-  ROS_INFO_STREAM("Socket openned.");
+    fd_set read_flags,write_flags; // the flag sets to be used
+    struct timeval waitd = {10, 0};          // the max wait time for an event
+    int sel;                      // holds return value for select();
 
-  int enable = 1;
-  if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-  ROS_ERROR_STREAM("setsockopt(SO_REUSEADDR) failed");
-  else
-  {
-    ROS_INFO_STREAM("Socket set.");
-  }
 
- // #include <sys/socket.h>
-//int keepalive_enabled = 1;
-//int keepalive_time = 2;
-//int keepalive_count = 3;
-//int keepalive_interval = 2;
-//setsockopt(socket_fd, SOL_SOCKET, SO_KEEPALIVE, 1,
-//setsockopt(socket_fd, IPPROTO_TCP, TCP_KEEPIDLE, keepalive_time, sizeof keepalive_time);
-//setsockopt(socket_fd, IPPROTO_TCP, TCP_KEEPCNT, keepalive_count, sizeof keepalive_count);
-//setsockopt(socket_fd, IPPROTO_TCP, TCP_KEEPINTVL, keepalive_interval, sizeof keepalive_interval);
+    //socket infoS
+    memset(&hints, 0, sizeof hints); //make sure the struct is empty
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; //tcp
+    hints.ai_flags = AI_PASSIVE;     //use local-host address
 
-  bzero( &servaddr, sizeof(servaddr));
+    //get server info, put into servinfo
+    /*if ((status = getaddrinfo("127.0.0.1", (const char *)PORT, &hints, &servinfo)) != 0) 
+    {
+        ROS_ERROR("getaddrinfo error: %s",  gai_strerror(status));
+        //fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+        exit(1);
+    }
+    else
+    {
+    	ROS_INFO("getaddrinfo OK");
+    }*/
+    ROS_WARN("getaddrinfo Bypassed");
 
-  servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = htons(INADDR_ANY);
-  servaddr.sin_port = htons(11511);
+    //make socket
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        ROS_ERROR("server socket failure %d", errno);
+        //printf("\nserver socket failure %m", errno);
+        exit(1);
+    }
+    else
+    {
+    	ROS_INFO("socket OK");
+    }
 
-  if (bind(socket_fd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
+    //allow reuse of port
+    int yes=1;
+    if (setsockopt(sock,SOL_SOCKET, SO_REUSEADDR,&yes,sizeof(int)) == -1) {   
+        ROS_ERROR("setsockopt");
+        //perror("setsockopt");
+        exit(1);
+    }
+    else
+    {
+    	ROS_INFO("setsockopt OK");
+    }
+    
+	
+	  bzero( &servaddr, sizeof(servaddr));
+
+	  servaddr.sin_family = AF_INET;
+	  servaddr.sin_addr.s_addr = htons(INADDR_ANY);
+	  servaddr.sin_port = htons(PORT);
+
+  if (bind(sock, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
    ROS_ERROR_STREAM("ERROR on binding");
   else
   {
-    ROS_INFO_STREAM("Bound.");
+    ROS_INFO_STREAM("Bind OK");
   }
-
-  listen(socket_fd, 1);
-  //fcntl(socket_fd, F_SETFL, fcntl(socket_fd, F_GETFL, 0) | O_NONBLOCK);
-  ROS_INFO_STREAM("Ready ... ");
-  ROS_WARN("Program will need force clsoe if no coneection is accepted.");
-
-  // TODO : Non-blocked : Might need thread
-   clilen = sizeof(clientaddr);
-   accepted_socket_fd = accept(socket_fd, (struct sockaddr*) &clientaddr, &clilen);
-    if (accepted_socket_fd < 0)
-    	ROS_ERROR_STREAM("ERROR on accept");
+    //unlink and bind
+    /*unlink("127.0.0.1");
+    if(bind (sock, servaddr->ai_addr, servinfo->ai_addrlen) < 0) 
+    {
+        ROS_ERROR("Bind error %d", errno);
+        exit(1);
+    }
     else
     {
-      ROS_INFO_STREAM("Connected");
+    	ROS_INFO("Bind OK");
+    }*/
+
+    //freeaddrinfo(servinfo);
+
+    //listen
+    if(listen(sock, 5) < 0) {
+        ROS_ERROR("\nListen error %d", errno);
+        exit(1);
     }
+    else
+    {
+    	ROS_INFO("Listen OK");
+    }
+    their_addr_size = sizeof(their_addr);
+    
+    
+    //accept
+    relink: 
+    new_sd = accept(sock, (struct sockaddr*)&their_addr, &their_addr_size);
+    if( new_sd < 0) {
+        ROS_ERROR("\nAccept error %d", errno);
+        exit(1);
+    }
+    else
+    {
+    	ROS_INFO("Accept OK");
+    }
+
+    //set non blocking
+    set_nonblock(new_sd);
+    ROS_INFO("Successful Connection!");
+
+    char in[SIZE_OF_ALL_DATA];
+    char out[SIZE_OF_ALL_DATA];
+    memset(&in, 0, SIZE_OF_ALL_DATA);
+    memset(&out, 0, SIZE_OF_ALL_DATA);
+    int numSent;
+    int numRead;
     
   int32_t count = 0;
   while(ros::ok())
   {
-    int read_size = 0;
-    //ROS_INFO_STREAM("loop");
-    //accepted_socket_fd = accept(socket_fd, (struct sockaddr*) &clientaddr, &clilen);
-    //if (accepted_socket_fd < 0)    	
-    //{
-	//ROS_ERROR_STREAM("ERROR on accept");
-    //}
-    //else
-    //{
-    //  ROS_INFO_STREAM("Connected");
-    //}
-    
-    if( (read_size = recv(accepted_socket_fd , buffer , SIZE_OF_ALL_DATA , 0)) > 0 ) // code convention !! 
-    { 
-      memcpy((char*)&all_data, buffer, SIZE_OF_ALL_DATA);
+  
+    FD_ZERO(&read_flags);
+        FD_ZERO(&write_flags);
+        FD_SET(new_sd, &read_flags);
+        FD_SET(new_sd, &write_flags);
+        FD_SET(STDIN_FILENO, &read_flags);
+        FD_SET(STDIN_FILENO, &write_flags);
+
+        sel = select(new_sd+1, &read_flags, &write_flags, (fd_set*)0, &waitd);
+
+        //if an error with select
+        if(sel < 0)
+            continue;
+
+        //socket ready for reading
+        if(FD_ISSET(new_sd, &read_flags)) {
+
+            //clear set
+            FD_CLR(new_sd, &read_flags);
+
+            memset(&in, 0, SIZE_OF_ALL_DATA);
+
+            numRead = recv(new_sd, in, SIZE_OF_ALL_DATA, 0);
+            if(numRead <= 0) {
+                ROS_ERROR("error in socket, probably closed by client, recovery attempt TODO");
+                close(new_sd);
+                goto relink;
+                //break;
+            }
+            else if(in[0] != '\0')
+            {
+                //cout<<"\nClient: "<<in;
+                memcpy((char*)&all_data, in, SIZE_OF_ALL_DATA);
       
-      copydata(&all_data, &msg);
-      msg.H.stamp = ros::Time::now();
-      // msg.H.frame_id = "?"
-      msg.H.seq = count;
-      ROS_INFO("DATA from ESP");
-      //printdata(&data);
+	      copy_alldata(&all_data, &msg);
+	      msg.H.stamp = ros::Time::now();
+	      // msg.H.frame_id = "?"
+	      msg.H.seq = count++;
+	      ROS_DEBUG_THROTTLE(10, "DATA from ESP"); 
+	      //printdata(&data);
 
-      server_pub.publish(msg);
-      
-      int n = write(accepted_socket_fd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // SEEMS OK: Thread safety could be an issue
-      if (n < 0) ROS_ERROR("ERROR writing to socket");
-      //setpoints
+	      server_pub.publish(msg);
+	      //ROS_ERROR("?");
+	      // %Tag(SPINONCE)%
+	    ros::spinOnce();
+	// %EndTag(SPINONCE)%
 
-      ros::spinOnce();
+	// %Tag(RATE_SLEEP)%
+	    
+	      
+	      int n = write(new_sd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // SEEMS OK: Thread safety could be an issue
+      if (n < 0) 
+      {
+      ROS_ERROR("[ESP]: ERROR writing to socket, recovery attempt...");
+      close(new_sd);
+                goto relink;
+	}
+	loop_rate.sleep();      
+            }
 
-      //ss.str(std::string());
-      bzero(buffer,SIZE_OF_ALL_DATA);
-      
-      ++count;
-    }
-    else
-    {
-      //ROS_INFO_STREAM("read err");
-    }
+        }   //end if ready for read
 
+        //if stdin is ready to be read
+        //if(FD_ISSET(STDIN_FILENO, &read_flags))
+        //    fgets(out, 255, stdin);
+
+
+        //socket ready for writing
+         /*if(FD_ISSET(new_sd, &write_flags)) {
+            //printf("\nSocket ready for write");
+            FD_CLR(new_sd, &write_flags);
+            sGENERICSETPOINTS_t gmpts = setpoints;
+            //copy_joydata(&gmpts, &setpoints);
+            send(new_sd, &gmpts, SIZE_OF_GMSETPOINTS_DATA, 0);
+            memset(&gmpts, 0, SIZE_OF_GMSETPOINTS_DATA);
+        }   //end if
+        */
+        
   }
   
   ROS_WARN("EXIT");
@@ -334,11 +459,8 @@ int main (int argc, char** argv)
 
   return 0;
 }
-
-#define PORT "11511"
-#define STDIN 0
-
-struct sockaddr name;
+ 
+//struct sockaddr name;
 
 void set_nonblock(int socket) {
     int flags;
@@ -356,8 +478,8 @@ void *get_in_addr(struct sockaddr *sa) {
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-
-int main(int agrc, char** argv) {
+/*
+int _main(int agrc, char** argv) {
     int status, sock, adrlen, new_sd;
 
     struct addrinfo hints;
@@ -482,4 +604,4 @@ int main(int agrc, char** argv) {
 
    cout<<"\n\nExiting normally\n";
     return 0;
-}
+}*/
