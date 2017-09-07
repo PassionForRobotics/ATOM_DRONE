@@ -8,10 +8,10 @@ import struct
 import std_msgs.msg
 
 class joydata(genpy.Message):
-  _md5sum = "b9528701db416223921ea3eb84e581e7"
+  _md5sum = "a8d766a6e235fd7ad875a4a557990e38"
   _type = "atom_esp_joy/joydata"
-  _has_header = False #flag to mark the presence of a Header object
-  _full_text = """Header H
+  _has_header = True #flag to mark the presence of a Header object
+  _full_text = """Header header
 int16 X
 int16 Y
 int16 Z
@@ -45,7 +45,7 @@ time stamp
 # 1: global frame
 string frame_id
 """
-  __slots__ = ['H','X','Y','Z','S','buttons']
+  __slots__ = ['header','X','Y','Z','S','buttons']
   _slot_types = ['std_msgs/Header','int16','int16','int16','int16','uint16']
 
   def __init__(self, *args, **kwds):
@@ -56,7 +56,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       H,X,Y,Z,S,buttons
+       header,X,Y,Z,S,buttons
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -65,8 +65,8 @@ string frame_id
     if args or kwds:
       super(joydata, self).__init__(*args, **kwds)
       #message fields cannot be None, assign default values for those that are
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       if self.X is None:
         self.X = 0
       if self.Y is None:
@@ -78,7 +78,7 @@ string frame_id
       if self.buttons is None:
         self.buttons = 0
     else:
-      self.H = std_msgs.msg.Header()
+      self.header = std_msgs.msg.Header()
       self.X = 0
       self.Y = 0
       self.Z = 0
@@ -98,8 +98,8 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_get_struct_3I().pack(_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs))
-      _x = self.H.frame_id
+      buff.write(_get_struct_3I().pack(_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs))
+      _x = self.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
         _x = _x.encode('utf-8')
@@ -116,22 +116,22 @@ string frame_id
     :param str: byte array of serialized message, ``str``
     """
     try:
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       end = 0
       _x = self
       start = end
       end += 12
-      (_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      (_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
       start = end
       end += length
       if python3:
-        self.H.frame_id = str[start:end].decode('utf-8')
+        self.header.frame_id = str[start:end].decode('utf-8')
       else:
-        self.H.frame_id = str[start:end]
+        self.header.frame_id = str[start:end]
       _x = self
       start = end
       end += 10
@@ -149,8 +149,8 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_get_struct_3I().pack(_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs))
-      _x = self.H.frame_id
+      buff.write(_get_struct_3I().pack(_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs))
+      _x = self.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
         _x = _x.encode('utf-8')
@@ -168,22 +168,22 @@ string frame_id
     :param numpy: numpy python module
     """
     try:
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       end = 0
       _x = self
       start = end
       end += 12
-      (_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      (_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
       start = end
       end += length
       if python3:
-        self.H.frame_id = str[start:end].decode('utf-8')
+        self.header.frame_id = str[start:end].decode('utf-8')
       else:
-        self.H.frame_id = str[start:end]
+        self.header.frame_id = str[start:end]
       _x = self
       start = end
       end += 10

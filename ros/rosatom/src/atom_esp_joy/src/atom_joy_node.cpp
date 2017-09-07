@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(1);
 // %EndTag(LOOP_RATE)%
 
     bool s = es.Initialize();
@@ -242,9 +242,9 @@ int main(int argc, char **argv)
     	continue;
 
     LogitechAxes(a[0], &x, &y, &z, &s, &btns); // ctrl+c is not working here ???
-    msg.H.stamp = ros::Time::now();
-    // msg.H.frame_id = "?"
-    msg.H.seq = count;
+    //msg.header.stamp = ros::Time::now();
+    // msg.header.frame_id = "?"
+    //msg.header.seq = count;
     msg.X = x;
     msg.Y = y;
     msg.Z = z;
@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 // %EndTag(SPINONCE)%
 
 // %Tag(RATE_SLEEP)%
-    loop_rate.sleep();
+    //loop_rate.sleep();
 // %EndTag(RATE_SLEEP)%
     ++count;
   }

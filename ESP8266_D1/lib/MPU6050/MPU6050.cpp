@@ -90,6 +90,8 @@ MPU6050::MPU6050(uint16_t sampleRate, byte filterLevel, byte gyroRange, byte acc
 	gY_bias = 0;
 	gZ_bias = 0;
 
+  Serial.printf("Initialized.\n" );
+
 }
 
 
@@ -172,6 +174,8 @@ void MPU6050::retrieve(){
 	gX = float(GX.full) * gyroToRad + gX_bias;
 	gY = float(GY.full) * gyroToRad + gY_bias;
 	gZ = float(GZ.full) * gyroToRad + gZ_bias;
+
+  //Serial.printf("data retrived.\n" );
 
 }
 

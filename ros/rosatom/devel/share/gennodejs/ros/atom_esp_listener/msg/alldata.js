@@ -19,7 +19,7 @@ class alldata {
   constructor(initObj={}) {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
-      this.H = null;
+      this.header = null;
       this.mpuData_AcX = null;
       this.mpuData_AcY = null;
       this.mpuData_AcZ = null;
@@ -65,11 +65,11 @@ class alldata {
       this.tune_type = null;
     }
     else {
-      if (initObj.hasOwnProperty('H')) {
-        this.H = initObj.H
+      if (initObj.hasOwnProperty('header')) {
+        this.header = initObj.header
       }
       else {
-        this.H = new std_msgs.msg.Header();
+        this.header = new std_msgs.msg.Header();
       }
       if (initObj.hasOwnProperty('mpuData_AcX')) {
         this.mpuData_AcX = initObj.mpuData_AcX
@@ -334,8 +334,8 @@ class alldata {
 
   static serialize(obj, buffer, bufferOffset) {
     // Serializes a message object of type alldata
-    // Serialize message field [H]
-    bufferOffset = std_msgs.msg.Header.serialize(obj.H, buffer, bufferOffset);
+    // Serialize message field [header]
+    bufferOffset = std_msgs.msg.Header.serialize(obj.header, buffer, bufferOffset);
     // Serialize message field [mpuData_AcX]
     bufferOffset = _serializer.int16(obj.mpuData_AcX, buffer, bufferOffset);
     // Serialize message field [mpuData_AcY]
@@ -429,8 +429,8 @@ class alldata {
     //deserializes a message object of type alldata
     let len;
     let data = new alldata(null);
-    // Deserialize message field [H]
-    data.H = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
+    // Deserialize message field [header]
+    data.header = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
     // Deserialize message field [mpuData_AcX]
     data.mpuData_AcX = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [mpuData_AcY]
@@ -522,7 +522,7 @@ class alldata {
 
   static getMessageSize(object) {
     let length = 0;
-    length += std_msgs.msg.Header.getMessageSize(object.H);
+    length += std_msgs.msg.Header.getMessageSize(object.header);
     return length + 214;
   }
 
@@ -533,13 +533,13 @@ class alldata {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '92f8517c65a9c6e751033ceff53a0609';
+    return '586be2de32280a4c8bb4bc521bc4cf73';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
-    Header H
+    Header header
     int16  mpuData_AcX
     int16  mpuData_AcY
     int16  mpuData_AcZ
@@ -618,11 +618,11 @@ class alldata {
       msg = {};
     }
     const resolved = new alldata(null);
-    if (msg.H !== undefined) {
-      resolved.H = std_msgs.msg.Header.Resolve(msg.H)
+    if (msg.header !== undefined) {
+      resolved.header = std_msgs.msg.Header.Resolve(msg.header)
     }
     else {
-      resolved.H = new std_msgs.msg.Header()
+      resolved.header = new std_msgs.msg.Header()
     }
 
     if (msg.mpuData_AcX !== undefined) {

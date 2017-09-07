@@ -19,7 +19,7 @@ class joydata {
   constructor(initObj={}) {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
-      this.H = null;
+      this.header = null;
       this.X = null;
       this.Y = null;
       this.Z = null;
@@ -27,11 +27,11 @@ class joydata {
       this.buttons = null;
     }
     else {
-      if (initObj.hasOwnProperty('H')) {
-        this.H = initObj.H
+      if (initObj.hasOwnProperty('header')) {
+        this.header = initObj.header
       }
       else {
-        this.H = new std_msgs.msg.Header();
+        this.header = new std_msgs.msg.Header();
       }
       if (initObj.hasOwnProperty('X')) {
         this.X = initObj.X
@@ -68,8 +68,8 @@ class joydata {
 
   static serialize(obj, buffer, bufferOffset) {
     // Serializes a message object of type joydata
-    // Serialize message field [H]
-    bufferOffset = std_msgs.msg.Header.serialize(obj.H, buffer, bufferOffset);
+    // Serialize message field [header]
+    bufferOffset = std_msgs.msg.Header.serialize(obj.header, buffer, bufferOffset);
     // Serialize message field [X]
     bufferOffset = _serializer.int16(obj.X, buffer, bufferOffset);
     // Serialize message field [Y]
@@ -87,8 +87,8 @@ class joydata {
     //deserializes a message object of type joydata
     let len;
     let data = new joydata(null);
-    // Deserialize message field [H]
-    data.H = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
+    // Deserialize message field [header]
+    data.header = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
     // Deserialize message field [X]
     data.X = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [Y]
@@ -104,7 +104,7 @@ class joydata {
 
   static getMessageSize(object) {
     let length = 0;
-    length += std_msgs.msg.Header.getMessageSize(object.H);
+    length += std_msgs.msg.Header.getMessageSize(object.header);
     return length + 10;
   }
 
@@ -115,13 +115,13 @@ class joydata {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return 'b9528701db416223921ea3eb84e581e7';
+    return 'a8d766a6e235fd7ad875a4a557990e38';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
-    Header H
+    Header header
     int16 X
     int16 Y
     int16 Z
@@ -164,11 +164,11 @@ class joydata {
       msg = {};
     }
     const resolved = new joydata(null);
-    if (msg.H !== undefined) {
-      resolved.H = std_msgs.msg.Header.Resolve(msg.H)
+    if (msg.header !== undefined) {
+      resolved.header = std_msgs.msg.Header.Resolve(msg.header)
     }
     else {
-      resolved.H = new std_msgs.msg.Header()
+      resolved.header = new std_msgs.msg.Header()
     }
 
     if (msg.X !== undefined) {

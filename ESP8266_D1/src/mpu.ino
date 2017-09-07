@@ -8,6 +8,8 @@ extern "C" {
 }
 #endif
 
+
+
 #if defined(QUATERNION_BASED_CALC)
 #include <MPU6050.h>
 #include <Math3D.h>
@@ -111,6 +113,8 @@ void mpu_loop(sMPUDATA_t *mpudata)
   mpudata->GyY = GyY;
   mpudata->GyZ = GyZ;
 
+  printMPU(mpudata);
+
 }
 
 void printMPU(sMPUDATA_t *mpudata)
@@ -185,6 +189,8 @@ Vec3 mpu_calc(sMPUDATA_t *_mpudata)
   _mpudata->GyZ = _DEGREES(GyroVec.z);
 
   lastmpudata.timestamp = _mpudata->timestamp;
+
+  //printMPU(_mpudata);
 
 
   // Manipulate

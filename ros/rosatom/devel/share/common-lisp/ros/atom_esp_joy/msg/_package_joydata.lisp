@@ -1,6 +1,6 @@
 (cl:in-package atom_esp_joy-msg)
-(cl:export '(H-VAL
-          H
+(cl:export '(HEADER-VAL
+          HEADER
           X-VAL
           X
           Y-VAL

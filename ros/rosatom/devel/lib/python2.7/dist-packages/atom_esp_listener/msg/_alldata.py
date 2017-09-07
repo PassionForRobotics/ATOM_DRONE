@@ -8,10 +8,10 @@ import struct
 import std_msgs.msg
 
 class alldata(genpy.Message):
-  _md5sum = "92f8517c65a9c6e751033ceff53a0609"
+  _md5sum = "586be2de32280a4c8bb4bc521bc4cf73"
   _type = "atom_esp_listener/alldata"
-  _has_header = False #flag to mark the presence of a Header object
-  _full_text = """Header H
+  _has_header = True #flag to mark the presence of a Header object
+  _full_text = """Header header
 int16  mpuData_AcX
 int16  mpuData_AcY
 int16  mpuData_AcZ
@@ -81,7 +81,7 @@ time stamp
 # 1: global frame
 string frame_id
 """
-  __slots__ = ['H','mpuData_AcX','mpuData_AcY','mpuData_AcZ','mpuData_timestamp','mpuData_Tmp','mpuData_GyX','mpuData_GyY','mpuData_GyZ','mpuRAW_AcX','mpuRAW_AcY','mpuRAW_AcZ','mpuRAW_timestamp','mpuRAW_Tmp','mpuRAW_GyX','mpuRAW_GyY','mpuRAW_GyZ','pingheight','ppfb_timestamp','ppfb_Input','ppfb_Kd','ppfb_Ki','ppfb_Kp','ppfb_Output','ppfb_Setpoint','pplr_timestamp','pplr_Input','pplr_Kd','pplr_Ki','pplr_Kp','pplr_Output','pplr_Setpoint','ppud_timestamp','ppud_Input','ppud_Kd','ppud_Ki','ppud_Kp','ppud_Output','ppud_Setpoint','yaw','pitch','roll','timestamp','tune_type']
+  __slots__ = ['header','mpuData_AcX','mpuData_AcY','mpuData_AcZ','mpuData_timestamp','mpuData_Tmp','mpuData_GyX','mpuData_GyY','mpuData_GyZ','mpuRAW_AcX','mpuRAW_AcY','mpuRAW_AcZ','mpuRAW_timestamp','mpuRAW_Tmp','mpuRAW_GyX','mpuRAW_GyY','mpuRAW_GyZ','pingheight','ppfb_timestamp','ppfb_Input','ppfb_Kd','ppfb_Ki','ppfb_Kp','ppfb_Output','ppfb_Setpoint','pplr_timestamp','pplr_Input','pplr_Kd','pplr_Ki','pplr_Kp','pplr_Output','pplr_Setpoint','ppud_timestamp','ppud_Input','ppud_Kd','ppud_Ki','ppud_Kp','ppud_Output','ppud_Setpoint','yaw','pitch','roll','timestamp','tune_type']
   _slot_types = ['std_msgs/Header','int16','int16','int16','uint32','int16','int16','int16','int16','int16','int16','int16','uint32','int16','int16','int16','int16','float32','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','float32','float32','float32','uint32','uint16']
 
   def __init__(self, *args, **kwds):
@@ -92,7 +92,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       H,mpuData_AcX,mpuData_AcY,mpuData_AcZ,mpuData_timestamp,mpuData_Tmp,mpuData_GyX,mpuData_GyY,mpuData_GyZ,mpuRAW_AcX,mpuRAW_AcY,mpuRAW_AcZ,mpuRAW_timestamp,mpuRAW_Tmp,mpuRAW_GyX,mpuRAW_GyY,mpuRAW_GyZ,pingheight,ppfb_timestamp,ppfb_Input,ppfb_Kd,ppfb_Ki,ppfb_Kp,ppfb_Output,ppfb_Setpoint,pplr_timestamp,pplr_Input,pplr_Kd,pplr_Ki,pplr_Kp,pplr_Output,pplr_Setpoint,ppud_timestamp,ppud_Input,ppud_Kd,ppud_Ki,ppud_Kp,ppud_Output,ppud_Setpoint,yaw,pitch,roll,timestamp,tune_type
+       header,mpuData_AcX,mpuData_AcY,mpuData_AcZ,mpuData_timestamp,mpuData_Tmp,mpuData_GyX,mpuData_GyY,mpuData_GyZ,mpuRAW_AcX,mpuRAW_AcY,mpuRAW_AcZ,mpuRAW_timestamp,mpuRAW_Tmp,mpuRAW_GyX,mpuRAW_GyY,mpuRAW_GyZ,pingheight,ppfb_timestamp,ppfb_Input,ppfb_Kd,ppfb_Ki,ppfb_Kp,ppfb_Output,ppfb_Setpoint,pplr_timestamp,pplr_Input,pplr_Kd,pplr_Ki,pplr_Kp,pplr_Output,pplr_Setpoint,ppud_timestamp,ppud_Input,ppud_Kd,ppud_Ki,ppud_Kp,ppud_Output,ppud_Setpoint,yaw,pitch,roll,timestamp,tune_type
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -101,8 +101,8 @@ string frame_id
     if args or kwds:
       super(alldata, self).__init__(*args, **kwds)
       #message fields cannot be None, assign default values for those that are
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       if self.mpuData_AcX is None:
         self.mpuData_AcX = 0
       if self.mpuData_AcY is None:
@@ -190,7 +190,7 @@ string frame_id
       if self.tune_type is None:
         self.tune_type = 0
     else:
-      self.H = std_msgs.msg.Header()
+      self.header = std_msgs.msg.Header()
       self.mpuData_AcX = 0
       self.mpuData_AcY = 0
       self.mpuData_AcZ = 0
@@ -248,8 +248,8 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_get_struct_3I().pack(_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs))
-      _x = self.H.frame_id
+      buff.write(_get_struct_3I().pack(_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs))
+      _x = self.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
         _x = _x.encode('utf-8')
@@ -266,22 +266,22 @@ string frame_id
     :param str: byte array of serialized message, ``str``
     """
     try:
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       end = 0
       _x = self
       start = end
       end += 12
-      (_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      (_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
       start = end
       end += length
       if python3:
-        self.H.frame_id = str[start:end].decode('utf-8')
+        self.header.frame_id = str[start:end].decode('utf-8')
       else:
-        self.H.frame_id = str[start:end]
+        self.header.frame_id = str[start:end]
       _x = self
       start = end
       end += 214
@@ -299,8 +299,8 @@ string frame_id
     """
     try:
       _x = self
-      buff.write(_get_struct_3I().pack(_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs))
-      _x = self.H.frame_id
+      buff.write(_get_struct_3I().pack(_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs))
+      _x = self.header.frame_id
       length = len(_x)
       if python3 or type(_x) == unicode:
         _x = _x.encode('utf-8')
@@ -318,22 +318,22 @@ string frame_id
     :param numpy: numpy python module
     """
     try:
-      if self.H is None:
-        self.H = std_msgs.msg.Header()
+      if self.header is None:
+        self.header = std_msgs.msg.Header()
       end = 0
       _x = self
       start = end
       end += 12
-      (_x.H.seq, _x.H.stamp.secs, _x.H.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      (_x.header.seq, _x.header.stamp.secs, _x.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
       start = end
       end += 4
       (length,) = _struct_I.unpack(str[start:end])
       start = end
       end += length
       if python3:
-        self.H.frame_id = str[start:end].decode('utf-8')
+        self.header.frame_id = str[start:end].decode('utf-8')
       else:
-        self.H.frame_id = str[start:end]
+        self.header.frame_id = str[start:end]
       _x = self
       start = end
       end += 214

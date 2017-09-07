@@ -16,12 +16,12 @@
 
 (defclass atom_esp_joy::joydata
   :super ros::object
-  :slots (_H _X _Y _Z _S _buttons ))
+  :slots (_header _X _Y _Z _S _buttons ))
 
 (defmethod atom_esp_joy::joydata
   (:init
    (&key
-    ((:H __H) (instance std_msgs::Header :init))
+    ((:header __header) (instance std_msgs::Header :init))
     ((:X __X) 0)
     ((:Y __Y) 0)
     ((:Z __Z) 0)
@@ -29,20 +29,20 @@
     ((:buttons __buttons) 0)
     )
    (send-super :init)
-   (setq _H __H)
+   (setq _header __header)
    (setq _X (round __X))
    (setq _Y (round __Y))
    (setq _Z (round __Z))
    (setq _S (round __S))
    (setq _buttons (round __buttons))
    self)
-  (:H
-   (&rest __H)
-   (if (keywordp (car __H))
-       (send* _H __H)
+  (:header
+   (&rest __header)
+   (if (keywordp (car __header))
+       (send* _header __header)
      (progn
-       (if __H (setq _H (car __H)))
-       _H)))
+       (if __header (setq _header (car __header)))
+       _header)))
   (:X
    (&optional __X)
    (if __X (setq _X __X)) _X)
@@ -61,8 +61,8 @@
   (:serialization-length
    ()
    (+
-    ;; std_msgs/Header _H
-    (send _H :serialization-length)
+    ;; std_msgs/Header _header
+    (send _header :serialization-length)
     ;; int16 _X
     2
     ;; int16 _Y
@@ -78,8 +78,8 @@
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
-     ;; std_msgs/Header _H
-       (send _H :serialize s)
+     ;; std_msgs/Header _header
+       (send _header :serialize s)
      ;; int16 _X
        (write-word _X s)
      ;; int16 _Y
@@ -94,8 +94,8 @@
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
-   ;; std_msgs/Header _H
-     (send _H :deserialize buf ptr-) (incf ptr- (send _H :serialization-length))
+   ;; std_msgs/Header _header
+     (send _header :deserialize buf ptr-) (incf ptr- (send _header :serialization-length))
    ;; int16 _X
      (setq _X (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;; int16 _Y
@@ -110,10 +110,10 @@
    self)
   )
 
-(setf (get atom_esp_joy::joydata :md5sum-) "b9528701db416223921ea3eb84e581e7")
+(setf (get atom_esp_joy::joydata :md5sum-) "a8d766a6e235fd7ad875a4a557990e38")
 (setf (get atom_esp_joy::joydata :datatype-) "atom_esp_joy/joydata")
 (setf (get atom_esp_joy::joydata :definition-)
-      "Header H
+      "Header header
 int16 X
 int16 Y
 int16 Z
@@ -151,6 +151,6 @@ string frame_id
 
 
 
-(provide :atom_esp_joy/joydata "b9528701db416223921ea3eb84e581e7")
+(provide :atom_esp_joy/joydata "a8d766a6e235fd7ad875a4a557990e38")
 
 

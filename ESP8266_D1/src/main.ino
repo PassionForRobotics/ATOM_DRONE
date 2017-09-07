@@ -154,9 +154,9 @@ void loop()
       lastPrintTime = system_get_time();
       //if(data_received)
       {
-        printgmpts(&msetpts);
-        printMPU(&debug_data.mpuRAW);
-        printMPU(&rawmpudata);
+        //printgmpts(&msetpts);
+        //printMPU(&debug_data.mpuRAW);
+        //printMPU(&rawmpudata);
 
       }
       //else
@@ -167,6 +167,14 @@ void loop()
 
       //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
       //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
+
+      Serial.printf("YPR | %d | ", system_get_time()/1000);
+      Serial.print(_DEGREES(YPR.x));
+      Serial.printf(" ");
+      Serial.print(_DEGREES(YPR.y));
+      Serial.printf(" ");
+      Serial.print(_DEGREES(YPR.z));
+      Serial.println(" ");
 
       // Serial.print("PID | S:");
       // Serial.print(debug_data.pplr.Setpoint);

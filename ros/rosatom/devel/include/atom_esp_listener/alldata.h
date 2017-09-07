@@ -25,7 +25,7 @@ struct alldata_
   typedef alldata_<ContainerAllocator> Type;
 
   alldata_()
-    : H()
+    : header()
     , mpuData_AcX(0)
     , mpuData_AcY(0)
     , mpuData_AcZ(0)
@@ -71,7 +71,7 @@ struct alldata_
     , tune_type(0)  {
     }
   alldata_(const ContainerAllocator& _alloc)
-    : H(_alloc)
+    : header(_alloc)
     , mpuData_AcX(0)
     , mpuData_AcY(0)
     , mpuData_AcZ(0)
@@ -120,8 +120,8 @@ struct alldata_
 
 
 
-   typedef  ::std_msgs::Header_<ContainerAllocator>  _H_type;
-  _H_type H;
+   typedef  ::std_msgs::Header_<ContainerAllocator>  _header_type;
+  _header_type header;
 
    typedef int16_t _mpuData_AcX_type;
   _mpuData_AcX_type mpuData_AcX;
@@ -285,7 +285,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': True}
 // {'atom_esp_listener': ['/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener/msg'], 'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -315,12 +315,12 @@ struct IsMessage< ::atom_esp_listener::alldata_<ContainerAllocator> const>
 
 template <class ContainerAllocator>
 struct HasHeader< ::atom_esp_listener::alldata_<ContainerAllocator> >
-  : FalseType
+  : TrueType
   { };
 
 template <class ContainerAllocator>
 struct HasHeader< ::atom_esp_listener::alldata_<ContainerAllocator> const>
-  : FalseType
+  : TrueType
   { };
 
 
@@ -329,12 +329,12 @@ struct MD5Sum< ::atom_esp_listener::alldata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "92f8517c65a9c6e751033ceff53a0609";
+    return "586be2de32280a4c8bb4bc521bc4cf73";
   }
 
   static const char* value(const ::atom_esp_listener::alldata_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x92f8517c65a9c6e7ULL;
-  static const uint64_t static_value2 = 0x51033ceff53a0609ULL;
+  static const uint64_t static_value1 = 0x586be2de32280a4cULL;
+  static const uint64_t static_value2 = 0x8bb4bc521bc4cf73ULL;
 };
 
 template<class ContainerAllocator>
@@ -353,7 +353,7 @@ struct Definition< ::atom_esp_listener::alldata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "Header H\n\
+    return "Header header\n\
 int16  mpuData_AcX\n\
 int16  mpuData_AcY\n\
 int16  mpuData_AcZ\n\
@@ -440,7 +440,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.H);
+      stream.next(m.header);
       stream.next(m.mpuData_AcX);
       stream.next(m.mpuData_AcY);
       stream.next(m.mpuData_AcZ);
@@ -502,9 +502,9 @@ struct Printer< ::atom_esp_listener::alldata_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::atom_esp_listener::alldata_<ContainerAllocator>& v)
   {
-    s << indent << "H: ";
+    s << indent << "header: ";
     s << std::endl;
-    Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.H);
+    Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.header);
     s << indent << "mpuData_AcX: ";
     Printer<int16_t>::stream(s, indent + "  ", v.mpuData_AcX);
     s << indent << "mpuData_AcY: ";

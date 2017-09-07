@@ -1,6 +1,6 @@
 (cl:in-package atom_esp_listener-msg)
-(cl:export '(H-VAL
-          H
+(cl:export '(HEADER-VAL
+          HEADER
           MPUDATA_ACX-VAL
           MPUDATA_ACX
           MPUDATA_ACY-VAL

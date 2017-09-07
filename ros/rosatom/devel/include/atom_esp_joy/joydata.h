@@ -25,7 +25,7 @@ struct joydata_
   typedef joydata_<ContainerAllocator> Type;
 
   joydata_()
-    : H()
+    : header()
     , X(0)
     , Y(0)
     , Z(0)
@@ -33,7 +33,7 @@ struct joydata_
     , buttons(0)  {
     }
   joydata_(const ContainerAllocator& _alloc)
-    : H(_alloc)
+    : header(_alloc)
     , X(0)
     , Y(0)
     , Z(0)
@@ -44,8 +44,8 @@ struct joydata_
 
 
 
-   typedef  ::std_msgs::Header_<ContainerAllocator>  _H_type;
-  _H_type H;
+   typedef  ::std_msgs::Header_<ContainerAllocator>  _header_type;
+  _header_type header;
 
    typedef int16_t _X_type;
   _X_type X;
@@ -95,7 +95,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': True}
 // {'atom_esp_joy': ['/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/msg'], 'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -125,12 +125,12 @@ struct IsMessage< ::atom_esp_joy::joydata_<ContainerAllocator> const>
 
 template <class ContainerAllocator>
 struct HasHeader< ::atom_esp_joy::joydata_<ContainerAllocator> >
-  : FalseType
+  : TrueType
   { };
 
 template <class ContainerAllocator>
 struct HasHeader< ::atom_esp_joy::joydata_<ContainerAllocator> const>
-  : FalseType
+  : TrueType
   { };
 
 
@@ -139,12 +139,12 @@ struct MD5Sum< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "b9528701db416223921ea3eb84e581e7";
+    return "a8d766a6e235fd7ad875a4a557990e38";
   }
 
   static const char* value(const ::atom_esp_joy::joydata_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xb9528701db416223ULL;
-  static const uint64_t static_value2 = 0x921ea3eb84e581e7ULL;
+  static const uint64_t static_value1 = 0xa8d766a6e235fd7aULL;
+  static const uint64_t static_value2 = 0xd875a4a557990e38ULL;
 };
 
 template<class ContainerAllocator>
@@ -163,7 +163,7 @@ struct Definition< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "Header H\n\
+    return "Header header\n\
 int16 X\n\
 int16 Y\n\
 int16 Z\n\
@@ -214,7 +214,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.H);
+      stream.next(m.header);
       stream.next(m.X);
       stream.next(m.Y);
       stream.next(m.Z);
@@ -238,9 +238,9 @@ struct Printer< ::atom_esp_joy::joydata_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::atom_esp_joy::joydata_<ContainerAllocator>& v)
   {
-    s << indent << "H: ";
+    s << indent << "header: ";
     s << std::endl;
-    Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.H);
+    Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.header);
     s << indent << "X: ";
     Printer<int16_t>::stream(s, indent + "  ", v.X);
     s << indent << "Y: ";
