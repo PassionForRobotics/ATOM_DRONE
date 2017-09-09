@@ -286,7 +286,9 @@ int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR) {
     return -3;
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
-  } else if (mpuIntStatus & 0x02) {
+  }
+  else if (mpuIntStatus & 0x02)
+  {
     // wait for correct available data length, should be a VERY short wait
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
 
@@ -413,4 +415,5 @@ int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR) {
     // blinkState = !blinkState;
     // digitalWrite(LED_PIN, blinkState);
   }
+  return -5;
 }

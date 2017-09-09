@@ -173,7 +173,14 @@ struct PID_Tune_Params_t
 
 };
 
-//struct 
+struct Profiler_data
+{
+  uint32_t ts;
+  uint16_t averageIterationCount;
+  float averageTime; // micros
+  float averageTime2; // micros
+  uint32_t averageTick;
+};
 
 struct ALL_DATA
 {
@@ -188,6 +195,8 @@ struct ALL_DATA
   PID_Tune_Params_t pplr;
   PID_Tune_Params_t ppfb;     //
   PID_Tune_Params_t ppud; // Yaw and Ping
+  Profiler_data profiled_loop, profiled_mpu, profiled_wifi, profiled_steer;
+
 };
 
 typedef sMPUDATA_t sMPUDATA_t;

@@ -5,10 +5,11 @@ python3 = True if sys.hexversion > 0x03000000 else False
 import genpy
 import struct
 
+import atom_esp_listener.msg
 import std_msgs.msg
 
 class alldata(genpy.Message):
-  _md5sum = "a02c529be361f99c2b4436fa34009a57"
+  _md5sum = "9f657d5dee01c22ca305fb4d2b9139bc"
   _type = "atom_esp_listener/alldata"
   _has_header = True #flag to mark the presence of a Header object
   _full_text = """Header header
@@ -21,40 +22,44 @@ class alldata(genpy.Message):
 #int16  mpuData_GyY
 #int16  mpuData_GyZ
 
-int16  mpuRAW_AcX
-int16  mpuRAW_AcY
-int16  mpuRAW_AcZ
-uint32  mpuRAW_timestamp
-int16  mpuRAW_Tmp
-int16  mpuRAW_GyX
-int16  mpuRAW_GyY
-int16  mpuRAW_GyZ
+mpudata mpuRAW
+#int16  mpuRAW_AcX
+#int16  mpuRAW_AcY
+#int16  mpuRAW_AcZ
+#uint32  mpuRAW_timestamp
+#int16  mpuRAW_Tmp
+#int16  mpuRAW_GyX
+#int16  mpuRAW_GyY
+#int16  mpuRAW_GyZ
 
 float32  pingheight
 
-uint32  ppfb_timestamp
-float64  ppfb_Input
-float64  ppfb_Kd
-float64  ppfb_Ki
-float64  ppfb_Kp
-float64  ppfb_Output
-float64  ppfb_Setpoint
+PID_Tune_Params ppfb
+#uint32  ppfb_timestamp
+#float64  ppfb_Input
+#float64  ppfb_Kd
+#float64  ppfb_Ki
+#float64  ppfb_Kp
+#float64  ppfb_Output
+#float64  ppfb_Setpoint
 
-uint32  pplr_timestamp
-float64  pplr_Input
-float64  pplr_Kd
-float64  pplr_Ki
-float64  pplr_Kp
-float64  pplr_Output
-float64  pplr_Setpoint
+PID_Tune_Params pplr
+#uint32  pplr_timestamp
+#float64  pplr_Input
+#float64  pplr_Kd
+#float64  pplr_Ki
+#float64  pplr_Kp
+#float64  pplr_Output
+#float64  pplr_Setpoint
 
-uint32  ppud_timestamp
-float64  ppud_Input
-float64  ppud_Kd
-float64  ppud_Ki
-float64  ppud_Kp
-float64  ppud_Output
-float64  ppud_Setpoint
+PID_Tune_Params ppud
+#uint32  ppud_timestamp
+#float64  ppud_Input
+#float64  ppud_Kd
+#float64  ppud_Ki
+#float64  ppud_Kp
+#float64  ppud_Output
+#float64  ppud_Setpoint
 
 float32  yaw
 float32  pitch
@@ -62,6 +67,13 @@ float32  roll
 
 uint32  timestamp
 uint16  tune_type
+
+Profiler_data profiled_loop
+Profiler_data profiled_mpu
+Profiler_data profiled_wifi
+Profiler_data profiled_steer
+
+
 
 ================================================================================
 MSG: std_msgs/Header
@@ -80,9 +92,41 @@ time stamp
 # 0: no frame
 # 1: global frame
 string frame_id
+
+================================================================================
+MSG: atom_esp_listener/mpudata
+Header header
+uint32 timestamp
+int16  AcX
+int16  AcY
+int16  AcZ
+int16  Tmp
+int16  GyX
+int16  GyY
+int16  GyZ
+
+================================================================================
+MSG: atom_esp_listener/PID_Tune_Params
+Header header
+uint32  timestamp
+float64 Setpoint
+float64 Input
+float64 Output
+float64 Kd
+float64 Ki
+float64 Kp
+
+================================================================================
+MSG: atom_esp_listener/Profiler_data
+Header  header
+uint32  timestamp
+uint16  averageIterationCount
+float32 averageTime # micros
+float32 averageTime2 # micros
+uint32  averageTick
 """
-  __slots__ = ['header','mpuRAW_AcX','mpuRAW_AcY','mpuRAW_AcZ','mpuRAW_timestamp','mpuRAW_Tmp','mpuRAW_GyX','mpuRAW_GyY','mpuRAW_GyZ','pingheight','ppfb_timestamp','ppfb_Input','ppfb_Kd','ppfb_Ki','ppfb_Kp','ppfb_Output','ppfb_Setpoint','pplr_timestamp','pplr_Input','pplr_Kd','pplr_Ki','pplr_Kp','pplr_Output','pplr_Setpoint','ppud_timestamp','ppud_Input','ppud_Kd','ppud_Ki','ppud_Kp','ppud_Output','ppud_Setpoint','yaw','pitch','roll','timestamp','tune_type']
-  _slot_types = ['std_msgs/Header','int16','int16','int16','uint32','int16','int16','int16','int16','float32','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','float32','float32','float32','uint32','uint16']
+  __slots__ = ['header','mpuRAW','pingheight','ppfb','pplr','ppud','yaw','pitch','roll','timestamp','tune_type','profiled_loop','profiled_mpu','profiled_wifi','profiled_steer']
+  _slot_types = ['std_msgs/Header','atom_esp_listener/mpudata','float32','atom_esp_listener/PID_Tune_Params','atom_esp_listener/PID_Tune_Params','atom_esp_listener/PID_Tune_Params','float32','float32','float32','uint32','uint16','atom_esp_listener/Profiler_data','atom_esp_listener/Profiler_data','atom_esp_listener/Profiler_data','atom_esp_listener/Profiler_data']
 
   def __init__(self, *args, **kwds):
     """
@@ -92,7 +136,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       header,mpuRAW_AcX,mpuRAW_AcY,mpuRAW_AcZ,mpuRAW_timestamp,mpuRAW_Tmp,mpuRAW_GyX,mpuRAW_GyY,mpuRAW_GyZ,pingheight,ppfb_timestamp,ppfb_Input,ppfb_Kd,ppfb_Ki,ppfb_Kp,ppfb_Output,ppfb_Setpoint,pplr_timestamp,pplr_Input,pplr_Kd,pplr_Ki,pplr_Kp,pplr_Output,pplr_Setpoint,ppud_timestamp,ppud_Input,ppud_Kd,ppud_Ki,ppud_Kp,ppud_Output,ppud_Setpoint,yaw,pitch,roll,timestamp,tune_type
+       header,mpuRAW,pingheight,ppfb,pplr,ppud,yaw,pitch,roll,timestamp,tune_type,profiled_loop,profiled_mpu,profiled_wifi,profiled_steer
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -103,66 +147,16 @@ string frame_id
       #message fields cannot be None, assign default values for those that are
       if self.header is None:
         self.header = std_msgs.msg.Header()
-      if self.mpuRAW_AcX is None:
-        self.mpuRAW_AcX = 0
-      if self.mpuRAW_AcY is None:
-        self.mpuRAW_AcY = 0
-      if self.mpuRAW_AcZ is None:
-        self.mpuRAW_AcZ = 0
-      if self.mpuRAW_timestamp is None:
-        self.mpuRAW_timestamp = 0
-      if self.mpuRAW_Tmp is None:
-        self.mpuRAW_Tmp = 0
-      if self.mpuRAW_GyX is None:
-        self.mpuRAW_GyX = 0
-      if self.mpuRAW_GyY is None:
-        self.mpuRAW_GyY = 0
-      if self.mpuRAW_GyZ is None:
-        self.mpuRAW_GyZ = 0
+      if self.mpuRAW is None:
+        self.mpuRAW = atom_esp_listener.msg.mpudata()
       if self.pingheight is None:
         self.pingheight = 0.
-      if self.ppfb_timestamp is None:
-        self.ppfb_timestamp = 0
-      if self.ppfb_Input is None:
-        self.ppfb_Input = 0.
-      if self.ppfb_Kd is None:
-        self.ppfb_Kd = 0.
-      if self.ppfb_Ki is None:
-        self.ppfb_Ki = 0.
-      if self.ppfb_Kp is None:
-        self.ppfb_Kp = 0.
-      if self.ppfb_Output is None:
-        self.ppfb_Output = 0.
-      if self.ppfb_Setpoint is None:
-        self.ppfb_Setpoint = 0.
-      if self.pplr_timestamp is None:
-        self.pplr_timestamp = 0
-      if self.pplr_Input is None:
-        self.pplr_Input = 0.
-      if self.pplr_Kd is None:
-        self.pplr_Kd = 0.
-      if self.pplr_Ki is None:
-        self.pplr_Ki = 0.
-      if self.pplr_Kp is None:
-        self.pplr_Kp = 0.
-      if self.pplr_Output is None:
-        self.pplr_Output = 0.
-      if self.pplr_Setpoint is None:
-        self.pplr_Setpoint = 0.
-      if self.ppud_timestamp is None:
-        self.ppud_timestamp = 0
-      if self.ppud_Input is None:
-        self.ppud_Input = 0.
-      if self.ppud_Kd is None:
-        self.ppud_Kd = 0.
-      if self.ppud_Ki is None:
-        self.ppud_Ki = 0.
-      if self.ppud_Kp is None:
-        self.ppud_Kp = 0.
-      if self.ppud_Output is None:
-        self.ppud_Output = 0.
-      if self.ppud_Setpoint is None:
-        self.ppud_Setpoint = 0.
+      if self.ppfb is None:
+        self.ppfb = atom_esp_listener.msg.PID_Tune_Params()
+      if self.pplr is None:
+        self.pplr = atom_esp_listener.msg.PID_Tune_Params()
+      if self.ppud is None:
+        self.ppud = atom_esp_listener.msg.PID_Tune_Params()
       if self.yaw is None:
         self.yaw = 0.
       if self.pitch is None:
@@ -173,43 +167,30 @@ string frame_id
         self.timestamp = 0
       if self.tune_type is None:
         self.tune_type = 0
+      if self.profiled_loop is None:
+        self.profiled_loop = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_mpu is None:
+        self.profiled_mpu = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_wifi is None:
+        self.profiled_wifi = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_steer is None:
+        self.profiled_steer = atom_esp_listener.msg.Profiler_data()
     else:
       self.header = std_msgs.msg.Header()
-      self.mpuRAW_AcX = 0
-      self.mpuRAW_AcY = 0
-      self.mpuRAW_AcZ = 0
-      self.mpuRAW_timestamp = 0
-      self.mpuRAW_Tmp = 0
-      self.mpuRAW_GyX = 0
-      self.mpuRAW_GyY = 0
-      self.mpuRAW_GyZ = 0
+      self.mpuRAW = atom_esp_listener.msg.mpudata()
       self.pingheight = 0.
-      self.ppfb_timestamp = 0
-      self.ppfb_Input = 0.
-      self.ppfb_Kd = 0.
-      self.ppfb_Ki = 0.
-      self.ppfb_Kp = 0.
-      self.ppfb_Output = 0.
-      self.ppfb_Setpoint = 0.
-      self.pplr_timestamp = 0
-      self.pplr_Input = 0.
-      self.pplr_Kd = 0.
-      self.pplr_Ki = 0.
-      self.pplr_Kp = 0.
-      self.pplr_Output = 0.
-      self.pplr_Setpoint = 0.
-      self.ppud_timestamp = 0
-      self.ppud_Input = 0.
-      self.ppud_Kd = 0.
-      self.ppud_Ki = 0.
-      self.ppud_Kp = 0.
-      self.ppud_Output = 0.
-      self.ppud_Setpoint = 0.
+      self.ppfb = atom_esp_listener.msg.PID_Tune_Params()
+      self.pplr = atom_esp_listener.msg.PID_Tune_Params()
+      self.ppud = atom_esp_listener.msg.PID_Tune_Params()
       self.yaw = 0.
       self.pitch = 0.
       self.roll = 0.
       self.timestamp = 0
       self.tune_type = 0
+      self.profiled_loop = atom_esp_listener.msg.Profiler_data()
+      self.profiled_mpu = atom_esp_listener.msg.Profiler_data()
+      self.profiled_wifi = atom_esp_listener.msg.Profiler_data()
+      self.profiled_steer = atom_esp_listener.msg.Profiler_data()
 
   def _get_types(self):
     """
@@ -232,7 +213,71 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_get_struct_3hI4hfI6dI6dI6d3fIH().pack(_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
+      buff.write(_get_struct_3I().pack(_x.mpuRAW.header.seq, _x.mpuRAW.header.stamp.secs, _x.mpuRAW.header.stamp.nsecs))
+      _x = self.mpuRAW.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I7hf3I().pack(_x.mpuRAW.timestamp, _x.mpuRAW.AcX, _x.mpuRAW.AcY, _x.mpuRAW.AcZ, _x.mpuRAW.Tmp, _x.mpuRAW.GyX, _x.mpuRAW.GyY, _x.mpuRAW.GyZ, _x.pingheight, _x.ppfb.header.seq, _x.ppfb.header.stamp.secs, _x.ppfb.header.stamp.nsecs))
+      _x = self.ppfb.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3I().pack(_x.ppfb.timestamp, _x.ppfb.Setpoint, _x.ppfb.Input, _x.ppfb.Output, _x.ppfb.Kd, _x.ppfb.Ki, _x.ppfb.Kp, _x.pplr.header.seq, _x.pplr.header.stamp.secs, _x.pplr.header.stamp.nsecs))
+      _x = self.pplr.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3I().pack(_x.pplr.timestamp, _x.pplr.Setpoint, _x.pplr.Input, _x.pplr.Output, _x.pplr.Kd, _x.pplr.Ki, _x.pplr.Kp, _x.ppud.header.seq, _x.ppud.header.stamp.secs, _x.ppud.header.stamp.nsecs))
+      _x = self.ppud.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3fIH3I().pack(_x.ppud.timestamp, _x.ppud.Setpoint, _x.ppud.Input, _x.ppud.Output, _x.ppud.Kd, _x.ppud.Ki, _x.ppud.Kp, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type, _x.profiled_loop.header.seq, _x.profiled_loop.header.stamp.secs, _x.profiled_loop.header.stamp.nsecs))
+      _x = self.profiled_loop.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_loop.timestamp, _x.profiled_loop.averageIterationCount, _x.profiled_loop.averageTime, _x.profiled_loop.averageTime2, _x.profiled_loop.averageTick, _x.profiled_mpu.header.seq, _x.profiled_mpu.header.stamp.secs, _x.profiled_mpu.header.stamp.nsecs))
+      _x = self.profiled_mpu.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_mpu.timestamp, _x.profiled_mpu.averageIterationCount, _x.profiled_mpu.averageTime, _x.profiled_mpu.averageTime2, _x.profiled_mpu.averageTick, _x.profiled_wifi.header.seq, _x.profiled_wifi.header.stamp.secs, _x.profiled_wifi.header.stamp.nsecs))
+      _x = self.profiled_wifi.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_wifi.timestamp, _x.profiled_wifi.averageIterationCount, _x.profiled_wifi.averageTime, _x.profiled_wifi.averageTime2, _x.profiled_wifi.averageTick, _x.profiled_steer.header.seq, _x.profiled_steer.header.stamp.secs, _x.profiled_steer.header.stamp.nsecs))
+      _x = self.profiled_steer.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2fI().pack(_x.profiled_steer.timestamp, _x.profiled_steer.averageIterationCount, _x.profiled_steer.averageTime, _x.profiled_steer.averageTime2, _x.profiled_steer.averageTick))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -244,6 +289,22 @@ string frame_id
     try:
       if self.header is None:
         self.header = std_msgs.msg.Header()
+      if self.mpuRAW is None:
+        self.mpuRAW = atom_esp_listener.msg.mpudata()
+      if self.ppfb is None:
+        self.ppfb = atom_esp_listener.msg.PID_Tune_Params()
+      if self.pplr is None:
+        self.pplr = atom_esp_listener.msg.PID_Tune_Params()
+      if self.ppud is None:
+        self.ppud = atom_esp_listener.msg.PID_Tune_Params()
+      if self.profiled_loop is None:
+        self.profiled_loop = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_mpu is None:
+        self.profiled_mpu = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_wifi is None:
+        self.profiled_wifi = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_steer is None:
+        self.profiled_steer = atom_esp_listener.msg.Profiler_data()
       end = 0
       _x = self
       start = end
@@ -260,8 +321,112 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 196
-      (_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
+      end += 12
+      (_x.mpuRAW.header.seq, _x.mpuRAW.header.stamp.secs, _x.mpuRAW.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.mpuRAW.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.mpuRAW.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 34
+      (_x.mpuRAW.timestamp, _x.mpuRAW.AcX, _x.mpuRAW.AcY, _x.mpuRAW.AcZ, _x.mpuRAW.Tmp, _x.mpuRAW.GyX, _x.mpuRAW.GyY, _x.mpuRAW.GyZ, _x.pingheight, _x.ppfb.header.seq, _x.ppfb.header.stamp.secs, _x.ppfb.header.stamp.nsecs,) = _get_struct_I7hf3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.ppfb.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.ppfb.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 64
+      (_x.ppfb.timestamp, _x.ppfb.Setpoint, _x.ppfb.Input, _x.ppfb.Output, _x.ppfb.Kd, _x.ppfb.Ki, _x.ppfb.Kp, _x.pplr.header.seq, _x.pplr.header.stamp.secs, _x.pplr.header.stamp.nsecs,) = _get_struct_I6d3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.pplr.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.pplr.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 64
+      (_x.pplr.timestamp, _x.pplr.Setpoint, _x.pplr.Input, _x.pplr.Output, _x.pplr.Kd, _x.pplr.Ki, _x.pplr.Kp, _x.ppud.header.seq, _x.ppud.header.stamp.secs, _x.ppud.header.stamp.nsecs,) = _get_struct_I6d3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.ppud.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.ppud.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 82
+      (_x.ppud.timestamp, _x.ppud.Setpoint, _x.ppud.Input, _x.ppud.Output, _x.ppud.Kd, _x.ppud.Ki, _x.ppud.Kp, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type, _x.profiled_loop.header.seq, _x.profiled_loop.header.stamp.secs, _x.profiled_loop.header.stamp.nsecs,) = _get_struct_I6d3fIH3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_loop.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_loop.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_loop.timestamp, _x.profiled_loop.averageIterationCount, _x.profiled_loop.averageTime, _x.profiled_loop.averageTime2, _x.profiled_loop.averageTick, _x.profiled_mpu.header.seq, _x.profiled_mpu.header.stamp.secs, _x.profiled_mpu.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_mpu.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_mpu.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_mpu.timestamp, _x.profiled_mpu.averageIterationCount, _x.profiled_mpu.averageTime, _x.profiled_mpu.averageTime2, _x.profiled_mpu.averageTick, _x.profiled_wifi.header.seq, _x.profiled_wifi.header.stamp.secs, _x.profiled_wifi.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_wifi.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_wifi.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_wifi.timestamp, _x.profiled_wifi.averageIterationCount, _x.profiled_wifi.averageTime, _x.profiled_wifi.averageTime2, _x.profiled_wifi.averageTick, _x.profiled_steer.header.seq, _x.profiled_steer.header.stamp.secs, _x.profiled_steer.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_steer.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_steer.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 18
+      (_x.profiled_steer.timestamp, _x.profiled_steer.averageIterationCount, _x.profiled_steer.averageTime, _x.profiled_steer.averageTime2, _x.profiled_steer.averageTick,) = _get_struct_IH2fI().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -283,7 +448,71 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_get_struct_3hI4hfI6dI6dI6d3fIH().pack(_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
+      buff.write(_get_struct_3I().pack(_x.mpuRAW.header.seq, _x.mpuRAW.header.stamp.secs, _x.mpuRAW.header.stamp.nsecs))
+      _x = self.mpuRAW.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I7hf3I().pack(_x.mpuRAW.timestamp, _x.mpuRAW.AcX, _x.mpuRAW.AcY, _x.mpuRAW.AcZ, _x.mpuRAW.Tmp, _x.mpuRAW.GyX, _x.mpuRAW.GyY, _x.mpuRAW.GyZ, _x.pingheight, _x.ppfb.header.seq, _x.ppfb.header.stamp.secs, _x.ppfb.header.stamp.nsecs))
+      _x = self.ppfb.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3I().pack(_x.ppfb.timestamp, _x.ppfb.Setpoint, _x.ppfb.Input, _x.ppfb.Output, _x.ppfb.Kd, _x.ppfb.Ki, _x.ppfb.Kp, _x.pplr.header.seq, _x.pplr.header.stamp.secs, _x.pplr.header.stamp.nsecs))
+      _x = self.pplr.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3I().pack(_x.pplr.timestamp, _x.pplr.Setpoint, _x.pplr.Input, _x.pplr.Output, _x.pplr.Kd, _x.pplr.Ki, _x.pplr.Kp, _x.ppud.header.seq, _x.ppud.header.stamp.secs, _x.ppud.header.stamp.nsecs))
+      _x = self.ppud.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_I6d3fIH3I().pack(_x.ppud.timestamp, _x.ppud.Setpoint, _x.ppud.Input, _x.ppud.Output, _x.ppud.Kd, _x.ppud.Ki, _x.ppud.Kp, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type, _x.profiled_loop.header.seq, _x.profiled_loop.header.stamp.secs, _x.profiled_loop.header.stamp.nsecs))
+      _x = self.profiled_loop.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_loop.timestamp, _x.profiled_loop.averageIterationCount, _x.profiled_loop.averageTime, _x.profiled_loop.averageTime2, _x.profiled_loop.averageTick, _x.profiled_mpu.header.seq, _x.profiled_mpu.header.stamp.secs, _x.profiled_mpu.header.stamp.nsecs))
+      _x = self.profiled_mpu.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_mpu.timestamp, _x.profiled_mpu.averageIterationCount, _x.profiled_mpu.averageTime, _x.profiled_mpu.averageTime2, _x.profiled_mpu.averageTick, _x.profiled_wifi.header.seq, _x.profiled_wifi.header.stamp.secs, _x.profiled_wifi.header.stamp.nsecs))
+      _x = self.profiled_wifi.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2f4I().pack(_x.profiled_wifi.timestamp, _x.profiled_wifi.averageIterationCount, _x.profiled_wifi.averageTime, _x.profiled_wifi.averageTime2, _x.profiled_wifi.averageTick, _x.profiled_steer.header.seq, _x.profiled_steer.header.stamp.secs, _x.profiled_steer.header.stamp.nsecs))
+      _x = self.profiled_steer.header.frame_id
+      length = len(_x)
+      if python3 or type(_x) == unicode:
+        _x = _x.encode('utf-8')
+        length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self
+      buff.write(_get_struct_IH2fI().pack(_x.profiled_steer.timestamp, _x.profiled_steer.averageIterationCount, _x.profiled_steer.averageTime, _x.profiled_steer.averageTime2, _x.profiled_steer.averageTick))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -296,6 +525,22 @@ string frame_id
     try:
       if self.header is None:
         self.header = std_msgs.msg.Header()
+      if self.mpuRAW is None:
+        self.mpuRAW = atom_esp_listener.msg.mpudata()
+      if self.ppfb is None:
+        self.ppfb = atom_esp_listener.msg.PID_Tune_Params()
+      if self.pplr is None:
+        self.pplr = atom_esp_listener.msg.PID_Tune_Params()
+      if self.ppud is None:
+        self.ppud = atom_esp_listener.msg.PID_Tune_Params()
+      if self.profiled_loop is None:
+        self.profiled_loop = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_mpu is None:
+        self.profiled_mpu = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_wifi is None:
+        self.profiled_wifi = atom_esp_listener.msg.Profiler_data()
+      if self.profiled_steer is None:
+        self.profiled_steer = atom_esp_listener.msg.Profiler_data()
       end = 0
       _x = self
       start = end
@@ -312,8 +557,112 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 196
-      (_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
+      end += 12
+      (_x.mpuRAW.header.seq, _x.mpuRAW.header.stamp.secs, _x.mpuRAW.header.stamp.nsecs,) = _get_struct_3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.mpuRAW.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.mpuRAW.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 34
+      (_x.mpuRAW.timestamp, _x.mpuRAW.AcX, _x.mpuRAW.AcY, _x.mpuRAW.AcZ, _x.mpuRAW.Tmp, _x.mpuRAW.GyX, _x.mpuRAW.GyY, _x.mpuRAW.GyZ, _x.pingheight, _x.ppfb.header.seq, _x.ppfb.header.stamp.secs, _x.ppfb.header.stamp.nsecs,) = _get_struct_I7hf3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.ppfb.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.ppfb.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 64
+      (_x.ppfb.timestamp, _x.ppfb.Setpoint, _x.ppfb.Input, _x.ppfb.Output, _x.ppfb.Kd, _x.ppfb.Ki, _x.ppfb.Kp, _x.pplr.header.seq, _x.pplr.header.stamp.secs, _x.pplr.header.stamp.nsecs,) = _get_struct_I6d3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.pplr.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.pplr.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 64
+      (_x.pplr.timestamp, _x.pplr.Setpoint, _x.pplr.Input, _x.pplr.Output, _x.pplr.Kd, _x.pplr.Ki, _x.pplr.Kp, _x.ppud.header.seq, _x.ppud.header.stamp.secs, _x.ppud.header.stamp.nsecs,) = _get_struct_I6d3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.ppud.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.ppud.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 82
+      (_x.ppud.timestamp, _x.ppud.Setpoint, _x.ppud.Input, _x.ppud.Output, _x.ppud.Kd, _x.ppud.Ki, _x.ppud.Kp, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type, _x.profiled_loop.header.seq, _x.profiled_loop.header.stamp.secs, _x.profiled_loop.header.stamp.nsecs,) = _get_struct_I6d3fIH3I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_loop.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_loop.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_loop.timestamp, _x.profiled_loop.averageIterationCount, _x.profiled_loop.averageTime, _x.profiled_loop.averageTime2, _x.profiled_loop.averageTick, _x.profiled_mpu.header.seq, _x.profiled_mpu.header.stamp.secs, _x.profiled_mpu.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_mpu.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_mpu.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_mpu.timestamp, _x.profiled_mpu.averageIterationCount, _x.profiled_mpu.averageTime, _x.profiled_mpu.averageTime2, _x.profiled_mpu.averageTick, _x.profiled_wifi.header.seq, _x.profiled_wifi.header.stamp.secs, _x.profiled_wifi.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_wifi.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_wifi.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 30
+      (_x.profiled_wifi.timestamp, _x.profiled_wifi.averageIterationCount, _x.profiled_wifi.averageTime, _x.profiled_wifi.averageTime2, _x.profiled_wifi.averageTick, _x.profiled_steer.header.seq, _x.profiled_steer.header.stamp.secs, _x.profiled_steer.header.stamp.nsecs,) = _get_struct_IH2f4I().unpack(str[start:end])
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      if python3:
+        self.profiled_steer.header.frame_id = str[start:end].decode('utf-8')
+      else:
+        self.profiled_steer.header.frame_id = str[start:end]
+      _x = self
+      start = end
+      end += 18
+      (_x.profiled_steer.timestamp, _x.profiled_steer.averageIterationCount, _x.profiled_steer.averageTime, _x.profiled_steer.averageTime2, _x.profiled_steer.averageTick,) = _get_struct_IH2fI().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -322,15 +671,39 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
+_struct_I6d3I = None
+def _get_struct_I6d3I():
+    global _struct_I6d3I
+    if _struct_I6d3I is None:
+        _struct_I6d3I = struct.Struct("<I6d3I")
+    return _struct_I6d3I
+_struct_I6d3fIH3I = None
+def _get_struct_I6d3fIH3I():
+    global _struct_I6d3fIH3I
+    if _struct_I6d3fIH3I is None:
+        _struct_I6d3fIH3I = struct.Struct("<I6d3fIH3I")
+    return _struct_I6d3fIH3I
+_struct_IH2f4I = None
+def _get_struct_IH2f4I():
+    global _struct_IH2f4I
+    if _struct_IH2f4I is None:
+        _struct_IH2f4I = struct.Struct("<IH2f4I")
+    return _struct_IH2f4I
+_struct_I7hf3I = None
+def _get_struct_I7hf3I():
+    global _struct_I7hf3I
+    if _struct_I7hf3I is None:
+        _struct_I7hf3I = struct.Struct("<I7hf3I")
+    return _struct_I7hf3I
 _struct_3I = None
 def _get_struct_3I():
     global _struct_3I
     if _struct_3I is None:
         _struct_3I = struct.Struct("<3I")
     return _struct_3I
-_struct_3hI4hfI6dI6dI6d3fIH = None
-def _get_struct_3hI4hfI6dI6dI6d3fIH():
-    global _struct_3hI4hfI6dI6dI6d3fIH
-    if _struct_3hI4hfI6dI6dI6d3fIH is None:
-        _struct_3hI4hfI6dI6dI6d3fIH = struct.Struct("<3hI4hfI6dI6dI6d3fIH")
-    return _struct_3hI4hfI6dI6dI6d3fIH
+_struct_IH2fI = None
+def _get_struct_IH2fI():
+    global _struct_IH2fI
+    if _struct_IH2fI is None:
+        _struct_IH2fI = struct.Struct("<IH2fI")
+    return _struct_IH2fI

@@ -95,40 +95,40 @@ void copy_alldata(const debug_data *_data, atom_esp_listener::alldata *_msg)
   _msg->  mpuData_GyY         = _data->mpuData.GyY;
   _msg->  mpuData_GyZ         = _data->mpuData.GyZ;*/
 
-  _msg->  mpuRAW_AcX          = _data->mpuRAW.AcX;
-  _msg->  mpuRAW_AcY          = _data->mpuRAW.AcY;
-  _msg->  mpuRAW_AcZ          = _data->mpuRAW.AcZ;
-  _msg->  mpuRAW_timestamp    = _data->mpuRAW.timestamp;
-  _msg->  mpuRAW_Tmp          = _data->mpuRAW.Tmp;
-  _msg->  mpuRAW_GyX          = _data->mpuRAW.GyX;
-  _msg->  mpuRAW_GyY          = _data->mpuRAW.GyY;
-  _msg->  mpuRAW_GyZ          = _data->mpuRAW.GyZ;
+  _msg->  mpuRAW.AcX          = _data->mpuRAW.AcX;
+  _msg->  mpuRAW.AcY          = _data->mpuRAW.AcY;
+  _msg->  mpuRAW.AcZ          = _data->mpuRAW.AcZ;
+  _msg->  mpuRAW.timestamp    = _data->mpuRAW.timestamp;
+  _msg->  mpuRAW.Tmp          = _data->mpuRAW.Tmp;
+  _msg->  mpuRAW.GyX          = _data->mpuRAW.GyX;
+  _msg->  mpuRAW.GyY          = _data->mpuRAW.GyY;
+  _msg->  mpuRAW.GyZ          = _data->mpuRAW.GyZ;
 
   _msg->  pingheight          = _data->pingheight;
 
-  _msg->  ppfb_timestamp      = _data->ppfb.timestamp;
-  _msg->  ppfb_Input          = _data->ppfb.Input;
-  _msg->  ppfb_Kd             = _data->ppfb.Kd;
-  _msg->  ppfb_Ki             = _data->ppfb.Ki;
-  _msg->  ppfb_Kp             = _data->ppfb.Kp;
-  _msg->  ppfb_Output         = _data->ppfb.Output;
-  _msg->  ppfb_Setpoint       = _data->ppfb.Setpoint;
+  _msg->  ppfb.timestamp      = _data->ppfb.timestamp;
+  _msg->  ppfb.Input          = _data->ppfb.Input;
+  _msg->  ppfb.Kd             = _data->ppfb.Kd;
+  _msg->  ppfb.Ki             = _data->ppfb.Ki;
+  _msg->  ppfb.Kp             = _data->ppfb.Kp;
+  _msg->  ppfb.Output         = _data->ppfb.Output;
+  _msg->  ppfb.Setpoint       = _data->ppfb.Setpoint;
 
-  _msg->  pplr_timestamp      = _data->pplr.timestamp;
-  _msg->  pplr_Input          = _data->pplr.Input;
-  _msg->  pplr_Kd             = _data->pplr.Kd;
-  _msg->  pplr_Ki             = _data->pplr.Ki;
-  _msg->  pplr_Kp             = _data->pplr.Kp;
-  _msg->  pplr_Output         = _data->pplr.Output;
-  _msg->  pplr_Setpoint       = _data->pplr.Setpoint;
+  _msg->  pplr.timestamp      = _data->pplr.timestamp;
+  _msg->  pplr.Input          = _data->pplr.Input;
+  _msg->  pplr.Kd             = _data->pplr.Kd;
+  _msg->  pplr.Ki             = _data->pplr.Ki;
+  _msg->  pplr.Kp             = _data->pplr.Kp;
+  _msg->  pplr.Output         = _data->pplr.Output;
+  _msg->  pplr.Setpoint       = _data->pplr.Setpoint;
 
-  _msg->  ppud_timestamp      = _data->ppud.timestamp;
-  _msg->  ppud_Input          = _data->ppud.Input;
-  _msg->  ppud_Kd             = _data->ppud.Kd;
-  _msg->  ppud_Ki             = _data->ppud.Ki;
-  _msg->  ppud_Kp             = _data->ppud.Kp;
-  _msg->  ppud_Output         = _data->ppud.Output;
-  _msg->  ppud_Setpoint       = _data->ppud.Setpoint;
+  _msg->  ppud.timestamp      = _data->ppud.timestamp;
+  _msg->  ppud.Input          = _data->ppud.Input;
+  _msg->  ppud.Kd             = _data->ppud.Kd;
+  _msg->  ppud.Ki             = _data->ppud.Ki;
+  _msg->  ppud.Kp             = _data->ppud.Kp;
+  _msg->  ppud.Output         = _data->ppud.Output;
+  _msg->  ppud.Setpoint       = _data->ppud.Setpoint;
 
   _msg->  yaw                 = _data->yaw;
   _msg->  pitch               = _data->pitch;
@@ -136,8 +136,32 @@ void copy_alldata(const debug_data *_data, atom_esp_listener::alldata *_msg)
 
   _msg->  timestamp           = _data->timestamp;
   _msg->  tune_type           = _data->tune_type;
+  
+  _msg-> profiled_loop.timestamp = _data->profiled_loop.ts;
+  _msg-> profiled_loop.averageIterationCount = _data->profiled_loop.averageIterationCount;
+  _msg-> profiled_loop.averageTick = _data->profiled_loop.averageTick;
+  _msg-> profiled_loop.averageTime = _data->profiled_loop.averageTime;
+  _msg-> profiled_loop.averageTime2 = _data->profiled_loop.averageTime2;
+  
+  _msg-> profiled_mpu.timestamp = _data->profiled_mpu.ts;
+  _msg-> profiled_mpu.averageIterationCount = _data->profiled_mpu.averageIterationCount;
+  _msg-> profiled_mpu.averageTick = _data->profiled_mpu.averageTick;
+  _msg-> profiled_mpu.averageTime = _data->profiled_mpu.averageTime;
+  _msg-> profiled_mpu.averageTime2 = _data->profiled_mpu.averageTime2;
+ 
+  _msg-> profiled_wifi.timestamp = _data->profiled_wifi.ts;
+  _msg-> profiled_wifi.averageIterationCount = _data->profiled_wifi.averageIterationCount;
+  _msg-> profiled_wifi.averageTick = _data->profiled_wifi.averageTick;
+  _msg-> profiled_wifi.averageTime = _data->profiled_wifi.averageTime;
+  _msg-> profiled_wifi.averageTime2 = _data->profiled_wifi.averageTime2;
 
-
+  _msg-> profiled_steer.timestamp = _data->profiled_steer.ts;
+  _msg-> profiled_steer.averageIterationCount = _data->profiled_steer.averageIterationCount;
+  _msg-> profiled_steer.averageTick = _data->profiled_steer.averageTick;
+  _msg-> profiled_steer.averageTime = _data->profiled_steer.averageTime;
+  _msg-> profiled_steer.averageTime2 = _data->profiled_steer.averageTime2;
+ 
+  
 }
 
 void printdata(const debug_data *_data)

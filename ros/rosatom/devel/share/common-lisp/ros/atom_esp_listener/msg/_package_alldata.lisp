@@ -1,66 +1,16 @@
 (cl:in-package atom_esp_listener-msg)
 (cl:export '(HEADER-VAL
           HEADER
-          MPURAW_ACX-VAL
-          MPURAW_ACX
-          MPURAW_ACY-VAL
-          MPURAW_ACY
-          MPURAW_ACZ-VAL
-          MPURAW_ACZ
-          MPURAW_TIMESTAMP-VAL
-          MPURAW_TIMESTAMP
-          MPURAW_TMP-VAL
-          MPURAW_TMP
-          MPURAW_GYX-VAL
-          MPURAW_GYX
-          MPURAW_GYY-VAL
-          MPURAW_GYY
-          MPURAW_GYZ-VAL
-          MPURAW_GYZ
+          MPURAW-VAL
+          MPURAW
           PINGHEIGHT-VAL
           PINGHEIGHT
-          PPFB_TIMESTAMP-VAL
-          PPFB_TIMESTAMP
-          PPFB_INPUT-VAL
-          PPFB_INPUT
-          PPFB_KD-VAL
-          PPFB_KD
-          PPFB_KI-VAL
-          PPFB_KI
-          PPFB_KP-VAL
-          PPFB_KP
-          PPFB_OUTPUT-VAL
-          PPFB_OUTPUT
-          PPFB_SETPOINT-VAL
-          PPFB_SETPOINT
-          PPLR_TIMESTAMP-VAL
-          PPLR_TIMESTAMP
-          PPLR_INPUT-VAL
-          PPLR_INPUT
-          PPLR_KD-VAL
-          PPLR_KD
-          PPLR_KI-VAL
-          PPLR_KI
-          PPLR_KP-VAL
-          PPLR_KP
-          PPLR_OUTPUT-VAL
-          PPLR_OUTPUT
-          PPLR_SETPOINT-VAL
-          PPLR_SETPOINT
-          PPUD_TIMESTAMP-VAL
-          PPUD_TIMESTAMP
-          PPUD_INPUT-VAL
-          PPUD_INPUT
-          PPUD_KD-VAL
-          PPUD_KD
-          PPUD_KI-VAL
-          PPUD_KI
-          PPUD_KP-VAL
-          PPUD_KP
-          PPUD_OUTPUT-VAL
-          PPUD_OUTPUT
-          PPUD_SETPOINT-VAL
-          PPUD_SETPOINT
+          PPFB-VAL
+          PPFB
+          PPLR-VAL
+          PPLR
+          PPUD-VAL
+          PPUD
           YAW-VAL
           YAW
           PITCH-VAL
@@ -71,4 +21,12 @@
           TIMESTAMP
           TUNE_TYPE-VAL
           TUNE_TYPE
+          PROFILED_LOOP-VAL
+          PROFILED_LOOP
+          PROFILED_MPU-VAL
+          PROFILED_MPU
+          PROFILED_WIFI-VAL
+          PROFILED_WIFI
+          PROFILED_STEER-VAL
+          PROFILED_STEER
 ))
