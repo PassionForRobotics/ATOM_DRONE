@@ -8,18 +8,18 @@ import struct
 import std_msgs.msg
 
 class alldata(genpy.Message):
-  _md5sum = "586be2de32280a4c8bb4bc521bc4cf73"
+  _md5sum = "a02c529be361f99c2b4436fa34009a57"
   _type = "atom_esp_listener/alldata"
   _has_header = True #flag to mark the presence of a Header object
   _full_text = """Header header
-int16  mpuData_AcX
-int16  mpuData_AcY
-int16  mpuData_AcZ
-uint32  mpuData_timestamp
-int16  mpuData_Tmp
-int16  mpuData_GyX
-int16  mpuData_GyY
-int16  mpuData_GyZ
+#int16  mpuData_AcX
+#int16  mpuData_AcY
+#int16  mpuData_AcZ
+#uint32  mpuData_timestamp
+#int16  mpuData_Tmp
+#int16  mpuData_GyX
+#int16  mpuData_GyY
+#int16  mpuData_GyZ
 
 int16  mpuRAW_AcX
 int16  mpuRAW_AcY
@@ -81,8 +81,8 @@ time stamp
 # 1: global frame
 string frame_id
 """
-  __slots__ = ['header','mpuData_AcX','mpuData_AcY','mpuData_AcZ','mpuData_timestamp','mpuData_Tmp','mpuData_GyX','mpuData_GyY','mpuData_GyZ','mpuRAW_AcX','mpuRAW_AcY','mpuRAW_AcZ','mpuRAW_timestamp','mpuRAW_Tmp','mpuRAW_GyX','mpuRAW_GyY','mpuRAW_GyZ','pingheight','ppfb_timestamp','ppfb_Input','ppfb_Kd','ppfb_Ki','ppfb_Kp','ppfb_Output','ppfb_Setpoint','pplr_timestamp','pplr_Input','pplr_Kd','pplr_Ki','pplr_Kp','pplr_Output','pplr_Setpoint','ppud_timestamp','ppud_Input','ppud_Kd','ppud_Ki','ppud_Kp','ppud_Output','ppud_Setpoint','yaw','pitch','roll','timestamp','tune_type']
-  _slot_types = ['std_msgs/Header','int16','int16','int16','uint32','int16','int16','int16','int16','int16','int16','int16','uint32','int16','int16','int16','int16','float32','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','float32','float32','float32','uint32','uint16']
+  __slots__ = ['header','mpuRAW_AcX','mpuRAW_AcY','mpuRAW_AcZ','mpuRAW_timestamp','mpuRAW_Tmp','mpuRAW_GyX','mpuRAW_GyY','mpuRAW_GyZ','pingheight','ppfb_timestamp','ppfb_Input','ppfb_Kd','ppfb_Ki','ppfb_Kp','ppfb_Output','ppfb_Setpoint','pplr_timestamp','pplr_Input','pplr_Kd','pplr_Ki','pplr_Kp','pplr_Output','pplr_Setpoint','ppud_timestamp','ppud_Input','ppud_Kd','ppud_Ki','ppud_Kp','ppud_Output','ppud_Setpoint','yaw','pitch','roll','timestamp','tune_type']
+  _slot_types = ['std_msgs/Header','int16','int16','int16','uint32','int16','int16','int16','int16','float32','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','uint32','float64','float64','float64','float64','float64','float64','float32','float32','float32','uint32','uint16']
 
   def __init__(self, *args, **kwds):
     """
@@ -92,7 +92,7 @@ string frame_id
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       header,mpuData_AcX,mpuData_AcY,mpuData_AcZ,mpuData_timestamp,mpuData_Tmp,mpuData_GyX,mpuData_GyY,mpuData_GyZ,mpuRAW_AcX,mpuRAW_AcY,mpuRAW_AcZ,mpuRAW_timestamp,mpuRAW_Tmp,mpuRAW_GyX,mpuRAW_GyY,mpuRAW_GyZ,pingheight,ppfb_timestamp,ppfb_Input,ppfb_Kd,ppfb_Ki,ppfb_Kp,ppfb_Output,ppfb_Setpoint,pplr_timestamp,pplr_Input,pplr_Kd,pplr_Ki,pplr_Kp,pplr_Output,pplr_Setpoint,ppud_timestamp,ppud_Input,ppud_Kd,ppud_Ki,ppud_Kp,ppud_Output,ppud_Setpoint,yaw,pitch,roll,timestamp,tune_type
+       header,mpuRAW_AcX,mpuRAW_AcY,mpuRAW_AcZ,mpuRAW_timestamp,mpuRAW_Tmp,mpuRAW_GyX,mpuRAW_GyY,mpuRAW_GyZ,pingheight,ppfb_timestamp,ppfb_Input,ppfb_Kd,ppfb_Ki,ppfb_Kp,ppfb_Output,ppfb_Setpoint,pplr_timestamp,pplr_Input,pplr_Kd,pplr_Ki,pplr_Kp,pplr_Output,pplr_Setpoint,ppud_timestamp,ppud_Input,ppud_Kd,ppud_Ki,ppud_Kp,ppud_Output,ppud_Setpoint,yaw,pitch,roll,timestamp,tune_type
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -103,22 +103,6 @@ string frame_id
       #message fields cannot be None, assign default values for those that are
       if self.header is None:
         self.header = std_msgs.msg.Header()
-      if self.mpuData_AcX is None:
-        self.mpuData_AcX = 0
-      if self.mpuData_AcY is None:
-        self.mpuData_AcY = 0
-      if self.mpuData_AcZ is None:
-        self.mpuData_AcZ = 0
-      if self.mpuData_timestamp is None:
-        self.mpuData_timestamp = 0
-      if self.mpuData_Tmp is None:
-        self.mpuData_Tmp = 0
-      if self.mpuData_GyX is None:
-        self.mpuData_GyX = 0
-      if self.mpuData_GyY is None:
-        self.mpuData_GyY = 0
-      if self.mpuData_GyZ is None:
-        self.mpuData_GyZ = 0
       if self.mpuRAW_AcX is None:
         self.mpuRAW_AcX = 0
       if self.mpuRAW_AcY is None:
@@ -191,14 +175,6 @@ string frame_id
         self.tune_type = 0
     else:
       self.header = std_msgs.msg.Header()
-      self.mpuData_AcX = 0
-      self.mpuData_AcY = 0
-      self.mpuData_AcZ = 0
-      self.mpuData_timestamp = 0
-      self.mpuData_Tmp = 0
-      self.mpuData_GyX = 0
-      self.mpuData_GyY = 0
-      self.mpuData_GyZ = 0
       self.mpuRAW_AcX = 0
       self.mpuRAW_AcY = 0
       self.mpuRAW_AcZ = 0
@@ -256,7 +232,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_get_struct_3hI7hI4hfI6dI6dI6d3fIH().pack(_x.mpuData_AcX, _x.mpuData_AcY, _x.mpuData_AcZ, _x.mpuData_timestamp, _x.mpuData_Tmp, _x.mpuData_GyX, _x.mpuData_GyY, _x.mpuData_GyZ, _x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
+      buff.write(_get_struct_3hI4hfI6dI6dI6d3fIH().pack(_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -284,8 +260,8 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 214
-      (_x.mpuData_AcX, _x.mpuData_AcY, _x.mpuData_AcZ, _x.mpuData_timestamp, _x.mpuData_Tmp, _x.mpuData_GyX, _x.mpuData_GyY, _x.mpuData_GyZ, _x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI7hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
+      end += 196
+      (_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -307,7 +283,7 @@ string frame_id
         length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self
-      buff.write(_get_struct_3hI7hI4hfI6dI6dI6d3fIH().pack(_x.mpuData_AcX, _x.mpuData_AcY, _x.mpuData_AcZ, _x.mpuData_timestamp, _x.mpuData_Tmp, _x.mpuData_GyX, _x.mpuData_GyY, _x.mpuData_GyZ, _x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
+      buff.write(_get_struct_3hI4hfI6dI6dI6d3fIH().pack(_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -336,8 +312,8 @@ string frame_id
         self.header.frame_id = str[start:end]
       _x = self
       start = end
-      end += 214
-      (_x.mpuData_AcX, _x.mpuData_AcY, _x.mpuData_AcZ, _x.mpuData_timestamp, _x.mpuData_Tmp, _x.mpuData_GyX, _x.mpuData_GyY, _x.mpuData_GyZ, _x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI7hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
+      end += 196
+      (_x.mpuRAW_AcX, _x.mpuRAW_AcY, _x.mpuRAW_AcZ, _x.mpuRAW_timestamp, _x.mpuRAW_Tmp, _x.mpuRAW_GyX, _x.mpuRAW_GyY, _x.mpuRAW_GyZ, _x.pingheight, _x.ppfb_timestamp, _x.ppfb_Input, _x.ppfb_Kd, _x.ppfb_Ki, _x.ppfb_Kp, _x.ppfb_Output, _x.ppfb_Setpoint, _x.pplr_timestamp, _x.pplr_Input, _x.pplr_Kd, _x.pplr_Ki, _x.pplr_Kp, _x.pplr_Output, _x.pplr_Setpoint, _x.ppud_timestamp, _x.ppud_Input, _x.ppud_Kd, _x.ppud_Ki, _x.ppud_Kp, _x.ppud_Output, _x.ppud_Setpoint, _x.yaw, _x.pitch, _x.roll, _x.timestamp, _x.tune_type,) = _get_struct_3hI4hfI6dI6dI6d3fIH().unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -352,9 +328,9 @@ def _get_struct_3I():
     if _struct_3I is None:
         _struct_3I = struct.Struct("<3I")
     return _struct_3I
-_struct_3hI7hI4hfI6dI6dI6d3fIH = None
-def _get_struct_3hI7hI4hfI6dI6dI6d3fIH():
-    global _struct_3hI7hI4hfI6dI6dI6d3fIH
-    if _struct_3hI7hI4hfI6dI6dI6d3fIH is None:
-        _struct_3hI7hI4hfI6dI6dI6d3fIH = struct.Struct("<3hI7hI4hfI6dI6dI6d3fIH")
-    return _struct_3hI7hI4hfI6dI6dI6d3fIH
+_struct_3hI4hfI6dI6dI6d3fIH = None
+def _get_struct_3hI4hfI6dI6dI6d3fIH():
+    global _struct_3hI4hfI6dI6dI6d3fIH
+    if _struct_3hI4hfI6dI6dI6d3fIH is None:
+        _struct_3hI4hfI6dI6dI6d3fIH = struct.Struct("<3hI4hfI6dI6dI6d3fIH")
+    return _struct_3hI4hfI6dI6dI6d3fIH

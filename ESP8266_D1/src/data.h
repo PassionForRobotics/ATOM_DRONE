@@ -117,7 +117,7 @@ struct PID_AutoTune_Params_t
 
     if(!useSimulation)
     { //pull the input in from the real world
-      pidparams->Input = all_data->mpuData.AcY+90.0; // degrees //analogRead(0);
+      pidparams->Input = all_data->pitch+90.0; // degrees //analogRead(0);
     }
 
     if(tuning)

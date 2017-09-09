@@ -86,14 +86,14 @@ void copy_joydata(sGENERICSETPOINTS_t *_data, const atom_esp_joy::joydata *_msg)
 
 void copy_alldata(const debug_data *_data, atom_esp_listener::alldata *_msg)
 {
-  _msg->  mpuData_AcX         = _data->mpuData.AcX;
+  /*_msg->  mpuData_AcX         = _data->mpuData.AcX;
   _msg->  mpuData_AcY         = _data->mpuData.AcY;
   _msg->  mpuData_AcZ         = _data->mpuData.AcZ;
   _msg->  mpuData_timestamp   = _data->mpuData.timestamp;
   _msg->  mpuData_Tmp         = _data->mpuData.Tmp;
   _msg->  mpuData_GyX         = _data->mpuData.GyX;
   _msg->  mpuData_GyY         = _data->mpuData.GyY;
-  _msg->  mpuData_GyZ         = _data->mpuData.GyZ;
+  _msg->  mpuData_GyZ         = _data->mpuData.GyZ;*/
 
   _msg->  mpuRAW_AcX          = _data->mpuRAW.AcX;
   _msg->  mpuRAW_AcY          = _data->mpuRAW.AcY;
@@ -158,14 +158,14 @@ void printdata(const debug_data *_data)
   ROS_DEBUG_THROTTLE(30,  "d.mR.gy %d", _data->mpuRAW.GyY);
   ROS_DEBUG_THROTTLE(30,  "d.mR.gz %d", _data->mpuRAW.GyZ);
   
-  ROS_DEBUG_THROTTLE(30,  "d.mD.ts %d", _data->mpuData.timestamp);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.ax %d", _data->mpuData.AcX);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.ay %d", _data->mpuData.AcY);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.az %d", _data->mpuData.AcZ);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.Tmp %d", _data->mpuData.Tmp);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.gx %d", _data->mpuData.GyX);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.gy %d", _data->mpuData.GyY);
-  ROS_DEBUG_THROTTLE(30,  "d.mD.gz %d", _data->mpuData.GyZ);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.ts %d", _data->mpuData.timestamp);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.ax %d", _data->mpuData.AcX);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.ay %d", _data->mpuData.AcY);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.az %d", _data->mpuData.AcZ);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.Tmp %d", _data->mpuData.Tmp);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.gx %d", _data->mpuData.GyX);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.gy %d", _data->mpuData.GyY);
+  //ROS_DEBUG_THROTTLE(30,  "d.mD.gz %d", _data->mpuData.GyZ);
 
   ROS_DEBUG_THROTTLE(30,  "d.pgh %f", _data->pingheight);
 
@@ -193,7 +193,7 @@ void printdata(const debug_data *_data)
   ROS_DEBUG_THROTTLE(30,  "d.pidud.Ki %f", _data->ppud.Ki);
   ROS_DEBUG_THROTTLE(30,  "d.pidud.Kd %f", _data->ppud.Kd);
   */
-  ROS_DEBUG_THROTTLE(5, "d.ptt %d, d.ts %d, d.yaw %f, d.pitch %f, d.roll %f, d.mR.ts %d, d.mR.ax %d, d.mR.ay %d, d.mR.az %d, d.mR.Tmp %d, d.mR.gx %d, d.mR.gy %d, d.mR.gz %d, d.mD.ts %d, d.mD.ax %d, d.mD.ay %d, d.mD.az %d, d.mD.Tmp %d, d.mD.gx %d, d.mD.gy %d, d.mD.gz %d , d.pgh %f, d.pfb.ts %d, d.pfb.S %f, d.pfb.I %f, d.pfb.O %f, d.pfb.Kp %f, d.pfb.Ki %f, d.pfb.Kd %f, d.plr.ts %d, d.plr.S %f, d.plr.I %f, d.plr.O %f, d.plr.Kp %f, d.plr.Ki %f, d.plr.Kd %f, d.pud.ts %d, d.pud.I %f, d.pud.S %f, d.pud.O %f, d.pud.Kp %f, d.pud.Ki %f, d.pud.Kd %f", _data->tune_type, _data->timestamp, _data->yaw, _data->pitch, _data->roll, _data->mpuRAW.timestamp, _data->mpuRAW.AcX, _data->mpuRAW.AcY, _data->mpuRAW.AcZ, _data->mpuRAW.Tmp, _data->mpuRAW.GyX, _data->mpuRAW.GyY, _data->mpuRAW.GyZ, _data->mpuData.timestamp, _data->mpuData.AcX, _data->mpuData.AcY, _data->mpuData.AcZ, _data->mpuData.Tmp, _data->mpuData.GyX, _data->mpuData.GyY, _data->mpuData.GyZ, _data->pingheight, _data->ppfb.timestamp, _data->ppfb.Setpoint, _data->ppfb.Input, _data->ppfb.Output, _data->ppfb.Kp, _data->ppfb.Ki, _data->ppfb.Kd, _data->pplr.timestamp, _data->pplr.Setpoint, _data->pplr.Input, _data->pplr.Output, _data->pplr.Kp, _data->pplr.Ki, _data->pplr.Kd, _data->ppud.timestamp, _data->ppud.Input, _data->ppud.Setpoint, _data->ppud.Output, _data->ppud.Kp, _data->ppud.Ki, _data->ppud.Kd);
+  ROS_DEBUG_THROTTLE(5, "d.ptt %d, d.ts %d, d.yaw %f, d.pitch %f, d.roll %f, d.mR.ts %d, d.mR.ax %d, d.mR.ay %d, d.mR.az %d, d.mR.Tmp %d, d.mR.gx %d, d.mR.gy %d, d.mR.gz %d, d.pgh %f, d.pfb.ts %d, d.pfb.S %f, d.pfb.I %f, d.pfb.O %f, d.pfb.Kp %f, d.pfb.Ki %f, d.pfb.Kd %f, d.plr.ts %d, d.plr.S %f, d.plr.I %f, d.plr.O %f, d.plr.Kp %f, d.plr.Ki %f, d.plr.Kd %f, d.pud.ts %d, d.pud.I %f, d.pud.S %f, d.pud.O %f, d.pud.Kp %f, d.pud.Ki %f, d.pud.Kd %f", _data->tune_type, _data->timestamp, _data->yaw, _data->pitch, _data->roll, _data->mpuRAW.timestamp, _data->mpuRAW.AcX, _data->mpuRAW.AcY, _data->mpuRAW.AcZ, _data->mpuRAW.Tmp, _data->mpuRAW.GyX, _data->mpuRAW.GyY, _data->mpuRAW.GyZ,  _data->pingheight, _data->ppfb.timestamp, _data->ppfb.Setpoint, _data->ppfb.Input, _data->ppfb.Output, _data->ppfb.Kp, _data->ppfb.Ki, _data->ppfb.Kd, _data->pplr.timestamp, _data->pplr.Setpoint, _data->pplr.Input, _data->pplr.Output, _data->pplr.Kp, _data->pplr.Ki, _data->pplr.Kd, _data->ppud.timestamp, _data->ppud.Input, _data->ppud.Setpoint, _data->ppud.Output, _data->ppud.Kp, _data->ppud.Ki, _data->ppud.Kd);
 }
 
 #define LISTENER

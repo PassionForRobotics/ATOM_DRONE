@@ -26,14 +26,6 @@ struct alldata_
 
   alldata_()
     : header()
-    , mpuData_AcX(0)
-    , mpuData_AcY(0)
-    , mpuData_AcZ(0)
-    , mpuData_timestamp(0)
-    , mpuData_Tmp(0)
-    , mpuData_GyX(0)
-    , mpuData_GyY(0)
-    , mpuData_GyZ(0)
     , mpuRAW_AcX(0)
     , mpuRAW_AcY(0)
     , mpuRAW_AcZ(0)
@@ -72,14 +64,6 @@ struct alldata_
     }
   alldata_(const ContainerAllocator& _alloc)
     : header(_alloc)
-    , mpuData_AcX(0)
-    , mpuData_AcY(0)
-    , mpuData_AcZ(0)
-    , mpuData_timestamp(0)
-    , mpuData_Tmp(0)
-    , mpuData_GyX(0)
-    , mpuData_GyY(0)
-    , mpuData_GyZ(0)
     , mpuRAW_AcX(0)
     , mpuRAW_AcY(0)
     , mpuRAW_AcZ(0)
@@ -122,30 +106,6 @@ struct alldata_
 
    typedef  ::std_msgs::Header_<ContainerAllocator>  _header_type;
   _header_type header;
-
-   typedef int16_t _mpuData_AcX_type;
-  _mpuData_AcX_type mpuData_AcX;
-
-   typedef int16_t _mpuData_AcY_type;
-  _mpuData_AcY_type mpuData_AcY;
-
-   typedef int16_t _mpuData_AcZ_type;
-  _mpuData_AcZ_type mpuData_AcZ;
-
-   typedef uint32_t _mpuData_timestamp_type;
-  _mpuData_timestamp_type mpuData_timestamp;
-
-   typedef int16_t _mpuData_Tmp_type;
-  _mpuData_Tmp_type mpuData_Tmp;
-
-   typedef int16_t _mpuData_GyX_type;
-  _mpuData_GyX_type mpuData_GyX;
-
-   typedef int16_t _mpuData_GyY_type;
-  _mpuData_GyY_type mpuData_GyY;
-
-   typedef int16_t _mpuData_GyZ_type;
-  _mpuData_GyZ_type mpuData_GyZ;
 
    typedef int16_t _mpuRAW_AcX_type;
   _mpuRAW_AcX_type mpuRAW_AcX;
@@ -329,12 +289,12 @@ struct MD5Sum< ::atom_esp_listener::alldata_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "586be2de32280a4c8bb4bc521bc4cf73";
+    return "a02c529be361f99c2b4436fa34009a57";
   }
 
   static const char* value(const ::atom_esp_listener::alldata_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x586be2de32280a4cULL;
-  static const uint64_t static_value2 = 0x8bb4bc521bc4cf73ULL;
+  static const uint64_t static_value1 = 0xa02c529be361f99cULL;
+  static const uint64_t static_value2 = 0x2b4436fa34009a57ULL;
 };
 
 template<class ContainerAllocator>
@@ -354,14 +314,14 @@ struct Definition< ::atom_esp_listener::alldata_<ContainerAllocator> >
   static const char* value()
   {
     return "Header header\n\
-int16  mpuData_AcX\n\
-int16  mpuData_AcY\n\
-int16  mpuData_AcZ\n\
-uint32  mpuData_timestamp\n\
-int16  mpuData_Tmp\n\
-int16  mpuData_GyX\n\
-int16  mpuData_GyY\n\
-int16  mpuData_GyZ\n\
+#int16  mpuData_AcX\n\
+#int16  mpuData_AcY\n\
+#int16  mpuData_AcZ\n\
+#uint32  mpuData_timestamp\n\
+#int16  mpuData_Tmp\n\
+#int16  mpuData_GyX\n\
+#int16  mpuData_GyY\n\
+#int16  mpuData_GyZ\n\
 \n\
 int16  mpuRAW_AcX\n\
 int16  mpuRAW_AcY\n\
@@ -441,14 +401,6 @@ namespace serialization
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
       stream.next(m.header);
-      stream.next(m.mpuData_AcX);
-      stream.next(m.mpuData_AcY);
-      stream.next(m.mpuData_AcZ);
-      stream.next(m.mpuData_timestamp);
-      stream.next(m.mpuData_Tmp);
-      stream.next(m.mpuData_GyX);
-      stream.next(m.mpuData_GyY);
-      stream.next(m.mpuData_GyZ);
       stream.next(m.mpuRAW_AcX);
       stream.next(m.mpuRAW_AcY);
       stream.next(m.mpuRAW_AcZ);
@@ -505,22 +457,6 @@ struct Printer< ::atom_esp_listener::alldata_<ContainerAllocator> >
     s << indent << "header: ";
     s << std::endl;
     Printer< ::std_msgs::Header_<ContainerAllocator> >::stream(s, indent + "  ", v.header);
-    s << indent << "mpuData_AcX: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_AcX);
-    s << indent << "mpuData_AcY: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_AcY);
-    s << indent << "mpuData_AcZ: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_AcZ);
-    s << indent << "mpuData_timestamp: ";
-    Printer<uint32_t>::stream(s, indent + "  ", v.mpuData_timestamp);
-    s << indent << "mpuData_Tmp: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_Tmp);
-    s << indent << "mpuData_GyX: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_GyX);
-    s << indent << "mpuData_GyY: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_GyY);
-    s << indent << "mpuData_GyZ: ";
-    Printer<int16_t>::stream(s, indent + "  ", v.mpuData_GyZ);
     s << indent << "mpuRAW_AcX: ";
     Printer<int16_t>::stream(s, indent + "  ", v.mpuRAW_AcX);
     s << indent << "mpuRAW_AcY: ";

@@ -1,22 +1,6 @@
 (cl:in-package atom_esp_listener-msg)
 (cl:export '(HEADER-VAL
           HEADER
-          MPUDATA_ACX-VAL
-          MPUDATA_ACX
-          MPUDATA_ACY-VAL
-          MPUDATA_ACY
-          MPUDATA_ACZ-VAL
-          MPUDATA_ACZ
-          MPUDATA_TIMESTAMP-VAL
-          MPUDATA_TIMESTAMP
-          MPUDATA_TMP-VAL
-          MPUDATA_TMP
-          MPUDATA_GYX-VAL
-          MPUDATA_GYX
-          MPUDATA_GYY-VAL
-          MPUDATA_GYY
-          MPUDATA_GYZ-VAL
-          MPUDATA_GYZ
           MPURAW_ACX-VAL
           MPURAW_ACX
           MPURAW_ACY-VAL

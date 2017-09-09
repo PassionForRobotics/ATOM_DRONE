@@ -173,6 +173,8 @@ struct PID_Tune_Params_t
 
 };
 
+//struct 
+
 struct ALL_DATA
 {
   PID_TUNE_TYPE tune_type;
@@ -181,7 +183,7 @@ struct ALL_DATA
   float pitch;
   float roll;
   sMPUDATA_t mpuRAW;
-  sMPUDATA_t mpuData;
+  //sMPUDATA_t mpuData;
   float pingheight;
   PID_Tune_Params_t pplr;
   PID_Tune_Params_t ppfb;     //

@@ -20,14 +20,6 @@ class alldata {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
       this.header = null;
-      this.mpuData_AcX = null;
-      this.mpuData_AcY = null;
-      this.mpuData_AcZ = null;
-      this.mpuData_timestamp = null;
-      this.mpuData_Tmp = null;
-      this.mpuData_GyX = null;
-      this.mpuData_GyY = null;
-      this.mpuData_GyZ = null;
       this.mpuRAW_AcX = null;
       this.mpuRAW_AcY = null;
       this.mpuRAW_AcZ = null;
@@ -70,54 +62,6 @@ class alldata {
       }
       else {
         this.header = new std_msgs.msg.Header();
-      }
-      if (initObj.hasOwnProperty('mpuData_AcX')) {
-        this.mpuData_AcX = initObj.mpuData_AcX
-      }
-      else {
-        this.mpuData_AcX = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_AcY')) {
-        this.mpuData_AcY = initObj.mpuData_AcY
-      }
-      else {
-        this.mpuData_AcY = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_AcZ')) {
-        this.mpuData_AcZ = initObj.mpuData_AcZ
-      }
-      else {
-        this.mpuData_AcZ = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_timestamp')) {
-        this.mpuData_timestamp = initObj.mpuData_timestamp
-      }
-      else {
-        this.mpuData_timestamp = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_Tmp')) {
-        this.mpuData_Tmp = initObj.mpuData_Tmp
-      }
-      else {
-        this.mpuData_Tmp = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_GyX')) {
-        this.mpuData_GyX = initObj.mpuData_GyX
-      }
-      else {
-        this.mpuData_GyX = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_GyY')) {
-        this.mpuData_GyY = initObj.mpuData_GyY
-      }
-      else {
-        this.mpuData_GyY = 0;
-      }
-      if (initObj.hasOwnProperty('mpuData_GyZ')) {
-        this.mpuData_GyZ = initObj.mpuData_GyZ
-      }
-      else {
-        this.mpuData_GyZ = 0;
       }
       if (initObj.hasOwnProperty('mpuRAW_AcX')) {
         this.mpuRAW_AcX = initObj.mpuRAW_AcX
@@ -336,22 +280,6 @@ class alldata {
     // Serializes a message object of type alldata
     // Serialize message field [header]
     bufferOffset = std_msgs.msg.Header.serialize(obj.header, buffer, bufferOffset);
-    // Serialize message field [mpuData_AcX]
-    bufferOffset = _serializer.int16(obj.mpuData_AcX, buffer, bufferOffset);
-    // Serialize message field [mpuData_AcY]
-    bufferOffset = _serializer.int16(obj.mpuData_AcY, buffer, bufferOffset);
-    // Serialize message field [mpuData_AcZ]
-    bufferOffset = _serializer.int16(obj.mpuData_AcZ, buffer, bufferOffset);
-    // Serialize message field [mpuData_timestamp]
-    bufferOffset = _serializer.uint32(obj.mpuData_timestamp, buffer, bufferOffset);
-    // Serialize message field [mpuData_Tmp]
-    bufferOffset = _serializer.int16(obj.mpuData_Tmp, buffer, bufferOffset);
-    // Serialize message field [mpuData_GyX]
-    bufferOffset = _serializer.int16(obj.mpuData_GyX, buffer, bufferOffset);
-    // Serialize message field [mpuData_GyY]
-    bufferOffset = _serializer.int16(obj.mpuData_GyY, buffer, bufferOffset);
-    // Serialize message field [mpuData_GyZ]
-    bufferOffset = _serializer.int16(obj.mpuData_GyZ, buffer, bufferOffset);
     // Serialize message field [mpuRAW_AcX]
     bufferOffset = _serializer.int16(obj.mpuRAW_AcX, buffer, bufferOffset);
     // Serialize message field [mpuRAW_AcY]
@@ -431,22 +359,6 @@ class alldata {
     let data = new alldata(null);
     // Deserialize message field [header]
     data.header = std_msgs.msg.Header.deserialize(buffer, bufferOffset);
-    // Deserialize message field [mpuData_AcX]
-    data.mpuData_AcX = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_AcY]
-    data.mpuData_AcY = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_AcZ]
-    data.mpuData_AcZ = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_timestamp]
-    data.mpuData_timestamp = _deserializer.uint32(buffer, bufferOffset);
-    // Deserialize message field [mpuData_Tmp]
-    data.mpuData_Tmp = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_GyX]
-    data.mpuData_GyX = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_GyY]
-    data.mpuData_GyY = _deserializer.int16(buffer, bufferOffset);
-    // Deserialize message field [mpuData_GyZ]
-    data.mpuData_GyZ = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [mpuRAW_AcX]
     data.mpuRAW_AcX = _deserializer.int16(buffer, bufferOffset);
     // Deserialize message field [mpuRAW_AcY]
@@ -523,7 +435,7 @@ class alldata {
   static getMessageSize(object) {
     let length = 0;
     length += std_msgs.msg.Header.getMessageSize(object.header);
-    return length + 214;
+    return length + 196;
   }
 
   static datatype() {
@@ -533,21 +445,21 @@ class alldata {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '586be2de32280a4c8bb4bc521bc4cf73';
+    return 'a02c529be361f99c2b4436fa34009a57';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
     Header header
-    int16  mpuData_AcX
-    int16  mpuData_AcY
-    int16  mpuData_AcZ
-    uint32  mpuData_timestamp
-    int16  mpuData_Tmp
-    int16  mpuData_GyX
-    int16  mpuData_GyY
-    int16  mpuData_GyZ
+    #int16  mpuData_AcX
+    #int16  mpuData_AcY
+    #int16  mpuData_AcZ
+    #uint32  mpuData_timestamp
+    #int16  mpuData_Tmp
+    #int16  mpuData_GyX
+    #int16  mpuData_GyY
+    #int16  mpuData_GyZ
     
     int16  mpuRAW_AcX
     int16  mpuRAW_AcY
@@ -623,62 +535,6 @@ class alldata {
     }
     else {
       resolved.header = new std_msgs.msg.Header()
-    }
-
-    if (msg.mpuData_AcX !== undefined) {
-      resolved.mpuData_AcX = msg.mpuData_AcX;
-    }
-    else {
-      resolved.mpuData_AcX = 0
-    }
-
-    if (msg.mpuData_AcY !== undefined) {
-      resolved.mpuData_AcY = msg.mpuData_AcY;
-    }
-    else {
-      resolved.mpuData_AcY = 0
-    }
-
-    if (msg.mpuData_AcZ !== undefined) {
-      resolved.mpuData_AcZ = msg.mpuData_AcZ;
-    }
-    else {
-      resolved.mpuData_AcZ = 0
-    }
-
-    if (msg.mpuData_timestamp !== undefined) {
-      resolved.mpuData_timestamp = msg.mpuData_timestamp;
-    }
-    else {
-      resolved.mpuData_timestamp = 0
-    }
-
-    if (msg.mpuData_Tmp !== undefined) {
-      resolved.mpuData_Tmp = msg.mpuData_Tmp;
-    }
-    else {
-      resolved.mpuData_Tmp = 0
-    }
-
-    if (msg.mpuData_GyX !== undefined) {
-      resolved.mpuData_GyX = msg.mpuData_GyX;
-    }
-    else {
-      resolved.mpuData_GyX = 0
-    }
-
-    if (msg.mpuData_GyY !== undefined) {
-      resolved.mpuData_GyY = msg.mpuData_GyY;
-    }
-    else {
-      resolved.mpuData_GyY = 0
-    }
-
-    if (msg.mpuData_GyZ !== undefined) {
-      resolved.mpuData_GyZ = msg.mpuData_GyZ;
-    }
-    else {
-      resolved.mpuData_GyZ = 0
     }
 
     if (msg.mpuRAW_AcX !== undefined) {

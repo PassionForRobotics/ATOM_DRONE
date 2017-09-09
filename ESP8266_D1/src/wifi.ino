@@ -217,14 +217,14 @@ void printdata(const debug_data *_data)
     return;
   }
 
-  Serial.printf("d.mD.ax %d, ", _data->mpuData.AcX);
-  Serial.printf("d.mD.ay %d, ", _data->mpuData.AcY);
-  Serial.printf("d.mD.az %d, ", _data->mpuData.AcZ);
-  Serial.printf("d.mD.ts %d, ", _data->mpuData.timestamp);
-  Serial.printf("d.mD.Tmp %d, ", _data->mpuData.Tmp);
-  Serial.printf("d.mD.gx %d, ", _data->mpuData.GyX);
-  Serial.printf("d.mD.gy %d, ", _data->mpuData.GyY);
-  Serial.printf("d.mD.gz %d, ", _data->mpuData.GyZ);
+  // Serial.printf("d.mD.ax %d, ", _data->mpuData.AcX);
+  // Serial.printf("d.mD.ay %d, ", _data->mpuData.AcY);
+  // Serial.printf("d.mD.az %d, ", _data->mpuData.AcZ);
+  // Serial.printf("d.mD.ts %d, ", _data->mpuData.timestamp);
+  // Serial.printf("d.mD.Tmp %d, ", _data->mpuData.Tmp);
+  // Serial.printf("d.mD.gx %d, ", _data->mpuData.GyX);
+  // Serial.printf("d.mD.gy %d, ", _data->mpuData.GyY);
+  // Serial.printf("d.mD.gz %d, ", _data->mpuData.GyZ);
 
   Serial.printf("d.mR.ax %d, ", _data->mpuRAW.AcX);
   Serial.printf("d.mR.ay %d, ", _data->mpuRAW.AcY);

@@ -16,20 +16,12 @@
 
 (defclass atom_esp_listener::alldata
   :super ros::object
-  :slots (_header _mpuData_AcX _mpuData_AcY _mpuData_AcZ _mpuData_timestamp _mpuData_Tmp _mpuData_GyX _mpuData_GyY _mpuData_GyZ _mpuRAW_AcX _mpuRAW_AcY _mpuRAW_AcZ _mpuRAW_timestamp _mpuRAW_Tmp _mpuRAW_GyX _mpuRAW_GyY _mpuRAW_GyZ _pingheight _ppfb_timestamp _ppfb_Input _ppfb_Kd _ppfb_Ki _ppfb_Kp _ppfb_Output _ppfb_Setpoint _pplr_timestamp _pplr_Input _pplr_Kd _pplr_Ki _pplr_Kp _pplr_Output _pplr_Setpoint _ppud_timestamp _ppud_Input _ppud_Kd _ppud_Ki _ppud_Kp _ppud_Output _ppud_Setpoint _yaw _pitch _roll _timestamp _tune_type ))
+  :slots (_header _mpuRAW_AcX _mpuRAW_AcY _mpuRAW_AcZ _mpuRAW_timestamp _mpuRAW_Tmp _mpuRAW_GyX _mpuRAW_GyY _mpuRAW_GyZ _pingheight _ppfb_timestamp _ppfb_Input _ppfb_Kd _ppfb_Ki _ppfb_Kp _ppfb_Output _ppfb_Setpoint _pplr_timestamp _pplr_Input _pplr_Kd _pplr_Ki _pplr_Kp _pplr_Output _pplr_Setpoint _ppud_timestamp _ppud_Input _ppud_Kd _ppud_Ki _ppud_Kp _ppud_Output _ppud_Setpoint _yaw _pitch _roll _timestamp _tune_type ))
 
 (defmethod atom_esp_listener::alldata
   (:init
    (&key
     ((:header __header) (instance std_msgs::Header :init))
-    ((:mpuData_AcX __mpuData_AcX) 0)
-    ((:mpuData_AcY __mpuData_AcY) 0)
-    ((:mpuData_AcZ __mpuData_AcZ) 0)
-    ((:mpuData_timestamp __mpuData_timestamp) 0)
-    ((:mpuData_Tmp __mpuData_Tmp) 0)
-    ((:mpuData_GyX __mpuData_GyX) 0)
-    ((:mpuData_GyY __mpuData_GyY) 0)
-    ((:mpuData_GyZ __mpuData_GyZ) 0)
     ((:mpuRAW_AcX __mpuRAW_AcX) 0)
     ((:mpuRAW_AcY __mpuRAW_AcY) 0)
     ((:mpuRAW_AcZ __mpuRAW_AcZ) 0)
@@ -68,14 +60,6 @@
     )
    (send-super :init)
    (setq _header __header)
-   (setq _mpuData_AcX (round __mpuData_AcX))
-   (setq _mpuData_AcY (round __mpuData_AcY))
-   (setq _mpuData_AcZ (round __mpuData_AcZ))
-   (setq _mpuData_timestamp (round __mpuData_timestamp))
-   (setq _mpuData_Tmp (round __mpuData_Tmp))
-   (setq _mpuData_GyX (round __mpuData_GyX))
-   (setq _mpuData_GyY (round __mpuData_GyY))
-   (setq _mpuData_GyZ (round __mpuData_GyZ))
    (setq _mpuRAW_AcX (round __mpuRAW_AcX))
    (setq _mpuRAW_AcY (round __mpuRAW_AcY))
    (setq _mpuRAW_AcZ (round __mpuRAW_AcZ))
@@ -119,30 +103,6 @@
      (progn
        (if __header (setq _header (car __header)))
        _header)))
-  (:mpuData_AcX
-   (&optional __mpuData_AcX)
-   (if __mpuData_AcX (setq _mpuData_AcX __mpuData_AcX)) _mpuData_AcX)
-  (:mpuData_AcY
-   (&optional __mpuData_AcY)
-   (if __mpuData_AcY (setq _mpuData_AcY __mpuData_AcY)) _mpuData_AcY)
-  (:mpuData_AcZ
-   (&optional __mpuData_AcZ)
-   (if __mpuData_AcZ (setq _mpuData_AcZ __mpuData_AcZ)) _mpuData_AcZ)
-  (:mpuData_timestamp
-   (&optional __mpuData_timestamp)
-   (if __mpuData_timestamp (setq _mpuData_timestamp __mpuData_timestamp)) _mpuData_timestamp)
-  (:mpuData_Tmp
-   (&optional __mpuData_Tmp)
-   (if __mpuData_Tmp (setq _mpuData_Tmp __mpuData_Tmp)) _mpuData_Tmp)
-  (:mpuData_GyX
-   (&optional __mpuData_GyX)
-   (if __mpuData_GyX (setq _mpuData_GyX __mpuData_GyX)) _mpuData_GyX)
-  (:mpuData_GyY
-   (&optional __mpuData_GyY)
-   (if __mpuData_GyY (setq _mpuData_GyY __mpuData_GyY)) _mpuData_GyY)
-  (:mpuData_GyZ
-   (&optional __mpuData_GyZ)
-   (if __mpuData_GyZ (setq _mpuData_GyZ __mpuData_GyZ)) _mpuData_GyZ)
   (:mpuRAW_AcX
    (&optional __mpuRAW_AcX)
    (if __mpuRAW_AcX (setq _mpuRAW_AcX __mpuRAW_AcX)) _mpuRAW_AcX)
@@ -253,22 +213,6 @@
    (+
     ;; std_msgs/Header _header
     (send _header :serialization-length)
-    ;; int16 _mpuData_AcX
-    2
-    ;; int16 _mpuData_AcY
-    2
-    ;; int16 _mpuData_AcZ
-    2
-    ;; uint32 _mpuData_timestamp
-    4
-    ;; int16 _mpuData_Tmp
-    2
-    ;; int16 _mpuData_GyX
-    2
-    ;; int16 _mpuData_GyY
-    2
-    ;; int16 _mpuData_GyZ
-    2
     ;; int16 _mpuRAW_AcX
     2
     ;; int16 _mpuRAW_AcY
@@ -346,22 +290,6 @@
               (make-string-output-stream (send self :serialization-length)))))
      ;; std_msgs/Header _header
        (send _header :serialize s)
-     ;; int16 _mpuData_AcX
-       (write-word _mpuData_AcX s)
-     ;; int16 _mpuData_AcY
-       (write-word _mpuData_AcY s)
-     ;; int16 _mpuData_AcZ
-       (write-word _mpuData_AcZ s)
-     ;; uint32 _mpuData_timestamp
-       (write-long _mpuData_timestamp s)
-     ;; int16 _mpuData_Tmp
-       (write-word _mpuData_Tmp s)
-     ;; int16 _mpuData_GyX
-       (write-word _mpuData_GyX s)
-     ;; int16 _mpuData_GyY
-       (write-word _mpuData_GyY s)
-     ;; int16 _mpuData_GyZ
-       (write-word _mpuData_GyZ s)
      ;; int16 _mpuRAW_AcX
        (write-word _mpuRAW_AcX s)
      ;; int16 _mpuRAW_AcY
@@ -438,22 +366,6 @@
    (buf &optional (ptr- 0))
    ;; std_msgs/Header _header
      (send _header :deserialize buf ptr-) (incf ptr- (send _header :serialization-length))
-   ;; int16 _mpuData_AcX
-     (setq _mpuData_AcX (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _mpuData_AcY
-     (setq _mpuData_AcY (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _mpuData_AcZ
-     (setq _mpuData_AcZ (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; uint32 _mpuData_timestamp
-     (setq _mpuData_timestamp (sys::peek buf ptr- :integer)) (incf ptr- 4)
-   ;; int16 _mpuData_Tmp
-     (setq _mpuData_Tmp (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _mpuData_GyX
-     (setq _mpuData_GyX (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _mpuData_GyY
-     (setq _mpuData_GyY (sys::peek buf ptr- :short)) (incf ptr- 2)
-   ;; int16 _mpuData_GyZ
-     (setq _mpuData_GyZ (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;; int16 _mpuRAW_AcX
      (setq _mpuRAW_AcX (sys::peek buf ptr- :short)) (incf ptr- 2)
    ;; int16 _mpuRAW_AcY
@@ -528,18 +440,18 @@
    self)
   )
 
-(setf (get atom_esp_listener::alldata :md5sum-) "586be2de32280a4c8bb4bc521bc4cf73")
+(setf (get atom_esp_listener::alldata :md5sum-) "a02c529be361f99c2b4436fa34009a57")
 (setf (get atom_esp_listener::alldata :datatype-) "atom_esp_listener/alldata")
 (setf (get atom_esp_listener::alldata :definition-)
       "Header header
-int16  mpuData_AcX
-int16  mpuData_AcY
-int16  mpuData_AcZ
-uint32  mpuData_timestamp
-int16  mpuData_Tmp
-int16  mpuData_GyX
-int16  mpuData_GyY
-int16  mpuData_GyZ
+#int16  mpuData_AcX
+#int16  mpuData_AcY
+#int16  mpuData_AcZ
+#uint32  mpuData_timestamp
+#int16  mpuData_Tmp
+#int16  mpuData_GyX
+#int16  mpuData_GyY
+#int16  mpuData_GyZ
 
 int16  mpuRAW_AcX
 int16  mpuRAW_AcY
@@ -605,6 +517,6 @@ string frame_id
 
 
 
-(provide :atom_esp_listener/alldata "586be2de32280a4c8bb4bc521bc4cf73")
+(provide :atom_esp_listener/alldata "a02c529be361f99c2b4436fa34009a57")
 
 

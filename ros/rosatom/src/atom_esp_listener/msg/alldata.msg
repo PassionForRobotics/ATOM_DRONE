@@ -1,12 +1,12 @@
 Header header
-int16  mpuData_AcX
-int16  mpuData_AcY
-int16  mpuData_AcZ
-uint32  mpuData_timestamp
-int16  mpuData_Tmp
-int16  mpuData_GyX
-int16  mpuData_GyY
-int16  mpuData_GyZ
+#int16  mpuData_AcX
+#int16  mpuData_AcY
+#int16  mpuData_AcZ
+#uint32  mpuData_timestamp
+#int16  mpuData_Tmp
+#int16  mpuData_GyX
+#int16  mpuData_GyY
+#int16  mpuData_GyZ
 
 int16  mpuRAW_AcX
 int16  mpuRAW_AcY
