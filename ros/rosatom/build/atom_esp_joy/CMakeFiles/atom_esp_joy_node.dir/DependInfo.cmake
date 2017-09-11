@@ -19,9 +19,9 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/devel/include"
   "/usr/include/libevdev-1.0"
-  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/include"
   "/opt/ros/kinetic/include"
   "/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"
+  "/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy/include"
   "/usr/include/libevdev-1.0/libevdev"
   )
 

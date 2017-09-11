@@ -214,50 +214,51 @@ void loop()
 
     //mpu_filter(&mpudata, &sdata);
 
-    //if(system_get_time()-lastWIFITime >=(10*1000))
-    //{
-    lastWIFITime = system_get_time();
+    if(system_get_time()-lastWIFITime >=(10*1000))
+    {
+      lastWIFITime = system_get_time();
 
-    debug_data.timestamp = millis();
-    debug_data.yaw = YPR.x;
-    debug_data.pitch = YPR.y;
-    debug_data.roll = YPR.z;
-    debug_data.pingheight = ping_loop();
-    //debug_data.mpuData = mpudata;
-    debug_data.mpuRAW = rawmpudata;
-    //debug_data.pplr =
-
-
-    // ENABLE_WIFI
-    //
+      debug_data.timestamp = millis();
+      debug_data.yaw = YPR.x;
+      debug_data.pitch = YPR.y;
+      debug_data.roll = YPR.z;
+      debug_data.pingheight = ping_loop();
+      //debug_data.mpuData = mpudata;
+      debug_data.mpuRAW = rawmpudata;
+      //debug_data.pplr =
 
 
-    #if defined(ENABLE_WIFI)
-
-    uint32_t profWifiTs = 0;
-
-    #if defined(WIFI_PROFILER_ON)
-    wifiLoopProfiler.Start();
-
-    profWifiTs = system_get_time();
-
-    #endif //WIFI_PROFILER_ON
+      // ENABLE_WIFI
+      //
 
 
-    data_received = wifi_loop(&debug_data, &msetpts);
+      #if defined(ENABLE_WIFI)
 
-    debug_data.tune_type = msetpts.pid_tune_type;
+      uint32_t profWifiTs = 0;
+
+      #if defined(WIFI_PROFILER_ON)
+      wifiLoopProfiler.Start();
+
+      profWifiTs = system_get_time();
+
+      #endif //WIFI_PROFILER_ON
+
+      //if(system_get_time()-lastLoopTime >=(LOOP_TIME))
+      //{
+      data_received = wifi_loop(&debug_data, &msetpts);
+
+      debug_data.tune_type = msetpts.pid_tune_type;
+      //}
+
+      #if defined(WIFI_PROFILER_ON)
+      profWifiTs = system_get_time() - profWifiTs;
+
+      wifiLoopProfiler.Pause();
+      #endif //WIFI_PROFILER_ON
 
 
-    #if defined(WIFI_PROFILER_ON)
-    profWifiTs = system_get_time() - profWifiTs;
-
-    wifiLoopProfiler.Pause();
-    #endif //WIFI_PROFILER_ON
-
-
-    #endif // ENABLE_WIFI
-    //}
+      #endif // ENABLE_WIFI
+    }
     //else
     //{
     //data_received = false;

@@ -868,6 +868,175 @@ atom_esp_listener_genpy/fast:
 .PHONY : atom_esp_listener_genpy/fast
 
 #=============================================================================
+# Target rules for targets named atom_esp_perf_node
+
+# Build rule for target.
+atom_esp_perf_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_node
+.PHONY : atom_esp_perf_node
+
+# fast build rule for target.
+atom_esp_perf_node/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_node.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_node.dir/build
+.PHONY : atom_esp_perf_node/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_genpy
+
+# Build rule for target.
+atom_esp_perf_genpy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_genpy
+.PHONY : atom_esp_perf_genpy
+
+# fast build rule for target.
+atom_esp_perf_genpy/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_genpy.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_genpy.dir/build
+.PHONY : atom_esp_perf_genpy/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages_cpp
+
+# Build rule for target.
+atom_esp_perf_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages_cpp
+.PHONY : atom_esp_perf_generate_messages_cpp
+
+# fast build rule for target.
+atom_esp_perf_generate_messages_cpp/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_cpp.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_cpp.dir/build
+.PHONY : atom_esp_perf_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_gencpp
+
+# Build rule for target.
+atom_esp_perf_gencpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_gencpp
+.PHONY : atom_esp_perf_gencpp
+
+# fast build rule for target.
+atom_esp_perf_gencpp/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_gencpp.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_gencpp.dir/build
+.PHONY : atom_esp_perf_gencpp/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages_nodejs
+
+# Build rule for target.
+atom_esp_perf_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages_nodejs
+.PHONY : atom_esp_perf_generate_messages_nodejs
+
+# fast build rule for target.
+atom_esp_perf_generate_messages_nodejs/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_nodejs.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_nodejs.dir/build
+.PHONY : atom_esp_perf_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named _atom_esp_perf_generate_messages_check_deps_empty
+
+# Build rule for target.
+_atom_esp_perf_generate_messages_check_deps_empty: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 _atom_esp_perf_generate_messages_check_deps_empty
+.PHONY : _atom_esp_perf_generate_messages_check_deps_empty
+
+# fast build rule for target.
+_atom_esp_perf_generate_messages_check_deps_empty/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/_atom_esp_perf_generate_messages_check_deps_empty.dir/build.make atom_esp_perf/CMakeFiles/_atom_esp_perf_generate_messages_check_deps_empty.dir/build
+.PHONY : _atom_esp_perf_generate_messages_check_deps_empty/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages_py
+
+# Build rule for target.
+atom_esp_perf_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages_py
+.PHONY : atom_esp_perf_generate_messages_py
+
+# fast build rule for target.
+atom_esp_perf_generate_messages_py/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_py.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_py.dir/build
+.PHONY : atom_esp_perf_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages
+
+# Build rule for target.
+atom_esp_perf_generate_messages: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages
+.PHONY : atom_esp_perf_generate_messages
+
+# fast build rule for target.
+atom_esp_perf_generate_messages/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages.dir/build
+.PHONY : atom_esp_perf_generate_messages/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages_lisp
+
+# Build rule for target.
+atom_esp_perf_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages_lisp
+.PHONY : atom_esp_perf_generate_messages_lisp
+
+# fast build rule for target.
+atom_esp_perf_generate_messages_lisp/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_lisp.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_lisp.dir/build
+.PHONY : atom_esp_perf_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_genlisp
+
+# Build rule for target.
+atom_esp_perf_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_genlisp
+.PHONY : atom_esp_perf_genlisp
+
+# fast build rule for target.
+atom_esp_perf_genlisp/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_genlisp.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_genlisp.dir/build
+.PHONY : atom_esp_perf_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_generate_messages_eus
+
+# Build rule for target.
+atom_esp_perf_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_generate_messages_eus
+.PHONY : atom_esp_perf_generate_messages_eus
+
+# fast build rule for target.
+atom_esp_perf_generate_messages_eus/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_eus.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_generate_messages_eus.dir/build
+.PHONY : atom_esp_perf_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_geneus
+
+# Build rule for target.
+atom_esp_perf_geneus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_geneus
+.PHONY : atom_esp_perf_geneus
+
+# fast build rule for target.
+atom_esp_perf_geneus/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_geneus.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_geneus.dir/build
+.PHONY : atom_esp_perf_geneus/fast
+
+#=============================================================================
+# Target rules for targets named atom_esp_perf_gennodejs
+
+# Build rule for target.
+atom_esp_perf_gennodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 atom_esp_perf_gennodejs
+.PHONY : atom_esp_perf_gennodejs
+
+# fast build rule for target.
+atom_esp_perf_gennodejs/fast:
+	$(MAKE) -f atom_esp_perf/CMakeFiles/atom_esp_perf_gennodejs.dir/build.make atom_esp_perf/CMakeFiles/atom_esp_perf_gennodejs.dir/build
+.PHONY : atom_esp_perf_gennodejs/fast
+
+#=============================================================================
 # Target rules for targets named talker
 
 # Build rule for target.
@@ -960,6 +1129,19 @@ help:
 	@echo "... _atom_esp_listener_generate_messages_check_deps_mpudata"
 	@echo "... atom_esp_listener_node"
 	@echo "... atom_esp_listener_genpy"
+	@echo "... atom_esp_perf_node"
+	@echo "... atom_esp_perf_genpy"
+	@echo "... atom_esp_perf_generate_messages_cpp"
+	@echo "... atom_esp_perf_gencpp"
+	@echo "... atom_esp_perf_generate_messages_nodejs"
+	@echo "... _atom_esp_perf_generate_messages_check_deps_empty"
+	@echo "... atom_esp_perf_generate_messages_py"
+	@echo "... atom_esp_perf_generate_messages"
+	@echo "... atom_esp_perf_generate_messages_lisp"
+	@echo "... atom_esp_perf_genlisp"
+	@echo "... atom_esp_perf_generate_messages_eus"
+	@echo "... atom_esp_perf_geneus"
+	@echo "... atom_esp_perf_gennodejs"
 	@echo "... talker"
 	@echo "... listener"
 .PHONY : help

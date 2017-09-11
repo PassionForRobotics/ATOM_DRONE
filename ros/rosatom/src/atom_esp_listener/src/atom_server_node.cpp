@@ -8,7 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include "std_msgs/String.h"
-
+#include <netinet/tcp.h>
 #include <atom_esp_listener/alldata.h>
 atom_esp_listener::alldata msg;
 
@@ -252,6 +252,7 @@ void joyCallback(const atom_esp_joy::joydata msg)
 struct sockaddr name;
 void *get_in_addr(struct sockaddr *sa);
 void set_nonblock(int socket);
+int setTCPNoDelay(int socks, int enabled);
 //char* PORT = "11511";
 int PORT = 11511;
 //#define STDIN 00 0
@@ -271,9 +272,15 @@ int main (int argc, char** argv)
   ROS_INFO("Starting up...");
   ros::NodeHandle nh;
 
-  ros::Publisher server_pub = nh.advertise<atom_esp_listener::alldata>("atom_alldata", 1000);
-  //ros::Subscriber server_sub = nh.subscribe("atom_drone_all_data", 1000, chatterCallback); // test sub
-  ros::Rate loop_rate(10);
+  ros::Publisher server_pub_esp_all = nh.advertise<atom_esp_listener::alldata>("atom_alldata", 1000);
+  
+  /*ros::Publisher server_pub_esp_perf_loop = nh.advertise<atom_esp_listener::Profiler_data>("atom_perf_loop", 100);
+  ros::Publisher server_pub_esp_perf_mpu = nh.advertise<atom_esp_listener::Profiler_data>("atom_perf_mpu", 100);
+  ros::Publisher server_pub_esp_perf_wifi = nh.advertise<atom_esp_listener::Profiler_data>("atom_perf_wifi", 100);
+  ros::Publisher server_pub_esp_perf_steer = nh.advertise<atom_esp_listener::Profiler_data>("atom_perf_steer", 100);*/
+  
+  //ros::Subscriber server_sub = nh.subscribe("atom_alldata", 1000, chatterCallback); // test sub
+  ros::Rate loop_rate(1000);
 
   //char buffer[SIZE_OF_ALL_DATA+1];
 
@@ -315,17 +322,30 @@ int main (int argc, char** argv)
   {
     ROS_DEBUG("[ESP]: socket OK");
   }
-
-  //allow reuse of port
-  int yes=1;
-  if (setsockopt(sock,SOL_SOCKET, SO_REUSEADDR,&yes,sizeof(int)) == -1) {
-    ROS_ERROR("[ESP]: setsockopt");
+  
+  
+  if(-1 == setTCPNoDelay(sock, 1))
+  {
+    ROS_ERROR("[ESP]: setsockopt TCP_NODELAY");
     //perror("setsockopt");
     exit(1);
   }
   else
   {
-    ROS_DEBUG("[ESP]: setsockopt OK");
+     ROS_DEBUG("[ESP]: setsockopt OK TCP_NODELAY");
+  }
+
+  //allow reuse of port
+  int yes=1;
+  if (setsockopt(sock,SOL_SOCKET, SO_REUSEADDR,&yes,sizeof(int)) == -1) 
+  {
+    ROS_ERROR("[ESP]: setsockopt SO_REUSEADDR");
+    //perror("setsockopt");
+    exit(1);
+  }
+  else
+  {
+    ROS_DEBUG("[ESP]: setsockopt OK SO_REUSEADDR");
   }
 
 
@@ -431,8 +451,19 @@ int main (int argc, char** argv)
         //msg.header.seq = count++;
         ROS_DEBUG_THROTTLE(0.5, "[ESP]: DATA from ESP | %d | %f, %f, %f", all_data.timestamp, (float)all_data.yaw, (float)all_data.pitch, (float)all_data.roll );
         //printdata(&data);
-
-        server_pub.publish(msg);
+	
+	msg.header.stamp = ros::Time::now();
+        msg.profiled_loop.header = msg.header;
+        msg.profiled_mpu.header = msg.header;
+        msg.profiled_wifi.header = msg.header;
+        msg.profiled_steer.header = msg.header;
+        
+        server_pub_esp_all.publish(msg);
+        //server_pub_esp_perf_loop.publish(msg.profiled_loop);
+        //server_pub_esp_perf_mpu.publish(msg.profiled_mpu);
+        //server_pub_esp_perf_wifi.publish(msg.profiled_wifi);
+        //server_pub_esp_perf_steer.publish(msg.profiled_steer);
+        
         //ROS_ERROR("?");
         // %Tag(SPINONCE)%
         ros::spinOnce();
@@ -453,7 +484,7 @@ int main (int argc, char** argv)
             }
         }
         //ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
-        //loop_rate.sleep();
+        loop_rate.sleep();
       }
       //ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
 
@@ -500,3 +531,15 @@ void *get_in_addr(struct sockaddr *sa) {
   return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
+int setTCPNoDelay(int socks, int enabled)
+{
+
+    int flag = (enabled ? 1 : 0);
+
+    if(setsockopt(socks,IPPROTO_TCP,TCP_NODELAY,(char *)&flag,sizeof(flag)) == -1)
+    {
+         return -1;
+    }
+
+    return 0;
+}

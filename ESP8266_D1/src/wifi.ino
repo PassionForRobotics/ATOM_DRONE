@@ -82,6 +82,7 @@ void printgmpts(sGENERICSETPOINTS_t *setpoints)
 void connectserver()
 {
   const int httpPort = serverPort;
+
   if (!client.connect(/*"localhost"*/serverip, httpPort))
   {
 
@@ -119,8 +120,10 @@ void wifi_setup()
 
   wifi_set_sleep_type(NONE_SLEEP_T);//LIGHT_SLEEP_T);
 
+  client.setTimeout(500);
   connectserver();
-
+  client.setNoDelay(true);
+  client.setTimeout(50);
   //Udp.begin(localUdpPort);
   //Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
 
@@ -139,7 +142,7 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
 
   all_data->tune_type = PID_TUNE_TYPE_FORE_BACK;
   all_data->ppud.Kd = 23.23;
-  printdata(all_data);
+  //printdata(all_data);
 
 
   client.write((uint8_t*)all_data, SIZE_OF_ALL_DATA);
