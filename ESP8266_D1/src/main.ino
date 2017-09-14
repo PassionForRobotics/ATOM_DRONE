@@ -33,7 +33,7 @@ extern "C" {
 
 
 #if defined(ENABLE_WIFI)
-//#define ENABLE_OTA_WIFI
+#define ENABLE_OTA_WIFI
 #endif //ENABLE_WIFI
 
 #if defined(ENABLE_MPU)
@@ -131,7 +131,7 @@ void setup()
 
 }
 
-uint32_t lastWIFITime = 0, lastLoopTime =0 , lastPrintTime = 0;
+uint32_t lastWIFITime = 0, lastLoopTime =0 , lastPrintTime = 0, lastPerfTime = 0;
 
 sGENERICSETPOINTS_t msetpts;
 
@@ -280,34 +280,10 @@ void loop()
 
     #endif  // ENABLE_STEER
 
-
-    if(system_get_time()-lastPrintTime >=(1000*1000)) // It must be a sec for profiling
+    if(system_get_time()-lastPerfTime >=(100*1000)) // It must be a sec for profiling
     {
-      //Serial.print("RAW | "); printMPU(&rawmpudata);
+      lastPerfTime = system_get_time();
 
-      lastPrintTime = system_get_time();
-      //if(data_received)
-      {
-        //printgmpts(&msetpts);
-        //printMPU(&debug_data.mpuRAW);
-        //printMPU(&rawmpudata);
-
-      }
-      //else
-      {
-        //Serial.println("[ WARN] [.] Probable connection loss.");
-      }
-
-
-      //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
-      //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
-
-
-
-      //Serial.printf("Cy: ");
-      //Serial.print( (float)(cycleSum/cyCount) );
-
-      //uint32_t cycleT = ESP.getCycleCount();
       wholeLoopProfiler.Pause();
 
       wholeLoopProfiler.CalculateAverageTicks();
@@ -320,13 +296,13 @@ void loop()
       wifiLoopProfiler.CalculateAverageTicks();
       #endif //WIFI_PROFILER_ON
 
-      #if defined(PRINT_LOOP_PROFILER_ON)
-      Serial.printf("L:%d,%d|[", wholeLoopProfiler.getLastIterationCount(), wholeLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
-      Serial.print(wholeLoopProfiler.getAverageMicros());
-      Serial.printf(" ");
-      Serial.print(wholeLoopProfiler.getAverageMicros2());
-      Serial.printf(" %d]uS | ", system_get_time() - profLoopTs);
-      #endif // PRINT_LOOP_PROFILER_ON
+      // #if defined(PRINT_LOOP_PROFILER_ON)
+      // Serial.printf("L:%d,%d|[", wholeLoopProfiler.getLastIterationCount(), wholeLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      // Serial.print(wholeLoopProfiler.getAverageMicros());
+      // Serial.printf(" ");
+      // Serial.print(wholeLoopProfiler.getAverageMicros2());
+      // Serial.printf(" %d]uS | ", system_get_time() - profLoopTs);
+      // #endif // PRINT_LOOP_PROFILER_ON
 
       profiled_loop.ts = millis();
       profiled_loop.averageIterationCount = wholeLoopProfiler.getLastIterationCount();
@@ -337,13 +313,13 @@ void loop()
       debug_data.profiled_loop = profiled_loop;
 
       #if defined(MPU_PROFILER_ON)
-      #if defined(PRINT_MPU_PROFILER_ON)
-      Serial.printf("M:%d,%d|[", mpuLoopProfiler.getLastIterationCount(), mpuLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
-      Serial.print(mpuLoopProfiler.getAverageMicros());
-      Serial.printf(" ");
-      Serial.print(mpuLoopProfiler.getAverageMicros2());
-      Serial.printf(" %d]uS | ", profMpuTs);
-      #endif //PRINT_MPU_PROFILER_ON
+      // #if defined(PRINT_MPU_PROFILER_ON)
+      // Serial.printf("M:%d,%d|[", mpuLoopProfiler.getLastIterationCount(), mpuLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      // Serial.print(mpuLoopProfiler.getAverageMicros());
+      // Serial.printf(" ");
+      // Serial.print(mpuLoopProfiler.getAverageMicros2());
+      // Serial.printf(" %d]uS | ", profMpuTs);
+      // #endif //PRINT_MPU_PROFILER_ON
 
       profiled_mpu.ts = millis();
       profiled_mpu.averageIterationCount = mpuLoopProfiler.getLastIterationCount();
@@ -356,13 +332,13 @@ void loop()
       #endif //MPU_PROFILER_ON
 
       #if defined(WIFI_PROFILER_ON)
-      #if defined(PRINT_WIFI_PROFILER_ON)
-      Serial.printf("W:%d,%d|[", wifiLoopProfiler.getLastIterationCount(), wifiLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
-      Serial.print(wifiLoopProfiler.getAverageMicros());
-      Serial.printf(" ");
-      Serial.print(wifiLoopProfiler.getAverageMicros2());
-      Serial.printf(" %d]uS | ", profWifiTs);
-      #endif //PRINT_WIFI_PROFILER_ON
+      // #if defined(PRINT_WIFI_PROFILER_ON)
+      // Serial.printf("W:%d,%d|[", wifiLoopProfiler.getLastIterationCount(), wifiLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      // Serial.print(wifiLoopProfiler.getAverageMicros());
+      // Serial.printf(" ");
+      // Serial.print(wifiLoopProfiler.getAverageMicros2());
+      // Serial.printf(" %d]uS | ", profWifiTs);
+      //#endif //PRINT_WIFI_PROFILER_ON
 
       profiled_wifi.ts = millis();
       profiled_wifi.averageIterationCount = wifiLoopProfiler.getLastIterationCount();
@@ -371,6 +347,119 @@ void loop()
       profiled_wifi.averageTime2 = wifiLoopProfiler.getAverageMicros2();
 
       debug_data.profiled_wifi = profiled_wifi;
+
+      #endif //WIFI_PROFILER_ON
+      //
+      // Serial.printf("YPR|%d|%d|", system_get_time()/1000, isMpuDataValid);
+      // Serial.print((YPR.x));
+      // Serial.printf(" ");
+      // Serial.print((YPR.y));
+      // Serial.printf(" ");
+      // Serial.print((YPR.z));
+      // Serial.printf(" | 0x%X\n",_mpustatus);
+
+      //wholeLoopProfiler.Pause();
+      wholeLoopProfiler.ReinitCounters();
+
+      #if defined(MPU_PROFILER_ON)
+      mpuLoopProfiler.ReinitCounters();
+      #endif //MPU_PROFILER_ON
+
+      #if defined(WIFI_PROFILER_ON)
+      wifiLoopProfiler.ReinitCounters();
+      #endif //WIFI_PROFILER_ON
+    }
+
+    if(system_get_time()-lastPrintTime >=(1000*1000)) // It must be a sec for profiling
+    {
+      //Serial.print("RAW | "); printMPU(&rawmpudata);
+
+      lastPrintTime = system_get_time();
+      //if(data_received)
+      //{
+        //printgmpts(&msetpts);
+        //printMPU(&debug_data.mpuRAW);
+        //printMPU(&rawmpudata);
+
+      //}
+      //else
+      //{
+        //Serial.println("[ WARN] [.] Probable connection loss.");
+      //}
+
+
+      //Serial.print("PRO | "); Serial.printf("png %lu cms | %d ", ping_loop(), msetpts.hat) ; //Serial.printf("dt %d uS ", (int)(dt));
+      //Serial.printf("| %d %d | %d %d %d\n", msetpts.x, msetpts.y, mpudata.AcX, mpudata.AcY, mpudata.AcZ);
+
+
+
+      //Serial.printf("Cy: ");
+      //Serial.print( (float)(cycleSum/cyCount) );
+
+      //uint32_t cycleT = ESP.getCycleCount();
+      // wholeLoopProfiler.Pause();
+      //
+      // wholeLoopProfiler.CalculateAverageTicks();
+      //
+      // #if defined(MPU_PROFILER_ON)
+      // mpuLoopProfiler.CalculateAverageTicks();
+      // #endif //MPU_PROFILER_ON
+      //
+      // #if defined(WIFI_PROFILER_ON)
+      // wifiLoopProfiler.CalculateAverageTicks();
+      // #endif //WIFI_PROFILER_ON
+
+      #if defined(PRINT_LOOP_PROFILER_ON)
+      Serial.printf("L:%d,%d|[", wholeLoopProfiler.getLastIterationCount(), wholeLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      Serial.print(wholeLoopProfiler.getAverageMicros());
+      Serial.printf(" ");
+      Serial.print(wholeLoopProfiler.getAverageMicros2());
+      Serial.printf(" %d]uS | ", system_get_time() - profLoopTs);
+      #endif // PRINT_LOOP_PROFILER_ON
+
+      // profiled_loop.ts = millis();
+      // profiled_loop.averageIterationCount = wholeLoopProfiler.getLastIterationCount();
+      // profiled_loop.averageTick = wholeLoopProfiler.getAverageTicks();
+      // profiled_loop.averageTime = wholeLoopProfiler.getAverageMicros();
+      // profiled_loop.averageTime2 = wholeLoopProfiler.getAverageMicros2();
+      //
+      // debug_data.profiled_loop = profiled_loop;
+
+      #if defined(MPU_PROFILER_ON)
+      #if defined(PRINT_MPU_PROFILER_ON)
+      Serial.printf("M:%d,%d|[", mpuLoopProfiler.getLastIterationCount(), mpuLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      Serial.print(mpuLoopProfiler.getAverageMicros());
+      Serial.printf(" ");
+      Serial.print(mpuLoopProfiler.getAverageMicros2());
+      Serial.printf(" %d]uS | ", profMpuTs);
+      #endif //PRINT_MPU_PROFILER_ON
+
+      // profiled_mpu.ts = millis();
+      // profiled_mpu.averageIterationCount = mpuLoopProfiler.getLastIterationCount();
+      // profiled_mpu.averageTick = mpuLoopProfiler.getAverageTicks();
+      // profiled_mpu.averageTime = mpuLoopProfiler.getAverageMicros();
+      // profiled_mpu.averageTime2 = mpuLoopProfiler.getAverageMicros2();
+      //
+      // debug_data.profiled_mpu = profiled_mpu;
+
+      #endif //MPU_PROFILER_ON
+
+      #if defined(WIFI_PROFILER_ON)
+      #if defined(PRINT_WIFI_PROFILER_ON)
+      Serial.printf("W:%d,%d|[", wifiLoopProfiler.getLastIterationCount(), wifiLoopProfiler.getAverageTicks());// (cycleSum/cyCount));
+      Serial.print(wifiLoopProfiler.getAverageMicros());
+      Serial.printf(" ");
+      Serial.print(wifiLoopProfiler.getAverageMicros2());
+      Serial.printf(" %d]uS | ", profWifiTs);
+      #endif //PRINT_WIFI_PROFILER_ON
+
+      // profiled_wifi.ts = millis();
+      // profiled_wifi.averageIterationCount = wifiLoopProfiler.getLastIterationCount();
+      // profiled_wifi.averageTick = wifiLoopProfiler.getAverageTicks();
+      // profiled_wifi.averageTime = wifiLoopProfiler.getAverageMicros();
+      // profiled_wifi.averageTime2 = wifiLoopProfiler.getAverageMicros2();
+      //
+      // debug_data.profiled_wifi = profiled_wifi;
 
       #endif //WIFI_PROFILER_ON
 
@@ -383,15 +472,15 @@ void loop()
       Serial.printf(" | 0x%X\n",_mpustatus);
 
       //wholeLoopProfiler.Pause();
-      wholeLoopProfiler.ReinitCounters();
-
-      #if defined(MPU_PROFILER_ON)
-      mpuLoopProfiler.ReinitCounters();
-      #endif //MPU_PROFILER_ON
-
-      #if defined(WIFI_PROFILER_ON)
-      wifiLoopProfiler.ReinitCounters();
-      #endif //WIFI_PROFILER_ON
+      // wholeLoopProfiler.ReinitCounters();
+      //
+      // #if defined(MPU_PROFILER_ON)
+      // mpuLoopProfiler.ReinitCounters();
+      // #endif //MPU_PROFILER_ON
+      //
+      // #if defined(WIFI_PROFILER_ON)
+      // wifiLoopProfiler.ReinitCounters();
+      // #endif //WIFI_PROFILER_ON
       //cycleSum = 0;
       //cyCount = 0;
       //Serial.printf("Pt; %d | ", ESP.getCycleCount()/cycleT);

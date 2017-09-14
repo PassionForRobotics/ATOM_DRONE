@@ -125,7 +125,7 @@ void wifi_setup()
   client.setNoDelay(true);
   client.setTimeout(50);
   //Udp.begin(localUdpPort);
-  //Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);
+  Serial.printf("IP %s\n", WiFi.localIP().toString().c_str());//, localUdpPort);
 
 }
 

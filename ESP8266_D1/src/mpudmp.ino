@@ -293,13 +293,27 @@ int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR, int * _status)
     // reset so we can continue cleanly
 
     //Serial.println(F("FIFO overflow! :("));
-    mpu.resetFIFO();
+    // mpu.resetFIFO();
+    //
+    // _YPR->x = 0; // (float)ypr[0] * 180/M_PI;
+    // _YPR->y = 0; // (float)ypr[1] * 180/M_PI;
+    // _YPR->z = 0; // (float)ypr[2] * 180/M_PI;
+    //
+    // _mpudata->AcX = 0; // aa.x;
+    // _mpudata->AcY = 0; // aa.y;
+    // _mpudata->AcZ = 0; // aa.z;
+    // _mpudata->timestamp = system_get_time()/1000;
+    // _mpudata->Tmp = 0;
+    // _mpudata->GyX = 0; // gg.x;
+    // _mpudata->GyY = 0; // gg.y;
+    // _mpudata->GyZ = 0; //
 
+    mpu.resetFIFO();
     return -3;
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
   }
-  else //if (mpuIntStatus & 0x02)
+  else if (mpuIntStatus & 0x01)
   {
     // wait for correct available data length, should be a VERY short wait
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
