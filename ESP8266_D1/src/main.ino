@@ -159,6 +159,7 @@ void loop()
   wholeLoopProfiler.Start(); // Can check if beyond loop anything is going on
   //Serial.printf("Cy: %d, %d, %d, %d \n", cycleDiff, cycleSum, cyCount, (cycleSum/cyCount));
   uint32_t profLoopTs = system_get_time();
+  int _mpustatus=0;
 
   boolean data_received = false;
 
@@ -166,17 +167,17 @@ void loop()
 
   #if defined(ENABLE_OTA_WIFI)
 
-  #if defined(WIFI_PROFILER_ON)
-  wifiLoopProfiler.Start();
-  #endif //WIFI_PROFILER_ON
+  // #if defined(WIFI_PROFILER_ON)
+  // wifiLoopProfiler.Start();
+  // #endif //WIFI_PROFILER_ON
 
 
   if(true == loop_OTA())
   return; // skip all activity // or try how this works with this
 
-  #if defined(WIFI_PROFILER_ON)
-  wifiLoopProfiler.Pause();
-  #endif //WIFI_PROFILER_ON
+  // #if defined(WIFI_PROFILER_ON)
+  // wifiLoopProfiler.Pause();
+  // #endif //WIFI_PROFILER_ON
 
   #endif // ENABLE_OTA_WIFI
 
@@ -204,7 +205,7 @@ void loop()
     mpuLoopProfiler.Start();
     #endif //MPU_PROFILER_ON
 
-    isMpuDataValid = mpudmp_loop(&rawmpudata, &YPR);
+    isMpuDataValid = mpudmp_loop(&rawmpudata, &YPR, &_mpustatus);
     profMpuTs = system_get_time() - profMpuTs;
 
     //mpuLoopProfiler.Update();
@@ -280,7 +281,7 @@ void loop()
     #endif  // ENABLE_STEER
 
 
-    if(system_get_time()-lastPrintTime >=(1000*1000))
+    if(system_get_time()-lastPrintTime >=(1000*1000)) // It must be a sec for profiling
     {
       //Serial.print("RAW | "); printMPU(&rawmpudata);
 
@@ -379,7 +380,7 @@ void loop()
       Serial.print((YPR.y));
       Serial.printf(" ");
       Serial.print((YPR.z));
-      Serial.println();
+      Serial.printf(" | 0x%X\n",_mpustatus);
 
       //wholeLoopProfiler.Pause();
       wholeLoopProfiler.ReinitCounters();

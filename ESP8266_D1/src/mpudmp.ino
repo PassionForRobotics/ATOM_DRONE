@@ -246,21 +246,32 @@ void mpudmp_setup() {
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
-int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR) {
+int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR, int * _status)
+{
 
   //return;
   // if programming failed, don't try to do anything
-  if (!dmpReady) return -1;
-
+  if (!dmpReady)
+  {
+    //*_status = mpuIntStatus;
+    return -1;
+  }
   // reset interrupt flag and get INT_STATUS byte
   //mpuInterrupt = false;
+
   mpuIntStatus = mpu.getIntStatus();
 
+  *_status = mpuIntStatus;
+
   // get current FIFO count
+
+  // while(fifoCount < packetSize)
+  // {
   fifoCount = mpu.getFIFOCount();
+  // }
 
   // wait for MPU interrupt or extra packet(s) available
-  if (/*!mpuInterrupt && */fifoCount < packetSize) {
+  //if (/*!mpuInterrupt && */fifoCount < packetSize) {
     // other program behavior stuff here
     // .
     // .
@@ -270,30 +281,32 @@ int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR) {
     // while() loop to immediately process the MPU data
     // .
     // .
-    // .
-    return -2;
-  }
+    //mpu.resetFIFO();
+    //return -2;
+  //}
 
 
 
   // check for overflow (this should never happen unless our code is too inefficient)
-  if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+  if ((mpuIntStatus & 0x10) || fifoCount == 1024)
+  {
     // reset so we can continue cleanly
-    mpu.resetFIFO();
-    Serial.println(F("FIFO overflow!"));
 
+    //Serial.println(F("FIFO overflow! :("));
+    mpu.resetFIFO();
 
     return -3;
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
   }
-  else if (mpuIntStatus & 0x02)
+  else //if (mpuIntStatus & 0x02)
   {
     // wait for correct available data length, should be a VERY short wait
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
 
     // read a packet from FIFO
     mpu.getFIFOBytes(fifoBuffer, packetSize);
+    mpu.resetFIFO();
 
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
@@ -415,5 +428,9 @@ int mpudmp_loop(sMPUDATA_t * _mpudata, VectorFloat *_YPR) {
     // blinkState = !blinkState;
     // digitalWrite(LED_PIN, blinkState);
   }
+  //else
+  //{
+    //Serial.printf("mpu status %x\n", mpuIntStatus );
+  //}
   return -5;
 }
