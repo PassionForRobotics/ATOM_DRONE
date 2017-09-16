@@ -244,7 +244,7 @@ int main(int argc, char **argv)
     	continue;
 
     LogitechAxes(a[0], &x, &y, &z, &s, &btns); // ctrl+c is not working here ???
-    //msg.header.stamp = ros::Time::now();
+    msg.header.stamp = ros::Time::now(); // this was not working
     // msg.header.frame_id = "?"
     //msg.header.seq = count;
     msg.X = x;
