@@ -67,7 +67,7 @@ PID_AutoTune_Params_t pafb =
 
 PID_ATune PID_ATune_FB(&ppfb.Input, &ppfb.Output);
 
-
+void buttonProcess(debug_data *all_data, uint16_t btns);
 ///
 ///
 ///
@@ -187,9 +187,43 @@ void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
   // ///
 
   //PID
+  buttonProcess(all_data, msetpts->buttons);
+  // union eBUTTONS_t buttons ;
+  // buttons.btns = msetpts->buttons;
+  //
+  // static union eBUTTONS_t lastButtons ;
+  // static int lastStateButtons_B_03 = 0;//buttons.B_03;
+  // if(lastButtons.B_03 != buttons.B_03)
+  // {
+  //   static bool selected_pid_tune_FB = false;
+  //   static int selected_pid_tune_FB_debouce_cnt = 0;
+  //   selected_pid_tune_FB_debouce_cnt++;
+  //
+  //   if (0==buttons.B_03 && 2 == selected_pid_tune_FB_debouce_cnt)
+  //   {
+  //     selected_pid_tune_FB_debouce_cnt = 0;
+  //
+  //     if(false == selected_pid_tune_FB)
+  //     {
+  //       selected_pid_tune_FB = true;
+  //       all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type | (int)PID_TUNE_TYPE_FORE_BACK);
+  //       pid_tune_state_machine(all_data->tune_type);
+  //     }
+  //     else
+  //     {
+  //       selected_pid_tune_FB = false;
+  //       all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type & (int)~PID_TUNE_TYPE_FORE_BACK);
+  //       pid_tune_state_machine(all_data->tune_type);
+  //     }
+  //   }
+  //
+  //   lastButtons.B_03 = buttons.B_03;
+  //
+  //   // GPIO indecation will be good
+  // }
 
-  //palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
-  //pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
+  palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
+  pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
 
   // Use
   //all_data->pplr.Output
@@ -198,143 +232,216 @@ void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
 
 
 
-if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
-{
-  lastSteerLoopTime = system_get_time();
-
-
-  //if(true == data_received)
+  if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
   {
-  //  if( (msetpts->x != 0) && (msetpts->y != 0) )
-    //for(i=0;i<4;i++)
+    lastSteerLoopTime = system_get_time();
+
+
+    //if(true == data_received)
     {
-      //Serial.printf("rnd %d\n", angle);
-      servo[0].write(x);
-
-      servo[1].write(y);
-
-      servo[2].write(x1);
-
-      servo[3].write(y1);
-    }
-    //ESC.write(angle);
-  }
-
-
-  POV hat = (POV)(0x000F&msetpts->buttons) ;
-  int escval = 0;
-  static bool ESC_armed = false;
-  if(POV_WEST == hat )
-  {
-    escval = MIN_THROTTLE;
-    ESC.writeMicroseconds(escval);
-    ESC_armed = true;
-    //Serial.printf("%d\n", msetpts->hat);
-  }
-
-  if(POV_EAST == hat&& false == ESC_armed)
-  {
-    escval = MAX_THROTTLE;
-    ESC.writeMicroseconds(escval);
-    ESC_armed = false;
-    //Serial.printf("%d\n", msetpts->hat);
-  }
-
-  if(POV_SOUTH == hat)
-  {
-    escval = ZERO_THROTTLE;
-    ESC.writeMicroseconds(escval);
-    ESC_armed = false;
-    //Serial.printf("%d\n", msetpts->hat);
-  }
-
-  if ( (true == ESC_armed) )
-  {
-    escval = map(msetpts->s
-      , SET_POINT_S_MIN, SET_POINT_S_MAX
-      , MIN_THROTTLE, MAX_THROTTLE);
-
-      if(0==escval)
+      if( (msetpts->x != 0) && (msetpts->y != 0) )
+      //for(i=0;i<4;i++)
       {
-        ESC_armed = false;
+        //Serial.printf("rnd %d\n", angle);
+        servo[0].write(x);
+
+        servo[1].write(y);
+
+        servo[2].write(x1);
+
+        servo[3].write(y1);
+      }
+      //ESC.write(angle);
+    }
+
+
+    POV hat = (POV)(0x000F&msetpts->buttons) ;
+
+    int escval = 0;
+    static bool ESC_armed = false;
+    if(POV_WEST == hat )
+    {
+      escval = MIN_THROTTLE;
+      ESC.writeMicroseconds(escval);
+      ESC_armed = true;
+      //Serial.printf("%d\n", msetpts->hat);
+    }
+
+    if(POV_EAST == hat&& false == ESC_armed)
+    {
+      escval = MAX_THROTTLE;
+      ESC.writeMicroseconds(escval);
+      ESC_armed = false;
+      //Serial.printf("%d\n", msetpts->hat);
+    }
+
+    if(POV_SOUTH == hat)
+    {
+      escval = ZERO_THROTTLE;
+      ESC.writeMicroseconds(escval);
+      ESC_armed = false;
+      //Serial.printf("%d\n", msetpts->hat);
+    }
+
+    if ( (true == ESC_armed) )
+    {
+      escval = map(msetpts->s
+        , SET_POINT_S_MIN, SET_POINT_S_MAX
+        , MIN_THROTTLE, MAX_THROTTLE);
+
+        if(0==escval)
+        {
+          ESC_armed = false;
+        }
+
+        ESC.writeMicroseconds(escval);
       }
 
-      ESC.writeMicroseconds(escval);
+
+
+      //if(angle>=135)
+      //angle = 0;
+
     }
 
 
+    //all_data->ppfb
+    all_data->pplr = pplr;
+    all_data->ppfb = ppfb;
+    all_data->ppud = ppud;
+    //all_data->ppud
 
-    //if(angle>=135)
-    //angle = 0;
+    //return pplr;
+  }
+
+  void SerialSend()
+  {
+    // Serial.print("setpoint: ");Serial.print(pplr.Setpoint); Serial.print(" ");
+    // Serial.print("input: ");Serial.print(pplr.Input); Serial.print(" ");
+    // Serial.print("output: ");Serial.print(pplr.Output); Serial.print(" ");
+    // if(tuning){
+    //   Serial.println("tuning mode");
+    // } else {
+    //   Serial.print("kp: ");Serial.print(PIDlr.GetKp());Serial.print(" ");
+    //   Serial.print("ki: ");Serial.print(PIDlr.GetKi());Serial.print(" ");
+    //   Serial.print("kd: ");Serial.print(PIDlr.GetKd());Serial.println();
+    // }
+  }
+
+  void buttonProcess(debug_data *all_data, uint16_t btns)
+  {
+    union eBUTTONS_t buttons ;
+    buttons.btns = btns;//msetpts->buttons;
+
+    static union eBUTTONS_t lastButtons ;
+
+    if(lastButtons.B_03 != buttons.B_03)
+    {
+      static bool selected_pid_tune_FB = false;
+      static int selected_pid_tune_FB_debouce_cnt = 0;
+      selected_pid_tune_FB_debouce_cnt++;
+
+      if (0==buttons.B_03 && 2 == selected_pid_tune_FB_debouce_cnt)
+      {
+        selected_pid_tune_FB_debouce_cnt = 0;
+
+        if(false == selected_pid_tune_FB)
+        {
+          selected_pid_tune_FB = true;
+          all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type | (int)PID_TUNE_TYPE_FORE_BACK);
+          //pid_tune_state_machine(all_data->tune_type);
+        }
+        else
+        {
+          selected_pid_tune_FB = false;
+          all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type & (int)~PID_TUNE_TYPE_FORE_BACK);
+          //pid_tune_state_machine(all_data->tune_type);
+        }
+        pafb.changeAutoTune(&ppfb, &PID_ATune_FB, &PIDfb);
+      }
+
+      lastButtons.B_03 = buttons.B_03;
+
+      // GPIO indecation will be good
+    }
+
+    if(lastButtons.B_04 != buttons.B_04)
+    {
+      static bool selected_pid_tune_LR = false;
+      static int selected_pid_tune_LR_debouce_cnt = 0;
+      selected_pid_tune_LR_debouce_cnt++;
+
+      if (0==buttons.B_04 && 2 == selected_pid_tune_LR_debouce_cnt)
+      {
+        selected_pid_tune_LR_debouce_cnt = 0;
+
+        if(false == selected_pid_tune_LR)
+        {
+          selected_pid_tune_LR = true;
+          all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type | (int)PID_TUNE_TYPE_LEFT_RIGHT);
+          //pid_tune_state_machine(all_data->tune_type);
+          //if(palr.tuning)
+
+
+        }
+        else
+        {
+          selected_pid_tune_LR = false;
+          all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type & (int)~PID_TUNE_TYPE_LEFT_RIGHT);
+          //pid_tune_state_machine(all_data->tune_type);
+        }
+        palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+      }
+
+      lastButtons.B_04 = buttons.B_04;
+
+      // GPIO indecation will be good
+    }
 
   }
 
-
-  //all_data->ppfb
-  all_data->pplr = pplr;
-  all_data->ppfb = ppfb;
-  all_data->ppud = ppud;
-  //all_data->ppud
-
-  //return pplr;
-}
-
-void SerialSend()
-{
-  // Serial.print("setpoint: ");Serial.print(pplr.Setpoint); Serial.print(" ");
-  // Serial.print("input: ");Serial.print(pplr.Input); Serial.print(" ");
-  // Serial.print("output: ");Serial.print(pplr.Output); Serial.print(" ");
-  // if(tuning){
-  //   Serial.println("tuning mode");
-  // } else {
-  //   Serial.print("kp: ");Serial.print(PIDlr.GetKp());Serial.print(" ");
-  //   Serial.print("ki: ");Serial.print(PIDlr.GetKi());Serial.print(" ");
-  //   Serial.print("kd: ");Serial.print(PIDlr.GetKd());Serial.println();
-  // }
-}
-
-void SerialReceive()
-{
-  if(Serial.available())
+  void SerialReceive()
   {
-    char b = Serial.read();
-    Serial.flush();
-
-    b = b - 48; //ascii to int
-
-    switch(b)
+    if(Serial.available())
     {
-      case PID_TUNE_TYPE_NONE:
+      char b = Serial.read();
+      Serial.flush();
+
+      b = b - 48; //ascii to int
+
+      switch(b)
       {
-        if(palr.tuning)
+        case PID_TUNE_TYPE_NONE:
+        {
+          if(palr.tuning)
           palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
 
-        if(pafb.tuning)
+          if(pafb.tuning)
           pafb.changeAutoTune(&ppfb, &PID_ATune_FB, &PIDfb);
 
           // if ... pafb, paud
-      }break;
+        }break;
 
-      case PID_TUNE_TYPE_LEFT_RIGHT:
-      {
-        //if((b=='1' && !palr.tuning) || (b!='1' && palr.tuning))
-        palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
-      }break;
+        case PID_TUNE_TYPE_LEFT_RIGHT:
+        {
+          //if((b=='1' && !palr.tuning) || (b!='1' && palr.tuning))
+          palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+        }break;
 
-      case PID_TUNE_TYPE_FORE_BACK:
-      {
-        palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
-      }break;
+        case PID_TUNE_TYPE_FORE_BACK:
+        {
+          palr.changeAutoTune(&pplr, &PID_ATune_LR, &PIDlr);
+        }break;
 
-      case PID_TUNE_TYPE_UP_DOWN:
-      {
+        case PID_TUNE_TYPE_UP_DOWN:
+        {
 
-      }break;
+        }break;
 
-      default:
-      {
-        Serial.printf("PID mode : Not implemented\n" );
+        default:
+        {
+          Serial.printf("PID mode : Not implemented\n" );
+        }
       }
     }
   }
-}

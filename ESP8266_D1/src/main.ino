@@ -248,7 +248,7 @@ void loop()
       //{
       data_received = wifi_loop(&debug_data, &msetpts);
 
-      debug_data.tune_type = msetpts.pid_tune_type;
+      //debug_data.tune_type = msetpts.pid_tune_type;
       //}
 
       #if defined(WIFI_PROFILER_ON)

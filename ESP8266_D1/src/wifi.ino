@@ -140,8 +140,8 @@ boolean wifi_loop(debug_data *all_data, sGENERICSETPOINTS_t *setpoints)
     return false;
   }
 
-  all_data->tune_type = PID_TUNE_TYPE_FORE_BACK;
-  all_data->ppud.Kd = 23.23;
+  //all_data->tune_type = PID_TUNE_TYPE_FORE_BACK;
+  //all_data->ppud.Kd = 23.23;
   //printdata(all_data);
 
 

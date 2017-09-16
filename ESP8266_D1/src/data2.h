@@ -104,19 +104,19 @@ struct sMOTIONSETPOINTS_t
 };
 
 
-enum PID_TUNE_TYPE
+enum PID_TUNE_TYPE : uint16_t
 {
-  PID_TUNE_TYPE_INVALID = -1,
+  PID_TUNE_TYPE_INVALID = 0xff,
   PID_TUNE_TYPE_NONE = 0,
-  PID_TUNE_TYPE_LEFT_RIGHT,
-  PID_TUNE_TYPE_FORE_BACK,
-  PID_TUNE_TYPE_UP_DOWN,
-  PID_TUNE_TYPE_TUNING_DONE,
+  PID_TUNE_TYPE_LEFT_RIGHT = 1 << 0,
+  PID_TUNE_TYPE_FORE_BACK =  1 << 1,
+  PID_TUNE_TYPE_UP_DOWN   =  1 << 2,
+  PID_TUNE_TYPE_TUNING_DONE =  1 << 3,
   PID_TUNE_TYPE_MAX = 0xff
 };
 
 
-enum POV
+enum POV : uint16_t
 {
   POV_NONE = 0,                               /**< POV hat is not in use.              */
   POV_WEST = 1 << 0,                          /**< POV hat is facing left.             */
@@ -129,21 +129,25 @@ enum POV
   POV_SOUTHEAST = POV_SOUTH | POV_EAST        /**< POV hat is facing south and right.  */
 };
 
-struct eBUTTONS_t //:: uint16_t
+union eBUTTONS_t
+{
+struct //:: uint16_t
 {
   uint16_t HAT:4;  // 13,14,15,16
-  uint16_t B_12:1; // 12
-  uint16_t B_11:1; // 11
-  uint16_t B_10:1; // 10
-  uint16_t B_09:1; // 09
+  uint16_t B_01:1; // 01
+  uint16_t B_02:1; // 02
+  uint16_t B_03:1; // 03
+  uint16_t B_04:1; // 04
+  uint16_t B_05:1; // 05
+  uint16_t B_06:1; // 06
   uint16_t B_07:1; // 08
   uint16_t B_08:1; // 07
-  uint16_t B_06:1; // 06
-  uint16_t B_05:1; // 05
-  uint16_t B_04:1; // 04
-  uint16_t B_03:1; // 03
-  uint16_t B_02:1; // 02
-  uint16_t B_01:1; // 01
+  uint16_t B_09:1; // 09
+  uint16_t B_10:1; // 10
+  uint16_t B_11:1; // 11
+  uint16_t B_12:1; // 12
+};
+uint16_t btns;
 };
 
 struct sGENERICSETPOINTS_t
@@ -182,6 +186,20 @@ struct Profiler_data
   uint32_t averageTick;
 };
 
+
+typedef sMPUDATA_t sMPUDATA_t;
+#define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
+
+typedef sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
+#define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
+
+typedef sGENERICSETPOINTS_t sGENERICSETPOINTS_t;
+#define SIZE_OF_GMSETPOINTS_DATA (sizeof(sGENERICSETPOINTS_t))
+
+typedef PID_Tune_Params_t PID_Tune_Params_t;
+
+typedef PID_TUNE_TYPE PID_TUNE_TYPE;
+
 struct ALL_DATA
 {
   PID_TUNE_TYPE tune_type;
@@ -198,19 +216,6 @@ struct ALL_DATA
   Profiler_data profiled_loop, profiled_mpu, profiled_wifi, profiled_steer;
   sGENERICSETPOINTS_t msetpts;
 };
-
-typedef sMPUDATA_t sMPUDATA_t;
-#define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
-
-typedef sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
-#define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
-
-typedef sGENERICSETPOINTS_t sGENERICSETPOINTS_t;
-#define SIZE_OF_GMSETPOINTS_DATA (sizeof(sGENERICSETPOINTS_t))
-
-typedef PID_Tune_Params_t PID_Tune_Params_t;
-
-typedef PID_TUNE_TYPE PID_TUNE_TYPE;
 
 typedef ALL_DATA debug_data;
 #define SIZE_OF_ALL_DATA (sizeof(ALL_DATA))
