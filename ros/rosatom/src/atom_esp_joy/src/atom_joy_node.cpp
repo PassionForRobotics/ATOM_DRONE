@@ -179,6 +179,8 @@ int main(int argc, char **argv)
    
 // %Tag(INIT)%
   ros::init(argc, argv, "joy_node");
+  
+  printf("%c]0;%s%c", '\033', "JOY_ATOM_ESP", '\007');
 // %EndTag(INIT)%
 
   /**
@@ -212,7 +214,7 @@ int main(int argc, char **argv)
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
-  ros::Rate loop_rate(1);
+  ros::Rate loop_rate(1000);
 // %EndTag(LOOP_RATE)%
 
     bool s = es.Initialize();
@@ -275,7 +277,7 @@ int main(int argc, char **argv)
 // %EndTag(SPINONCE)%
 
 // %Tag(RATE_SLEEP)%
-    //loop_rate.sleep();
+   loop_rate.sleep();
 // %EndTag(RATE_SLEEP)%
     ++count;
   }

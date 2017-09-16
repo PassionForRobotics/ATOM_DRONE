@@ -274,6 +274,7 @@ void loop()
     // Without this empty line esp is crashing ????
     Serial.print("");//check "); Serial.println(__LINE__); // Without this empty line esp is crashing ????
     steer_loop(&debug_data, &msetpts); // should be sent on next loop over wifi
+    debug_data.msetpts = msetpts;
     //}
     // Without this empty line esp is crashing ????
     Serial.print("");//check "); Serial.println(__LINE__) // Without this empty line esp is crashing ????;

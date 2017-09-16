@@ -253,12 +253,6 @@ _CATKIN_GTEST_INCLUDE:FILEPATH=/usr/include/gtest/gtest.h
 _CATKIN_GTEST_SRC:FILEPATH=/usr/src/gtest/src/gtest.cc
 
 //Value Computed by CMake
-atom_esp_dynmccfg_BINARY_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_dynmccfg
-
-//Value Computed by CMake
-atom_esp_dynmccfg_SOURCE_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_dynmccfg
-
-//Value Computed by CMake
 atom_esp_joy_BINARY_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_joy
 
 //Dependencies for the target
@@ -274,10 +268,10 @@ atom_esp_joy_JoyService_LIB_DEPENDS:STATIC=general;evdev;general;udev;general;at
 atom_esp_joy_SOURCE_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_joy
 
 //Value Computed by CMake
-atom_esp_listener_BINARY_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_listener
+atom_esp_master_BINARY_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_master
 
 //Value Computed by CMake
-atom_esp_listener_SOURCE_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_listener
+atom_esp_master_SOURCE_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/src/atom_esp_master
 
 //Value Computed by CMake
 atom_esp_perf_BINARY_DIR:STATIC=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/build/atom_esp_perf

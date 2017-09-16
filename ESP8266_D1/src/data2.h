@@ -196,7 +196,7 @@ struct ALL_DATA
   PID_Tune_Params_t ppfb;     //
   PID_Tune_Params_t ppud; // Yaw and Ping
   Profiler_data profiled_loop, profiled_mpu, profiled_wifi, profiled_steer;
-
+  sGENERICSETPOINTS_t msetpts;
 };
 
 typedef sMPUDATA_t sMPUDATA_t;

@@ -6,6 +6,6 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs(gtest)
 subdirs(atom_esp_joy)
-subdirs(atom_esp_listener)
+subdirs(atom_esp_master)
 subdirs(atom_esp_perf)
 subdirs(beginner_tutorials)

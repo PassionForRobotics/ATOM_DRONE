@@ -188,8 +188,8 @@ void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
 
   //PID
 
-  palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
-  pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
+  //palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
+  //pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
 
   // Use
   //all_data->pplr.Output
@@ -205,7 +205,7 @@ if(system_get_time()-lastSteerLoopTime >=(STEER_LOOP_TIME))
 
   //if(true == data_received)
   {
-    if( (msetpts->x != 0) && (msetpts->y != 0) )
+  //  if( (msetpts->x != 0) && (msetpts->y != 0) )
     //for(i=0;i<4;i++)
     {
       //Serial.printf("rnd %d\n", angle);
