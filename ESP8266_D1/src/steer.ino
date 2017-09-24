@@ -134,7 +134,6 @@ void steer_setup()
 
   servo[3].write(y1);
 
-
   PIDlr.SetOutputLimits(-45+90, 45+90); // Offsets are not taken into account for now
   PIDlr.SetMode(AUTOMATIC);
 
@@ -188,40 +187,10 @@ void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
 
   //PID
   buttonProcess(all_data, msetpts->buttons);
-  // union eBUTTONS_t buttons ;
-  // buttons.btns = msetpts->buttons;
-  //
-  // static union eBUTTONS_t lastButtons ;
-  // static int lastStateButtons_B_03 = 0;//buttons.B_03;
-  // if(lastButtons.B_03 != buttons.B_03)
-  // {
-  //   static bool selected_pid_tune_FB = false;
-  //   static int selected_pid_tune_FB_debouce_cnt = 0;
-  //   selected_pid_tune_FB_debouce_cnt++;
-  //
-  //   if (0==buttons.B_03 && 2 == selected_pid_tune_FB_debouce_cnt)
-  //   {
-  //     selected_pid_tune_FB_debouce_cnt = 0;
-  //
-  //     if(false == selected_pid_tune_FB)
-  //     {
-  //       selected_pid_tune_FB = true;
-  //       all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type | (int)PID_TUNE_TYPE_FORE_BACK);
-  //       pid_tune_state_machine(all_data->tune_type);
-  //     }
-  //     else
-  //     {
-  //       selected_pid_tune_FB = false;
-  //       all_data->tune_type = (PID_TUNE_TYPE)(  (int)all_data->tune_type & (int)~PID_TUNE_TYPE_FORE_BACK);
-  //       pid_tune_state_machine(all_data->tune_type);
-  //     }
-  //   }
-  //
-  //   lastButtons.B_03 = buttons.B_03;
-  //
-  //   // GPIO indecation will be good
-  // }
 
+  ppfb.Input = all_data->pitch; // check
+  ppfb.Setpoint = x1;
+  
   palr.pid_loop(all_data, &pplr, &PID_ATune_LR, &PIDlr);
   pafb.pid_loop(all_data, &ppfb, &PID_ATune_FB, &PIDfb);
 
@@ -245,7 +214,7 @@ void steer_loop(debug_data *all_data, sGENERICSETPOINTS_t *msetpts)
         //Serial.printf("rnd %d\n", angle);
         servo[0].write(x);
 
-        servo[1].write(y);
+        servo[1].write(ppfb.Output);
 
         servo[2].write(x1);
 
