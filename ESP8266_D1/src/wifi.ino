@@ -87,7 +87,7 @@ void connectserver()
   {
 
     static uint32_t lastServerDisconTime = 0;
-    if(system_get_time()-lastServerDisconTime >=(5000*1000))
+    if(system_get_time()-lastServerDisconTime >=(500*1000))
     {
        lastServerDisconTime = system_get_time();
        Serial.println("connection failed reconnecting .. ");
