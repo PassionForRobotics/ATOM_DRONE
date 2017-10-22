@@ -2,8 +2,21 @@
 #ifndef DATA_H
 #define DATA_H
 
+
+//#include </home/rahuldeo/.platformio/lib/PID_ID2/PID_v1.h>
+//#include </home/rahuldeo/.platformio/lib/PID-AutoTune_ID3/PID_AutoTune_v0.h>
+
 #include "Arduino.h"
 
+#include <PID_v1.h>
+#include <PID_AutoTune_v0.h>
+
+#include "data2.h"
+
+#define STR(x) #x
+#define XSTR(x) STR(x)
+
+#define _VER_ XSTR(VER)
 
 #define LOOP_TIME (400) // 400 uS// ms 126.58228ms
 #define STEER_LOOP_TIME (10000) // 10ms (1000) // 1 ms
@@ -11,134 +24,151 @@
 
 #define _DEGREES(x) (57.29578 * x)
 
-
-struct sSmoothData_t
+struct PID_AutoTune_Params_t
 {
-  int32_t X, Y, Z;
-};
+  byte ATuneModeRemember;
 
-struct sMPUDATA_f_t
-{
+  double kpmodel, taup;
+  double outputStart;
+  double aTuneStep, aTuneNoise, aTuneStartValue;
+  unsigned int aTuneLookBack;
 
-  //unsigned char stx;
-  //unsigned char header;
-  //unsigned char data_len;
-  //unsigned char data_type;
-  //unsigned char res3;
-  uint32_t timestamp;
-  float AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
-};
+  boolean tuning;
+  unsigned long  modelTime, serialTime;
 
-struct sMPUDATA_t
-{
+  //set to false to connect to the real world
+  boolean useSimulation;
 
-  //unsigned char stx;
-  //unsigned char header;
-  //unsigned char data_len;
-  //unsigned char data_type;
-  //unsigned char res3;
-  uint32_t timestamp;
-  int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+  double theta[50];
 
-  sMPUDATA_t operator+=(sMPUDATA_t d)
+
+  void AutoTunersInit(PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
   {
-    timestamp += (uint32_t)d.timestamp;
-    AcX += (int16_t)d.AcX;
-    AcY += (int16_t)d.AcY;
-    AcZ += (int16_t)d.AcZ;
-    GyX += (int16_t)d.GyX;
-    GyY += (int16_t)d.GyY;
-    GyZ += (int16_t)d.GyZ;
-    return *this;
+    if(useSimulation)
+    {
+      for(byte i=0;i<50;i++)
+      {
+        theta[i]=outputStart;
+      }
+      modelTime = 0;
+    }
+    //Setup the pid
+    //myPID.SetMode(AUTOMATIC);
+
+
+    if(tuning)
+    {
+      tuning=false;
+      changeAutoTune(pidparams, PID_ATune, PID);
+      tuning=true;
+    }
+
+    serialTime = 0;
+
   }
 
-  sMPUDATA_t operator-=(sMPUDATA_t d)
+  void AutoTuneHelper(boolean start, PID *pid)
   {
-    timestamp -= (uint32_t)d.timestamp;
-    AcX -= (int16_t)d.AcX;
-    AcY -= (int16_t)d.AcY;
-    AcZ -= (int16_t)d.AcZ;
-    GyX -= (int16_t)d.GyX;
-    GyY -= (int16_t)d.GyY;
-    GyZ -= (int16_t)d.GyZ;
-    return *this;
+    if(start)
+    ATuneModeRemember = pid->GetMode();
+    else
+    pid->SetMode(ATuneModeRemember);
   }
 
-  // Not tested
-  // sMPUDATA_t operator+( sMPUDATA_t &rhs)
-  // {
-  //   sMPUDATA_t lhs = *this;
-  //   lhs.timestamp += (uint32_t)rhs.timestamp;
-  //   lhs.AcX += (int16_t)rhs.AcX;
-  //   lhs.AcY += (int16_t)rhs.AcY;
-  //   lhs.AcZ += (int16_t)rhs.AcZ;
-  //   lhs.GyX += (int16_t)rhs.GyX;
-  //   lhs.GyY += (int16_t)rhs.GyY;
-  //   lhs.GyZ += (int16_t)rhs.GyZ;
-  //
-  //   return lhs;
-  //   //  return a.team_name < b.team_name;
-  // }
-  //
-  // sMPUDATA_t operator-(sMPUDATA_t &rhs)
-  // {
-  //   sMPUDATA_t lhs = *this;
-  //   lhs.timestamp -= (uint32_t)rhs.timestamp;
-  //   lhs.AcX -= (int16_t)rhs.AcX;
-  //   lhs.AcY -= (int16_t)rhs.AcY;
-  //   lhs.AcZ -= (int16_t)rhs.AcZ;
-  //   lhs.GyX -= (int16_t)rhs.GyX;
-  //   lhs.GyY -= (int16_t)rhs.GyY;
-  //   lhs.GyZ -= (int16_t)rhs.GyZ;
-  //
-  //   return lhs;
-  //   //  return a.team_name < b.team_name;
-  // }
-
-  sMPUDATA_t operator/(int d)
+  void DoModel(PID_Tune_Params_t *pidparams)
   {
-    sMPUDATA_t lhs = *this;
-    lhs.timestamp /= d;
-    lhs.AcX /= d;
-    lhs.AcY /= d;
-    lhs.AcZ /= d;
-    lhs.GyX /= d;
-    lhs.GyY /= d;
-    lhs.GyZ /= d;
+    //cycle the dead time
+    for(byte i=0;i<49;i++)
+    {
+      theta[i] = theta[i+1];
+    }
+    //compute the input
+    pidparams->Input = (kpmodel / taup) *(theta[0] - outputStart) + pidparams->Input*(1-1/taup) + ((float)random(-10,10))/100;
 
-    return lhs;
   }
 
-  //unsigned char etx;
+  // AutoPID tune modeling
+  //
+  void changeAutoTune(PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
+  {
+    if(!tuning)
+    {
+      //Set the output to the desired starting frequency.
+      pidparams->Output=aTuneStartValue;
+      PID_ATune->SetNoiseBand(aTuneNoise);
+      PID_ATune->SetOutputStep(aTuneStep);
+      PID_ATune->SetLookbackSec((int)aTuneLookBack);
+      AutoTuneHelper(true, PID);
+      tuning = true;
+    }
+    else
+    { //cancel autotune
+      PID_ATune->Cancel();
+      tuning = false;
+      AutoTuneHelper(false, PID);
+    }
+  }
+
+  void pid_loop(debug_data * all_data, PID_Tune_Params_t *pidparams, PID_ATune *PID_ATune, PID *PID)
+  {
+    //PID
+
+    unsigned long now = millis();
+
+    if(!useSimulation)
+    { //pull the input in from the real world
+      pidparams->Input = all_data->pitch+90.0; // degrees //analogRead(0);
+    }
+
+    if(tuning)
+    {
+      byte val = (PID_ATune->Runtime());
+      if (val!=0)
+      {
+        tuning = false;
+      }
+      if(!tuning)
+      { //we're done, set the tuning parameters
+        pidparams->Kp = PID_ATune->GetKp();
+        pidparams->Ki = PID_ATune->GetKp();
+        pidparams->Kd = PID_ATune->GetKd();
+        PID->SetTunings(pidparams->Kp,pidparams->Ki,pidparams->Kd);
+        AutoTuneHelper(true, PID);//AutoTuneHelper(false);
+      }
+    }
+    else
+    {
+      // pplr.Setpoint = x1-servo_offsets[2];
+      // pplr.Input = mpudata->AcY+90.0; // degree
+      // PIDlr.Compute();
+      // x1 = pplr.Output+servo_offsets[2];
+    }
+
+    if(useSimulation)
+    {
+      theta[30]=pidparams->Output;
+      if(now>=modelTime)
+      {
+        modelTime +=100;
+        DoModel(pidparams);
+      }
+    }
+    else
+    {
+      //analogWrite(0,output);
+    }
+
+    //send-receive with processing if it's time
+    if(millis()>serialTime)
+    {
+      //SerialReceive();
+      //SerialSend();
+      serialTime+=500;
+    }
+  }
+
 };
 
-#define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
-
-typedef struct sMOTIONSETPOINTS_t
-{
-  uint32_t timestamp;
-  uint16_t x;
-  uint16_t y;
-  uint8_t hat;
-  uint8_t twist;
-  //uint8_t buttons_a;
-  uint8_t slider;
-  uint16_t buttons;
-
-}sMOTIONSETPOINTS_t;
-
-#define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
-
-
-typedef struct PID_Tune_Params_t
-{
-  //Define Variables we'll be connecting to
-  double Setpoint, Input, Output;
-
-  //Specify the links and initial tuning parameters
-  double Kp, Ki, Kd;
-
-}PID_Tune_Params_t;
-//typedef PID_Tune_Params_t PID_Tune_Params_t;
+typedef PID_AutoTune_Params_t PID_AutoTune_Params_t;
 
 #endif // DATA_H

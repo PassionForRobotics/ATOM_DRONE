@@ -1,11 +1,15 @@
 var _ = require('c-struct');
 
 var REMOTE_PORT = 10000;
-var REMOTE_IP = '192.168.1.9'; //'192.168.43.25';
+var REMOTE_IP = '192.168.1.5'; //'192.168.43.25';
 
 var MY_FIXED_PORT = 20000;
 
 var UDP_PACKET_TIMEOUT  = 250;
+
+console.log("Please work on common structure\npress CTRL+C");
+//exit();
+while(1);
 
 
 // typedef struct sMPURATA_t

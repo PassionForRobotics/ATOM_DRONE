@@ -1,0 +1,8 @@
+prefix=/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/install
+
+Name: atom_esp_joy
+Description: Description of atom_esp_joy
+Version: 0.0.0
+Cflags: -I/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/install/include
+Libs: -L/home/rahuldeo/ATOM/ATOM_DRONE/ros/rosatom/install/lib 
+Requires: message_runtime roscpp rospy std_msgs
