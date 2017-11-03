@@ -1,0 +1,9 @@
+Header header
+uint32 timestamp
+int16  AcX
+int16  AcY
+int16  AcZ
+int16  Tmp
+int16  GyX
+int16  GyY
+int16  GyZ
