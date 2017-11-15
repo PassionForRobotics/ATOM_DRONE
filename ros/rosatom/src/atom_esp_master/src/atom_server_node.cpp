@@ -9,6 +9,10 @@
 #include <arpa/inet.h>
 #include "std_msgs/String.h"
 #include <netinet/tcp.h>
+
+#include <math.h>
+#include <tf/transform_broadcaster.h>
+
 #include <atom_esp_master/alldata.h>
 atom_esp_master::alldata msg;
 
@@ -91,6 +95,7 @@ void copy_imudata(const debug_data *_data, sensor_msgs::Imu *_msg)
   
   const double sigma2_gyr_adis16375_d = 0;
   const double sigma2_acc_adis16375_d = 0;
+  double roll, pitch, yaw;
   
   //imu_msg.header.stamp = _data->;
   //  _msg->  mpuRAW.timestamp    = _data->mpuRAW.timestamp
@@ -134,6 +139,13 @@ void copy_imudata(const debug_data *_data, sensor_msgs::Imu *_msg)
   _msg->linear_acceleration_covariance[6] = 0.0;
   _msg->linear_acceleration_covariance[7] = 0.0;
   _msg->linear_acceleration_covariance[8] = sigma2_acc_adis16375_d;
+  
+  
+   tf::Quaternion q;
+   tf::quaternionMsgToTF(_msg->orientation, q);
+   tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+   
+   ROS_DEBUG_THROTTLE(5, "RPY: %f %f %f",roll*180.0/M_PI, pitch*180.0/M_PI, yaw*180.0/M_PI);
 
   //_msg->
   //_msg->  mpuRAW.AcX          = _data->mpuRAW.AcX;
