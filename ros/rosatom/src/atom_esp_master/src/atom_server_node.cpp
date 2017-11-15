@@ -15,6 +15,9 @@ atom_esp_master::alldata msg;
 #include <atom_esp_joy/joydata.h>
 atom_esp_joy::joydata joydata;
 
+#include "sensor_msgs/Imu.h"
+sensor_msgs::Imu imudata;
+
 #include <signal.h>
 #include <cstdlib>
 #include <stdio.h>
@@ -83,7 +86,65 @@ void copy_joydata(sGENERICSETPOINTS_t *_data, const atom_esp_joy::joydata *_msg)
 
 }
 
+void copy_imudata(const debug_data *_data, sensor_msgs::Imu *_msg)
+{
+  
+  const double sigma2_gyr_adis16375_d = 0;
+  const double sigma2_acc_adis16375_d = 0;
+  
+  //imu_msg.header.stamp = _data->;
+  //  _msg->  mpuRAW.timestamp    = _data->mpuRAW.timestamp
+  //imu_msg.header.frame_id = ROS_IMU_FRAME_NAMES.at(static_cast<SensorId::SensorId>(imu_ptr->imu_id));
+  _msg->orientation.x = 0.0;
+  _msg->orientation.y = 0.0;
+  _msg->orientation.z = 0.0;
+  _msg->orientation.w = 1.0;
+  _msg->orientation_covariance[0] = 99999.9;
+  _msg->orientation_covariance[1] = 0.0;
+  _msg->orientation_covariance[2] = 0.0;
+  _msg->orientation_covariance[3] = 0.0;
+  _msg->orientation_covariance[4] = 99999.9;
+  _msg->orientation_covariance[5] = 0.0;
+  _msg->orientation_covariance[6] = 0.0;
+  _msg->orientation_covariance[7] = 0.0;
+  _msg->orientation_covariance[8] = 99999.9;
+  // --- Angular Velocity.
+  _msg->angular_velocity.x = _data->mpuRAW.GyX;
+  _msg->angular_velocity.y = _data->mpuRAW.GyY;
+  _msg->angular_velocity.z = _data->mpuRAW.GyZ;
+  _msg->angular_velocity_covariance[0] = sigma2_gyr_adis16375_d;
+  _msg->angular_velocity_covariance[1] = 0.0;
+  _msg->angular_velocity_covariance[2] = 0.0;
+  _msg->angular_velocity_covariance[3] = 0.0;
+  _msg->angular_velocity_covariance[4] = sigma2_gyr_adis16375_d;
+  _msg->angular_velocity_covariance[5] = 0.0;
+  _msg->angular_velocity_covariance[6] = 0.0;
+  _msg->angular_velocity_covariance[7] = 0.0;
+  _msg->angular_velocity_covariance[8] = sigma2_gyr_adis16375_d;
+  // --- Linear Acceleration.
+  _msg->linear_acceleration.x = _data->mpuRAW.AcX;
+  _msg->linear_acceleration.y = _data->mpuRAW.AcY;
+  _msg->linear_acceleration.z = _data->mpuRAW.AcZ;
+  _msg->linear_acceleration_covariance[0] = sigma2_acc_adis16375_d;
+  _msg->linear_acceleration_covariance[1] = 0.0;
+  _msg->linear_acceleration_covariance[2] = 0.0;
+  _msg->linear_acceleration_covariance[3] = 0.0;
+  _msg->linear_acceleration_covariance[4] = sigma2_acc_adis16375_d;
+  _msg->linear_acceleration_covariance[5] = 0.0;
+  _msg->linear_acceleration_covariance[6] = 0.0;
+  _msg->linear_acceleration_covariance[7] = 0.0;
+  _msg->linear_acceleration_covariance[8] = sigma2_acc_adis16375_d;
 
+  //_msg->
+  //_msg->  mpuRAW.AcX          = _data->mpuRAW.AcX;
+  //_msg->  mpuRAW.AcY          = _data->mpuRAW.AcY;
+  //_msg->  mpuRAW.AcZ          = _data->mpuRAW.AcZ;
+  //_msg->  mpuRAW.timestamp    = _data->mpuRAW.timestamp;
+  //_msg->  mpuRAW.Tmp          = _data->mpuRAW.Tmp;
+  //_data->mpuRAW.GyX;
+  //_data->mpuRAW.GyY;
+  //_data->mpuRAW.GyZ;
+}
 void copy_alldata(const debug_data *_data, atom_esp_master::alldata *_msg)
 {
   /*_msg->  mpuData_AcX         = _data->mpuData.AcX;
@@ -285,6 +346,7 @@ int main (int argc, char** argv)
   ros::NodeHandle nh;
 
   ros::Publisher server_pub_esp_all = nh.advertise<atom_esp_master::alldata>("atom_alldata", 1000);
+  ros::Publisher server_pub_esp_imu = nh.advertise<sensor_msgs::Imu>("atom_imudata", 1000);
   
   /*ros::Publisher server_pub_esp_perf_loop = nh.advertise<atom_esp_master::Profiler_data>("atom_perf_loop", 100);
   ros::Publisher server_pub_esp_perf_mpu = nh.advertise<atom_esp_master::Profiler_data>("atom_perf_mpu", 100);
@@ -458,6 +520,7 @@ int main (int argc, char** argv)
         printdata(&all_data);
 	//ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
         copy_alldata(&all_data, &msg);
+        copy_imudata(&all_data, &imudata);
         //msg.header.stamp = ros::Time::now();
         // msg.H.frame_id = "?"
         //msg.header.seq = count++;
@@ -484,11 +547,27 @@ int main (int argc, char** argv)
         //printdata(&data);
 	
 	msg.header.stamp = ros::Time::now();
+	
         msg.profiled_loop.header = msg.header;
         msg.profiled_mpu.header = msg.header;
         msg.profiled_wifi.header = msg.header;
         msg.profiled_steer.header = msg.header;
         server_pub_esp_all.publish(msg);
+        
+        imudata.header = msg.header;
+         
+        // TODO: Correct following 
+        // Data is corrupting so the temporary go ahead
+        int allzero =
+        all_data.mpuRAW.AcX || 
+  	all_data.mpuRAW.AcY || 
+  	all_data.mpuRAW.AcZ ||
+  	all_data.mpuRAW.GyX ||
+  	all_data.mpuRAW.GyY ||
+  	all_data.mpuRAW.GyZ;
+        
+        if(0!=allzero)
+        	server_pub_esp_imu.publish(imudata);
         //server_pub_esp_perf_loop.publish(msg.profiled_loop);
         //server_pub_esp_perf_mpu.publish(msg.profiled_mpu);
         //server_pub_esp_perf_wifi.publish(msg.profiled_wifi);
