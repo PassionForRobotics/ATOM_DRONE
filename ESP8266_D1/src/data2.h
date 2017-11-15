@@ -18,7 +18,9 @@ struct sMPUDATA_t
 {
   uint32_t timestamp;
   int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
-
+#ifdef __cplusplus
+//extern "C" {
+//#endif
   sMPUDATA_t operator+=(sMPUDATA_t d)
   {
     timestamp += (uint32_t)d.timestamp;
@@ -89,6 +91,9 @@ struct sMPUDATA_t
   }
 
   //unsigned char etx;
+//#ifdef __cplusplus
+//}
+#endif
 };
 
 struct sMOTIONSETPOINTS_t
@@ -103,8 +108,11 @@ struct sMOTIONSETPOINTS_t
   uint16_t buttons;
 };
 
-
-enum PID_TUNE_TYPE : uint16_t
+#ifdef __cplusplus
+enum PID_TUNE_TYPE : uint16_t // unsafe
+#else
+enum PID_TUNE_TYPE
+#endif
 {
   PID_TUNE_TYPE_INVALID = 0xff,
   PID_TUNE_TYPE_NONE = 0,
@@ -115,8 +123,11 @@ enum PID_TUNE_TYPE : uint16_t
   PID_TUNE_TYPE_MAX = 0xff
 };
 
-
+#ifdef __cplusplus
 enum POV : uint16_t
+#else
+enum POV
+#endif
 {
   POV_NONE = 0,                               /**< POV hat is not in use.              */
   POV_WEST = 1 << 0,                          /**< POV hat is facing left.             */
@@ -162,7 +173,7 @@ struct sGENERICSETPOINTS_t
   //{
   //  eBUTTONS_t ebuttons;
     int16_t buttons;
-    PID_TUNE_TYPE pid_tune_type;
+    enum PID_TUNE_TYPE pid_tune_type;
   ///};
 };
 
@@ -187,37 +198,37 @@ struct Profiler_data
 };
 
 
-typedef sMPUDATA_t sMPUDATA_t;
+typedef struct sMPUDATA_t sMPUDATA_t;
 #define SIZE_OF_MPU_DATA (sizeof(sMPUDATA_t))
 
-typedef sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
+typedef struct sMOTIONSETPOINTS_t sMOTIONSETPOINTS_t;
 #define SIZE_OF_MSETPOINTS_DATA (sizeof(sMOTIONSETPOINTS_t))
 
-typedef sGENERICSETPOINTS_t sGENERICSETPOINTS_t;
+typedef struct sGENERICSETPOINTS_t sGENERICSETPOINTS_t;
 #define SIZE_OF_GMSETPOINTS_DATA (sizeof(sGENERICSETPOINTS_t))
 
-typedef PID_Tune_Params_t PID_Tune_Params_t;
+typedef struct PID_Tune_Params_t PID_Tune_Params_t;
 
-typedef PID_TUNE_TYPE PID_TUNE_TYPE;
+typedef enum PID_TUNE_TYPE PID_TUNE_TYPE;
 
 struct ALL_DATA
 {
-  PID_TUNE_TYPE tune_type;
+  enum PID_TUNE_TYPE tune_type;
   uint32_t timestamp;
   float yaw;
   float pitch;
   float roll;
-  sMPUDATA_t mpuRAW;
+  struct sMPUDATA_t mpuRAW;
   //sMPUDATA_t mpuData;
   float pingheight;
-  PID_Tune_Params_t pplr;
-  PID_Tune_Params_t ppfb;     //
-  PID_Tune_Params_t ppud; // Yaw and Ping
-  Profiler_data profiled_loop, profiled_mpu, profiled_wifi, profiled_steer;
-  sGENERICSETPOINTS_t msetpts;
+  struct PID_Tune_Params_t pplr;
+  struct PID_Tune_Params_t ppfb;     //
+  struct PID_Tune_Params_t ppud; // Yaw and Ping
+  struct Profiler_data profiled_loop, profiled_mpu, profiled_wifi, profiled_steer;
+  struct sGENERICSETPOINTS_t msetpts;
 };
 
-typedef ALL_DATA debug_data;
+typedef struct ALL_DATA debug_data;
 #define SIZE_OF_ALL_DATA (sizeof(ALL_DATA))
 
 
