@@ -21,6 +21,8 @@ atom_esp_joy::joydata joydata;
 
 #include "sensor_msgs/Imu.h"
 sensor_msgs::Imu imudata;
+sensor_msgs::Imu imudatalast;
+
 
 #include <signal.h>
 #include <cstdlib>
@@ -342,6 +344,8 @@ const char* PID_TUNE_TYPE_str[]=
 
 int main (int argc, char** argv)
 {
+
+  double dt_imu;
   struct sigaction sigIntHandler;
 
   sigIntHandler.sa_handler = my_handler;
@@ -488,7 +492,8 @@ int main (int argc, char** argv)
 
   ros::Subscriber joy_sub = nh.subscribe("atom_joydata", 2000, joyCallback); // test sub
 
-
+  //setpoints.timestampsec = 1;
+  
   int32_t count = 0;
   while(ros::ok())
   {
@@ -537,7 +542,7 @@ int main (int argc, char** argv)
         // msg.H.frame_id = "?"
         //msg.header.seq = count++;
         
-	if(0 != setpoints.timestampsec)
+	//if(0 != setpoints.timestampsec)
 	{
 	    //ROS_DEBUG_THROTTLE(30, "LOOP %d", __LINE__);
             int n = write(new_sd, &setpoints, SIZE_OF_GMSETPOINTS_DATA); // SEEMS OK: Thread safety could be an issue
@@ -550,16 +555,18 @@ int main (int argc, char** argv)
             }
         }
         
-        ROS_DEBUG_THROTTLE(0.5, "[ESP]: DATA from ESP | %d | %f, %f, %f | %d, %d, %d, %d, %x | %x "/*%x %x %x | %x"*/, all_data.timestamp, (float)all_data.yaw, (float)all_data.pitch, (float)all_data.roll , setpoints.x, setpoints.y, setpoints.z, setpoints.s, setpoints.buttons
+        msg.header.stamp = ros::Time::now();
+	
+	dt_imu = msg.header.stamp.toSec() - imudatalast.header.stamp.toSec();
+	
+        ROS_DEBUG_THROTTLE(0.5, "[ESP]: DATA from ESP dtimu %f | %d | %f, %f, %f | %d, %d, %d, %d, %x | %x "/*%x %x %x | %x"*/, dt_imu, all_data.timestamp, (float)all_data.yaw, (float)all_data.pitch, (float)all_data.roll , setpoints.x, setpoints.y, setpoints.z, setpoints.s, setpoints.buttons
         /*, PID_TUNE_TYPE_LEFT_RIGHT == (msg.tune_type & PID_TUNE_TYPE_LEFT_RIGHT)
         ,  PID_TUNE_TYPE_FORE_BACK == (msg.tune_type & PID_TUNE_TYPE_FORE_BACK)
         , PID_TUNE_TYPE_LEFT_RIGHT
         , PID_TUNE_TYPE_FORE_BACK*/
         , msg.tune_type);
         //printdata(&data);
-	
-	msg.header.stamp = ros::Time::now();
-	
+	 
         msg.profiled_loop.header = msg.header;
         msg.profiled_mpu.header = msg.header;
         msg.profiled_wifi.header = msg.header;
@@ -584,6 +591,8 @@ int main (int argc, char** argv)
         //server_pub_esp_perf_mpu.publish(msg.profiled_mpu);
         //server_pub_esp_perf_wifi.publish(msg.profiled_wifi);
         //server_pub_esp_perf_steer.publish(msg.profiled_steer);
+        
+        imudatalast = imudata;
         
         //ROS_ERROR("?");
         // %Tag(SPINONCE)%
